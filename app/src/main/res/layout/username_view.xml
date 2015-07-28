@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="presenter"
+            type="info.mschmitt.githubapp.presenters.UsernameViewPresenter"/>
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="@{!presenter.loading}"
+                android:hint="username"
+                android:text="@{presenter.username}"
+                bind:addTextChangedListener="@{presenter.usernameTextWatcher}"
+                bind:error="@{presenter.usernameError}"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:enabled="@{!presenter.loading}"
+                android:text="Show repositories"
+                bind:onClickListener="@{presenter.onShowRepositoriesClickListener}"
+                />
+        </LinearLayout>
+    </ScrollView>
+</layout>

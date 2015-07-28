@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+
+        <variable
+            name="presenter"
+            type="info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter"/>
+    </data>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        bind:adapter="@{presenter.adapter}"
+        bind:currentItem="@{presenter.currentItem}"
+        bind:onPageChangeListener="@{presenter.onPageChangeListener}"/>
+</layout>

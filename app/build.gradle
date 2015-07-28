@@ -1,0 +1,67 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.android.databinding'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.github.triplet.play'
+
+android {
+    if (project.rootProject.file('playstore.properties').exists()) {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('playstore.properties').newDataInputStream())
+        play {
+            serviceAccountEmail = properties.getProperty('play.serviceaccountemail')
+            pk12File = file(properties.getProperty('play.pk12file'))
+            uploadImages = true
+        }
+        signingConfigs {
+            config {
+                storeFile file(properties.getProperty('keystore.path'))
+                storePassword properties.getProperty('keystore.password')
+                keyAlias properties.getProperty('keystore.key.githubapp.alias')
+                keyPassword properties.getProperty('keystore.key.githubapp.password')
+            }
+        }
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                signingConfig signingConfigs.config
+            }
+        }
+    }
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION) //22
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION //"23.0.0 rc2"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    defaultConfig {
+        applicationId "info.mschmitt.githubapp"
+        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION) //14
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION) //22
+        versionCode 3
+        versionName "1.0"
+    }
+    productFlavors {
+        multiactivity {
+            applicationId "info.mschmitt.githubapp.ma"
+            versionName "1.0-ma"
+        }
+        fragments {
+            applicationId "info.mschmitt.githubapp.f"
+            versionName "1.0-f"
+        }
+    }
+}
+
+dependencies {
+    compile project(':libraries:ghnetwork')
+    compile project(':libraries:ghentities')
+    compile project(':libraries:ghandroid')
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:support-annotations:22.2.1'
+    apt 'com.android.databinding:compiler:1.0-rc1'
+    compile 'com.google.dagger:dagger:2.0'
+    apt 'com.google.dagger:dagger-compiler:2.0'
+    compile 'io.reactivex:rxandroid:0.25.0'
+}
