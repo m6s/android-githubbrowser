@@ -22,7 +22,6 @@ import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
  */
 public class RepositoryListFragment extends Fragment
         implements Presentable<RepositoryListViewPresenter> {
-    private static final String ARG_USERNAME = "arg_username";
     private RepositoryListViewPresenter mPresenter;
     private FragmentHost mHost;
     private RepositoryListAdapter mAdapter;
@@ -39,12 +38,8 @@ public class RepositoryListFragment extends Fragment
                 }
             };
 
-    public static RepositoryListFragment newInstance(String username) {
-        RepositoryListFragment fragment = new RepositoryListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_USERNAME, username);
-        fragment.setArguments(args);
-        return fragment;
+    public static RepositoryListFragment newInstance() {
+        return new RepositoryListFragment();
     }
 
     @Override

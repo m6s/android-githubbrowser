@@ -15,8 +15,7 @@ import info.mschmitt.githubapp.android.presentation.OnErrorListener;
 import info.mschmitt.githubapp.android.presentation.OnLoadingListener;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.network.GitHubService;
-import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
-import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -27,16 +26,13 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 public class RepositoriesSplitSceneViewPresenter extends BaseObservable
-        implements OnBackPressedListener, RepositoryListViewPresenter.ParentPresenter,
-        RepositoryPagerViewPresenter.ParentPresenter {
-    public static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
+        implements OnBackPressedListener, RepositoriesSplitViewPresenter.ParentPresenter {
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
     private final GitHubService mGitHubService;
     private final Observable<List<Repository>> mRepositories;
     private final PublishSubject<List<Repository>> mRepositoriesSubject;
     private RepositoriesSplitSceneView mView;
-    private boolean mDetailsViewActive;
     private String mUsername;
     private boolean mLoading;
 
@@ -49,24 +45,12 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
         mRepositories = mRepositoriesSubject.asObservable();
     }
 
-    public boolean isDetailsViewActive() {
-        return mDetailsViewActive;
-    }
-
-    public void setDetailsViewActive(boolean detailsViewActive) {
-        mDetailsViewActive = detailsViewActive;
-    }
-
     public void onCreate(RepositoriesSplitSceneView view, Bundle savedState) {
         mView = view;
         mAnalyticsManager.logScreenView(getClass().getName());
-        if (savedState != null) {
-            mDetailsViewActive = savedState.getBoolean(STATE_DETAILS_VIEW_ACTIVE); //TODO presenter
-        }
     }
 
     public void onSave(Bundle outState) {
-        outState.putBoolean(STATE_DETAILS_VIEW_ACTIVE, mDetailsViewActive);
     }
 
     public void onDestroy() {
@@ -111,44 +95,24 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
     }
 
     @Override
-    public void onRepositorySelected(Object sender, Repository repository) {
-        if (sender == mView.getMasterPresenter()) {
-            if (!mDetailsViewActive) {
-                mView.showDetailsView();
-                mDetailsViewActive = true;
-            }
-            mView.getDetailsPresenter().selectRepository(repository);
-        } else if (sender == mView.getDetailsPresenter()) {
-            mView.getMasterPresenter().selectRepository(repository);
-        } else {
-            throw new AssertionError();
-        }
+    public boolean onBackPressed() {
+        return mView.getChildPresenter().onBackPressed();
     }
 
     @Override
-    public boolean onBackPressed() {
-        if (mDetailsViewActive && mView.getDetailsPresenter().onBackPressed()) {
-            return true;
-        }
-        if (mDetailsViewActive && !mView.isInSplitMode()) {
-            mView.hideDetailsView();
-            return true;
-        }
-        return mView.getMasterPresenter().onBackPressed();
+    public void onError(Object sender, Throwable throwable, Runnable retryHandler) {
+        mView.getParentPresenter().onError(sender, throwable, retryHandler);
+    }
+
+    @Override
+    public void onLoading(Object sender, boolean complete, Runnable cancelHandler) {
+        mView.getParentPresenter().onLoading(sender, complete, cancelHandler);
     }
 
     public interface RepositoriesSplitSceneView {
-        RepositoryListViewPresenter getMasterPresenter();
-
-        RepositoryPagerViewPresenter getDetailsPresenter();
-
-        void showDetailsView();
+        RepositoriesSplitViewPresenter getChildPresenter();
 
         ParentPresenter getParentPresenter();
-
-        boolean isInSplitMode();
-
-        void hideDetailsView();
     }
 
     public interface ParentPresenter extends OnLoadingListener, OnErrorListener {
