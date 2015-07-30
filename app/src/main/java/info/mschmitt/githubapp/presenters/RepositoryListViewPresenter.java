@@ -39,8 +39,7 @@ public class RepositoryListViewPresenter extends BaseObservable implements OnBac
         mRepositories = repositories;
     }
 
-    public void onCreate(RepositoryListView view, Bundle savedState) {
-        mView = view;
+    public void onCreate(Bundle savedState) {
         mSubscriptions.add(mRepositories.subscribe((repositories) -> {
             mView.getAdapter().clear();
             mView.getAdapter().addAll(repositories);
@@ -51,6 +50,10 @@ public class RepositoryListViewPresenter extends BaseObservable implements OnBac
             }
             mView.getAdapter().notifyDataSetChanged();
         }));
+    }
+
+    public void postInject(RepositoryListView view) {
+        mView = view;
     }
 
     public void onSave(Bundle outState) {

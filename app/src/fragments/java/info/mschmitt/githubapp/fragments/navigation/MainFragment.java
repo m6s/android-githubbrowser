@@ -29,37 +29,36 @@ import info.mschmitt.githubapp.presenters.navigation.MainViewPresenter;
  * @author Matthias Schmitt
  */
 public class MainFragment extends BugFixFragment
-        implements Presentable<MainViewPresenter>, UsernameSceneFragment.FragmentHost,
-        RepositoriesSplitSceneFragment.FragmentHost {
+        implements Presentable<MainViewPresenter>, MainViewPresenter.MainView,
+        UsernameSceneFragment.FragmentHost, RepositoriesSplitSceneFragment.FragmentHost {
     private FragmentHost mHost;
     private MainViewPresenter mPresenter;
     private Component mComponent;
-    private MainViewPresenter.MainView mMainView = new MainViewPresenter.MainView() {
-        @Override
-        public MainViewPresenter.ParentPresenter getParentPresenter() {
-            return mHost.getPresenter();
-        }
-
-        @Override
-        public Object getChildPresenter() {
-            Presentable fragment =
-                    (Presentable) getChildFragmentManager().findFragmentById(R.id.contentView);
-            return fragment.getPresenter();
-        }
-
-        @Override
-        public boolean tryShowPreviousChildView() {
-            return getChildFragmentManager().popBackStackImmediate();
-        }
-
-        @Override
-        public void showErrorDialog(Throwable throwable, Runnable retryHandler) {
-            AlertDialogs.showErrorDialog(getActivity(), throwable, retryHandler);
-        }
-    };
 
     public static MainFragment newInstance() {
         return new MainFragment();
+    }
+
+    @Override
+    public MainViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
+    }
+
+    @Override
+    public Object getChildPresenter() {
+        Presentable fragment =
+                (Presentable) getChildFragmentManager().findFragmentById(R.id.contentView);
+        return fragment.getPresenter();
+    }
+
+    @Override
+    public boolean tryShowPreviousChildView() {
+        return getChildFragmentManager().popBackStackImmediate();
+    }
+
+    @Override
+    public void showErrorDialog(Throwable throwable, Runnable retryHandler) {
+        AlertDialogs.showErrorDialog(getActivity(), throwable, retryHandler);
     }
 
     @Override
@@ -76,8 +75,9 @@ public class MainFragment extends BugFixFragment
         Application application = (Application) getActivity().getApplication();
         SuperComponent superComponent = application.getSuperComponent(this);
         superComponent.inject(this);
+        mPresenter.postInject(this);
         mComponent = superComponent.plus(new MainModule());
-        mPresenter.onCreate(mMainView, savedInstanceState);
+        mPresenter.onCreate(savedInstanceState);
     }
 
     @Override

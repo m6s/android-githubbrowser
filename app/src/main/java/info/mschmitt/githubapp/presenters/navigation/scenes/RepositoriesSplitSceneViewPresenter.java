@@ -45,9 +45,12 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
         mRepositories = mRepositoriesSubject.asObservable();
     }
 
-    public void onCreate(RepositoriesSplitSceneView view, Bundle savedState) {
-        mView = view;
+    public void onCreate(Bundle savedState) {
         mAnalyticsManager.logScreenView(getClass().getName());
+    }
+
+    public void postInject(RepositoriesSplitSceneView view) {
+        mView = view;
     }
 
     public void onSave(Bundle outState) {

@@ -23,7 +23,8 @@ import info.mschmitt.githubapp.presenters.navigation.scenes.RepositoriesSplitSce
 
 
 public class RepositoriesSplitSceneFragment extends Fragment
-        implements Presentable<RepositoriesSplitSceneViewPresenter>, ActionBarProvider,
+        implements Presentable<RepositoriesSplitSceneViewPresenter>,
+        RepositoriesSplitSceneViewPresenter.RepositoriesSplitSceneView, ActionBarProvider,
         RepositoriesSplitFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
@@ -31,19 +32,6 @@ public class RepositoriesSplitSceneFragment extends Fragment
     private Toolbar mActionBar;
     private Component mComponent;
     private RepositoriesSplitFragment mRepositoriesSplitFragment;
-    private RepositoriesSplitSceneViewPresenter.RepositoriesSplitSceneView
-            mRepositoriesSplitSceneView =
-            new RepositoriesSplitSceneViewPresenter.RepositoriesSplitSceneView() {
-                @Override
-                public RepositoriesSplitViewPresenter getChildPresenter() {
-                    return mRepositoriesSplitFragment.getPresenter();
-                }
-
-                @Override
-                public RepositoriesSplitSceneViewPresenter.ParentPresenter getParentPresenter() {
-                    return mHost.getPresenter();
-                }
-            };
 
     public static RepositoriesSplitSceneFragment newInstance(String username) {
         RepositoriesSplitSceneFragment fragment = new RepositoriesSplitSceneFragment();
@@ -51,6 +39,16 @@ public class RepositoriesSplitSceneFragment extends Fragment
         args.putString(ARG_USERNAME, username);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public RepositoriesSplitViewPresenter getChildPresenter() {
+        return mRepositoriesSplitFragment.getPresenter();
+    }
+
+    @Override
+    public RepositoriesSplitSceneViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
     }
 
     @Override
@@ -64,9 +62,10 @@ public class RepositoriesSplitSceneFragment extends Fragment
         super.onCreate(savedInstanceState);
         SuperComponent superComponent = mHost.getSuperComponent(this);
         superComponent.inject(this);
+        mPresenter.postInject(this);
         mComponent =
                 superComponent.plus(new RepositoriesSplitSceneModule(mPresenter.getRepositories()));
-        mPresenter.onCreate(mRepositoriesSplitSceneView, savedInstanceState);
+        mPresenter.onCreate(savedInstanceState);
         mPresenter.setUsername(getArguments().getString(ARG_USERNAME));
     }
 

@@ -20,17 +20,11 @@ import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryDetailsFragment extends Fragment
-        implements Presentable<RepositoryDetailsViewPresenter>, OnBackPressedListener {
+        implements Presentable<RepositoryDetailsViewPresenter>,
+        RepositoryDetailsViewPresenter.RepositoryDetailsView, OnBackPressedListener {
     private static final String ARG_REPOSITORY = "arg_repository";
     private RepositoryDetailsViewPresenter mPresenter;
     private FragmentHost mHost;
-    private RepositoryDetailsViewPresenter.RepositoryDetailsView mRepositoryDetailsView =
-            new RepositoryDetailsViewPresenter.RepositoryDetailsView() {
-                @Override
-                public RepositoryDetailsViewPresenter.ParentPresenter getParentPresenter() {
-                    return mHost.getPresenter();
-                }
-            };
 
     public static RepositoryDetailsFragment newInstance(Repository repository) {
         RepositoryDetailsFragment fragment = new RepositoryDetailsFragment();
@@ -38,6 +32,11 @@ public class RepositoryDetailsFragment extends Fragment
         args.putSerializable(ARG_REPOSITORY, repository);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public RepositoryDetailsViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
     }
 
     @Override
@@ -50,7 +49,8 @@ public class RepositoryDetailsFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).inject(this);
-        mPresenter.onCreate(mRepositoryDetailsView, savedInstanceState);
+        mPresenter.postInject(this);
+        mPresenter.onCreate(savedInstanceState);
         mPresenter.setRepository((Repository) getArguments().getSerializable(ARG_REPOSITORY));
     }
 

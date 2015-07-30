@@ -118,8 +118,7 @@ public class UsernameViewPresenter extends BaseObservable {
         notifyPropertyChanged(BR.loading);
     }
 
-    public void onCreate(UsernameView view, Bundle savedState) {
-        mView = view;
+    public void onCreate(Bundle savedState) {
         if (savedState != null) {
             mUsername = savedState.getString(STATE_USER_NAME);
         }
@@ -131,6 +130,10 @@ public class UsernameViewPresenter extends BaseObservable {
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
+    }
+
+    public void postInject(UsernameView view) {
+        mView = view;
     }
 
     public interface UsernameView {

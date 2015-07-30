@@ -20,55 +20,58 @@ import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
 
 
 public class RepositoriesSplitFragment extends Fragment
-        implements Presentable<RepositoriesSplitViewPresenter>, RepositoryListFragment.FragmentHost,
+        implements Presentable<RepositoriesSplitViewPresenter>,
+        RepositoriesSplitViewPresenter.RepositoriesSplitView, RepositoryListFragment.FragmentHost,
         RepositoryPagerFragment.FragmentHost {
     private FragmentHost mHost;
     private RepositoriesSplitViewPresenter mPresenter;
     private RepositoryListFragment mMasterFragment;
     private RepositoryPagerFragment mDetailsFragment;
-    private RepositoriesSplitViewPresenter.RepositoriesSplitView mRepositoriesSplitView =
-            new RepositoriesSplitViewPresenter.RepositoriesSplitView() {
-                @Override
-                public RepositoryListViewPresenter getMasterPresenter() {
-                    return mMasterFragment.getPresenter();
-                }
-
-                @Override
-                public RepositoryPagerViewPresenter getDetailsPresenter() {
-                    return mDetailsFragment.getPresenter();
-                }
-
-                @Override
-                public void showDetailsView() {
-                    RepositoriesSplitViewBinding binding = getBinding();
-                    if (!isInSplitMode()) {
-                        binding.masterView.setVisibility(View.GONE);
-                    }
-                    binding.detailsView.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public RepositoriesSplitViewPresenter.ParentPresenter getParentPresenter() {
-                    return mHost.getPresenter();
-                }
-
-                @Override
-                public boolean isInSplitMode() {
-                    return getResources().getBoolean(R.bool.split);
-                }
-
-                @Override
-                public void hideDetailsView() {
-                    RepositoriesSplitViewBinding binding = getBinding();
-                    binding.masterView.setVisibility(View.VISIBLE);
-                    if (!isInSplitMode()) {
-                        binding.detailsView.setVisibility(View.GONE);
-                    }
-                }
-            };
 
     public static RepositoriesSplitFragment newInstance() {
         return new RepositoriesSplitFragment();
+    }
+
+    @Override
+    public RepositoryListViewPresenter getMasterPresenter() {
+        return mMasterFragment.getPresenter();
+    }
+
+    @Override
+    public RepositoryPagerViewPresenter getDetailsPresenter() {
+        return mDetailsFragment.getPresenter();
+    }
+
+    @Override
+    public void showDetailsView() {
+        RepositoriesSplitViewBinding binding = getBinding();
+        if (!isInSplitMode()) {
+            binding.masterView.setVisibility(View.GONE);
+        }
+        binding.detailsView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public RepositoriesSplitViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
+    }
+
+    @Override
+    public boolean isInSplitMode() {
+        return getResources().getBoolean(R.bool.split);
+    }
+
+    @Override
+    public void hideDetailsView() {
+        RepositoriesSplitViewBinding binding = getBinding();
+        binding.masterView.setVisibility(View.VISIBLE);
+        if (!isInSplitMode()) {
+            binding.detailsView.setVisibility(View.GONE);
+        }
+    }
+
+    private RepositoriesSplitViewBinding getBinding() {
+        return DataBindingUtil.findBinding(getView());
     }
 
     @Override
@@ -81,9 +84,8 @@ public class RepositoriesSplitFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).inject(this);
-        SuperComponent superComponent = mHost.getSuperComponent(this);
-        superComponent.inject(this);
-        mPresenter.onCreate(mRepositoriesSplitView, savedInstanceState);
+        mPresenter.postInject(this);
+        mPresenter.onCreate(savedInstanceState);
     }
 
     @Override
@@ -141,10 +143,6 @@ public class RepositoriesSplitFragment extends Fragment
     public void onDetach() {
         mHost = null;
         super.onDetach();
-    }
-
-    private RepositoriesSplitViewBinding getBinding() {
-        return DataBindingUtil.findBinding(getView());
     }
 
     @Override

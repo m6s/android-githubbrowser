@@ -20,7 +20,10 @@ public class UsernameSceneViewPresenter extends BaseObservable
     public UsernameSceneViewPresenter() {
     }
 
-    public void onCreate(UsernameSceneView view, Bundle savedState) {
+    public void onCreate(Bundle savedState) {
+    }
+
+    public void postInject(UsernameSceneView view) {
         mView = view;
     }
 

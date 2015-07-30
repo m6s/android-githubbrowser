@@ -33,10 +33,11 @@ public class MainViewPresenter extends BaseObservable
     }
 
     @MainThread
-    public void onCreate(MainView view, Bundle savedState) {
+    public void onCreate(Bundle savedState) {
+    }
+
+    public void postInject(MainView view) {
         mView = view;
-        if (savedState != null) {
-        }
     }
 
     @MainThread

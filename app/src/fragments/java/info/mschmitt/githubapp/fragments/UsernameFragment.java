@@ -15,19 +15,18 @@ import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
 
 
-public class UsernameFragment extends Fragment implements Presentable<UsernameViewPresenter> {
+public class UsernameFragment extends Fragment
+        implements Presentable<UsernameViewPresenter>, UsernameViewPresenter.UsernameView {
     private FragmentHost mHost;
     private UsernameViewPresenter mPresenter;
-    private UsernameViewPresenter.UsernameView mUsernameView =
-            new UsernameViewPresenter.UsernameView() {
-                @Override
-                public UsernameViewPresenter.ParentPresenter getParentPresenter() {
-                    return mHost.getPresenter();
-                }
-            };
 
     public static UsernameFragment newInstance() {
         return new UsernameFragment();
+    }
+
+    @Override
+    public UsernameViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
     }
 
     @Override
@@ -40,7 +39,8 @@ public class UsernameFragment extends Fragment implements Presentable<UsernameVi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).inject(this);
-        mPresenter.onCreate(mUsernameView, savedInstanceState);
+        mPresenter.postInject(this);
+        mPresenter.onCreate(savedInstanceState);
     }
 
     @Override

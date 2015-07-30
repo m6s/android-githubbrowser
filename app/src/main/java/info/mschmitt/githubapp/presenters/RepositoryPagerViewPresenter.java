@@ -61,8 +61,7 @@ public class RepositoryPagerViewPresenter extends BaseObservable
         mAnalyticsManager = analyticsManager;
     }
 
-    public void onCreate(RepositoryPagerView view, Bundle savedState) {
-        mView = view;
+    public void onCreate(Bundle savedState) {
         mAnalyticsManager.logScreenView(getClass().getName());
         mSubscriptions.add(mRepositories.subscribe((repositories) -> {
             mRepositoryIndexes.clear();
@@ -74,6 +73,10 @@ public class RepositoryPagerViewPresenter extends BaseObservable
             mView.getAdapter().getRepositories().addAll(repositories);
             mView.getAdapter().notifyDataSetChanged();
         }));
+    }
+
+    public void postInject(RepositoryPagerView view) {
+        mView = view;
     }
 
     public void onSave(Bundle outState) {

@@ -33,12 +33,15 @@ public class RepositoriesSplitViewPresenter extends BaseObservable
         return mDetailsViewActive;
     }
 
-    public void onCreate(RepositoriesSplitView view, Bundle savedState) {
-        mView = view;
+    public void onCreate(Bundle savedState) {
         mAnalyticsManager.logScreenView(getClass().getName());
         if (savedState != null) {
             mDetailsViewActive = savedState.getBoolean(STATE_DETAILS_VIEW_ACTIVE); //TODO presenter
         }
+    }
+
+    public void postInject(RepositoriesSplitView view) {
+        mView = view;
     }
 
     public void onSave(Bundle outState) {

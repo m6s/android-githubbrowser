@@ -21,30 +21,29 @@ import info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPre
 
 
 public class UsernameSceneFragment extends Fragment
-        implements Presentable<UsernameSceneViewPresenter>, ActionBarProvider,
+        implements Presentable<UsernameSceneViewPresenter>,
+        UsernameSceneViewPresenter.UsernameSceneView, ActionBarProvider,
         UsernameFragment.FragmentHost {
     private FragmentHost mHost;
     private UsernameSceneViewPresenter mPresenter;
     private Toolbar mActionBar;
     private Component mComponent;
-    private UsernameSceneViewPresenter.UsernameSceneView mUsernameSceneView =
-            new UsernameSceneViewPresenter.UsernameSceneView() {
-                @Override
-                public UsernameSceneViewPresenter.ParentPresenter getParentPresenter() {
-                    return mHost.getPresenter();
-                }
-
-                @Override
-                public void showRepositories(Object sender, String username) {
-                    getFragmentManager().beginTransaction()
-                            .replace(FragmentUtils.getContainerViewId(UsernameSceneFragment.this),
-                                    RepositoriesSplitSceneFragment.newInstance(username))
-                            .addToBackStack(null).commit();
-                }
-            };
 
     public static UsernameSceneFragment newInstance() {
         return new UsernameSceneFragment();
+    }
+
+    @Override
+    public UsernameSceneViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
+    }
+
+    @Override
+    public void showRepositories(Object sender, String username) {
+        getFragmentManager().beginTransaction()
+                .replace(FragmentUtils.getContainerViewId(UsernameSceneFragment.this),
+                        RepositoriesSplitSceneFragment.newInstance(username)).addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -58,8 +57,9 @@ public class UsernameSceneFragment extends Fragment
         super.onCreate(savedInstanceState);
         SuperComponent superComponent = mHost.getSuperComponent(this);
         superComponent.inject(this);
+        mPresenter.postInject(this);
         mComponent = superComponent.plus(new UsernameSceneModule());
-        mPresenter.onCreate(mUsernameSceneView, savedInstanceState);
+        mPresenter.onCreate(savedInstanceState);
     }
 
     @Override

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -18,34 +17,29 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
-import rx.Observable;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryPagerFragment extends Fragment
         implements Presentable<RepositoryPagerViewPresenter>,
-        RepositoryDetailsFragment.FragmentHost {
+        RepositoryPagerViewPresenter.RepositoryPagerView, RepositoryDetailsFragment.FragmentHost {
     private RepositoryPagerViewPresenter mPresenter;
     private FragmentHost mHost;
-    private Observable<List<Repository>> mRepositories;
     private RepositoryPagerAdapter mAdapter;
-    private RepositoryPagerViewPresenter.RepositoryPagerView mRepositoryPagerView =
-            new RepositoryPagerViewPresenter.RepositoryPagerView() {
-                @Override
-                public RepositoryPagerAdapter getAdapter() {
-                    return mAdapter;
-                }
-
-                @Override
-                public RepositoryPagerViewPresenter.ParentPresenter getParentPresenter() {
-                    return mHost.getPresenter();
-                }
-            };
 
     public static RepositoryPagerFragment newInstance() {
-        RepositoryPagerFragment fragment = new RepositoryPagerFragment();
-        return fragment;
+        return new RepositoryPagerFragment();
+    }
+
+    @Override
+    public RepositoryPagerAdapter getAdapter() {
+        return mAdapter;
+    }
+
+    @Override
+    public RepositoryPagerViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
     }
 
     @Override
@@ -58,9 +52,10 @@ public class RepositoryPagerFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).inject(this);
+        mPresenter.postInject(this);
         ArrayList<Repository> repositories = new ArrayList<>();
         mAdapter = new RepositoryPagerAdapter(getChildFragmentManager(), repositories);
-        mPresenter.onCreate(mRepositoryPagerView, savedInstanceState);
+        mPresenter.onCreate(savedInstanceState);
     }
 
     @Override

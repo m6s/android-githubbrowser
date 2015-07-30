@@ -24,11 +24,15 @@ public class RepositoryDetailsViewPresenter extends BaseObservable {
         mAnalyticsManager = analyticsManager;
     }
 
-    public void onCreate(RepositoryDetailsView view, Bundle savedState) {
+    public void onCreate(Bundle savedState) {
         if (savedState != null) {
             mRepository = (Repository) savedState.getSerializable(STATE_REPOSITORY);
         }
         mAnalyticsManager.logScreenView(getClass().getName());
+    }
+
+    public void postInject(RepositoryDetailsView view) {
+        mView = view;
     }
 
     public void onSave(Bundle outState) {

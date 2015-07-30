@@ -21,25 +21,24 @@ import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryListFragment extends Fragment
-        implements Presentable<RepositoryListViewPresenter> {
+        implements Presentable<RepositoryListViewPresenter>,
+        RepositoryListViewPresenter.RepositoryListView {
     private RepositoryListViewPresenter mPresenter;
     private FragmentHost mHost;
     private RepositoryListAdapter mAdapter;
-    private RepositoryListViewPresenter.RepositoryListView mRepositoryListView =
-            new RepositoryListViewPresenter.RepositoryListView() {
-                @Override
-                public RepositoryListAdapter getAdapter() {
-                    return mAdapter;
-                }
-
-                @Override
-                public RepositoryListViewPresenter.ParentPresenter getParentPresenter() {
-                    return mHost.getPresenter();
-                }
-            };
 
     public static RepositoryListFragment newInstance() {
         return new RepositoryListFragment();
+    }
+
+    @Override
+    public RepositoryListAdapter getAdapter() {
+        return mAdapter;
+    }
+
+    @Override
+    public RepositoryListViewPresenter.ParentPresenter getParentPresenter() {
+        return mHost.getPresenter();
     }
 
     @Override
@@ -52,8 +51,9 @@ public class RepositoryListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).inject(this);
+        mPresenter.postInject(this);
         mAdapter = new RepositoryListAdapter(getActivity(), new ArrayList<>());
-        mPresenter.onCreate(mRepositoryListView, savedInstanceState);
+        mPresenter.onCreate(savedInstanceState);
     }
 
     @Override
