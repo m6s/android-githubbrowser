@@ -3,8 +3,6 @@ package info.mschmitt.githubapp.presenters;
 import android.databinding.BaseObservable;
 import android.os.Bundle;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.OnErrorListener;
@@ -21,11 +19,12 @@ public class RepositoriesSplitViewPresenter extends BaseObservable
     public static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
-    private RepositoriesSplitView mView;
+    private final RepositoriesSplitView mView;
     private boolean mDetailsViewActive;
 
-    @Inject
-    public RepositoriesSplitViewPresenter(AnalyticsManager analyticsManager) {
+    public RepositoriesSplitViewPresenter(RepositoriesSplitView view,
+                                          AnalyticsManager analyticsManager) {
+        mView = view;
         mAnalyticsManager = analyticsManager;
     }
 
@@ -38,10 +37,6 @@ public class RepositoriesSplitViewPresenter extends BaseObservable
         if (savedState != null) {
             mDetailsViewActive = savedState.getBoolean(STATE_DETAILS_VIEW_ACTIVE); //TODO presenter
         }
-    }
-
-    public void postInject(RepositoriesSplitView view) {
-        mView = view;
     }
 
     public void onSave(Bundle outState) {

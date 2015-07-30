@@ -4,8 +4,6 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.entities.Repository;
@@ -15,12 +13,13 @@ import info.mschmitt.githubapp.entities.Repository;
  */
 public class RepositoryDetailsViewPresenter extends BaseObservable {
     public static final String STATE_REPOSITORY = "STATE_REPOSITORY";
-    private AnalyticsManager mAnalyticsManager;
+    private final AnalyticsManager mAnalyticsManager;
+    private final RepositoryDetailsView mView;
     private Repository mRepository;
-    private RepositoryDetailsView mView;
 
-    @Inject
-    public RepositoryDetailsViewPresenter(AnalyticsManager analyticsManager) {
+    public RepositoryDetailsViewPresenter(RepositoryDetailsView view,
+                                          AnalyticsManager analyticsManager) {
+        mView = view;
         mAnalyticsManager = analyticsManager;
     }
 
@@ -29,10 +28,6 @@ public class RepositoryDetailsViewPresenter extends BaseObservable {
             mRepository = (Repository) savedState.getSerializable(STATE_REPOSITORY);
         }
         mAnalyticsManager.logScreenView(getClass().getName());
-    }
-
-    public void postInject(RepositoryDetailsView view) {
-        mView = view;
     }
 
     public void onSave(Bundle outState) {

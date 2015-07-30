@@ -2,7 +2,6 @@ package info.mschmitt.githubapp;
 
 import android.app.Application;
 
-import info.mschmitt.githubapp.components.AppComponent;
 import info.mschmitt.githubapp.components.DaggerAppComponent;
 import info.mschmitt.githubapp.modules.AppModule;
 import info.mschmitt.githubapp.modules.NetworkModule;

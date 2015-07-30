@@ -16,7 +16,7 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.UsernameSceneActionBarBinding;
 import info.mschmitt.githubapp.databinding.UsernameSceneViewBinding;
 import info.mschmitt.githubapp.fragments.UsernameFragment;
-import info.mschmitt.githubapp.modules.UsernameSceneModule;
+import info.mschmitt.githubapp.modules.navigation.scenes.UsernameSceneModule;
 import info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPresenter;
 
 
@@ -55,10 +55,8 @@ public class UsernameSceneFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SuperComponent superComponent = mHost.getSuperComponent(this);
-        superComponent.inject(this);
-        mPresenter.postInject(this);
-        mComponent = superComponent.plus(new UsernameSceneModule());
+        mComponent = mHost.getSuperComponent(this).plus(new UsernameSceneModule(this));
+        mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
     }
 
@@ -123,12 +121,11 @@ public class UsernameSceneFragment extends Fragment
     }
 
     public interface Component extends UsernameFragment.SuperComponent {
+        void inject(UsernameSceneFragment fragment);
     }
 
     public interface SuperComponent {
         Component plus(UsernameSceneModule module);
-
-        void inject(UsernameSceneFragment fragment);
     }
 
     public interface FragmentHost {

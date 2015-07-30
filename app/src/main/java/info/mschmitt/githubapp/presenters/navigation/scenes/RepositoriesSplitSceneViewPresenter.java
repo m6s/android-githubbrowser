@@ -6,8 +6,6 @@ import android.os.Bundle;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
@@ -32,13 +30,15 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
     private final GitHubService mGitHubService;
     private final Observable<List<Repository>> mRepositories;
     private final PublishSubject<List<Repository>> mRepositoriesSubject;
+    private final String mUsername;
     private RepositoriesSplitSceneView mView;
-    private String mUsername;
     private boolean mLoading;
 
-    @Inject
-    public RepositoriesSplitSceneViewPresenter(GitHubService gitHubService,
+    public RepositoriesSplitSceneViewPresenter(String username, RepositoriesSplitSceneView view,
+                                               GitHubService gitHubService,
                                                AnalyticsManager analyticsManager) {
+        mUsername = username;
+        mView = view;
         mAnalyticsManager = analyticsManager;
         mGitHubService = gitHubService;
         mRepositoriesSubject = PublishSubject.create();
@@ -46,11 +46,22 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
     }
 
     public void onCreate(Bundle savedState) {
+        observe();
         mAnalyticsManager.logScreenView(getClass().getName());
     }
 
-    public void postInject(RepositoriesSplitSceneView view) {
-        mView = view;
+    private void observe() {
+        setLoading(true);
+        Subscription subscription = mGitHubService.getUserRepositories(mUsername)
+                .observeOn(AndroidSchedulers.mainThread()).doOnUnsubscribe(() -> {
+                    setLoading(false);
+                    mView.getParentPresenter().onLoading(this, true, null);
+                }).subscribe(mRepositoriesSubject::onNext, throwable -> mView.getParentPresenter()
+                        .onError(RepositoriesSplitSceneViewPresenter.this, throwable,
+                                this::observe));
+        mSubscriptions.add(subscription);
+        setLoading(true);
+        mView.getParentPresenter().onLoading(this, false, subscription::unsubscribe);
     }
 
     public void onSave(Bundle outState) {
@@ -68,29 +79,6 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
     private void setLoading(boolean loading) {
         mLoading = loading;
         notifyPropertyChanged(BR.loading);
-    }
-
-    @Bindable
-    public String getUsername() {
-        return mUsername;
-    }
-
-    public void setUsername(String username) {
-        mUsername = username;
-        notifyPropertyChanged(BR.username);
-        setLoading(true);
-        Subscription subscription = mGitHubService.getUserRepositories(username)
-                .observeOn(AndroidSchedulers.mainThread()).doOnUnsubscribe(() -> {
-                    setLoading(false);
-                    mView.getParentPresenter().onLoading(this, true, null);
-                }).subscribe(mRepositoriesSubject::onNext, throwable -> {
-                    mView.getParentPresenter()
-                            .onError(RepositoriesSplitSceneViewPresenter.this, throwable,
-                                    () -> setUsername(username));
-                });
-        mSubscriptions.add(subscription);
-        setLoading(true);
-        mView.getParentPresenter().onLoading(this, false, subscription::unsubscribe);
     }
 
     public Observable<List<Repository>> getRepositories() {

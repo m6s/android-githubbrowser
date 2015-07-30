@@ -14,6 +14,7 @@ import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
+import info.mschmitt.githubapp.modules.navigation.RepositoriesSplitModule;
 import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
@@ -27,6 +28,7 @@ public class RepositoriesSplitFragment extends Fragment
     private RepositoriesSplitViewPresenter mPresenter;
     private RepositoryListFragment mMasterFragment;
     private RepositoryPagerFragment mDetailsFragment;
+    private Component mComponent;
 
     public static RepositoriesSplitFragment newInstance() {
         return new RepositoriesSplitFragment();
@@ -83,8 +85,8 @@ public class RepositoriesSplitFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).inject(this);
-        mPresenter.postInject(this);
+        mComponent = mHost.getSuperComponent(this).plus(new RepositoriesSplitModule(this));
+        mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
     }
 
@@ -148,13 +150,13 @@ public class RepositoriesSplitFragment extends Fragment
     @Override
     public RepositoryListFragment.SuperComponent getSuperComponent(
             RepositoryListFragment fragment) {
-        return mHost.getSuperComponent(this);
+        return mComponent;
     }
 
     @Override
     public RepositoryPagerFragment.SuperComponent getSuperComponent(
             RepositoryPagerFragment fragment) {
-        return mHost.getSuperComponent(this);
+        return mComponent;
     }
 
     @Override
@@ -167,9 +169,13 @@ public class RepositoriesSplitFragment extends Fragment
         mPresenter = presenter;
     }
 
-    public interface SuperComponent
+    public interface Component
             extends RepositoryListFragment.SuperComponent, RepositoryPagerFragment.SuperComponent {
         void inject(RepositoriesSplitFragment fragment);
+    }
+
+    public interface SuperComponent {
+        Component plus(RepositoriesSplitModule module);
     }
 
     public interface FragmentHost {

@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
@@ -54,9 +52,10 @@ public class RepositoryPagerViewPresenter extends BaseObservable
                 }
             };
 
-    @Inject
-    public RepositoryPagerViewPresenter(Observable<List<Repository>> repositories,
+    public RepositoryPagerViewPresenter(RepositoryPagerView view,
+                                        Observable<List<Repository>> repositories,
                                         AnalyticsManager analyticsManager) {
+        mView = view;
         mRepositories = repositories;
         mAnalyticsManager = analyticsManager;
     }
@@ -73,10 +72,6 @@ public class RepositoryPagerViewPresenter extends BaseObservable
             mView.getAdapter().getRepositories().addAll(repositories);
             mView.getAdapter().notifyDataSetChanged();
         }));
-    }
-
-    public void postInject(RepositoryPagerView view) {
-        mView = view;
     }
 
     public void onSave(Bundle outState) {

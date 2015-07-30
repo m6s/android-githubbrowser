@@ -16,6 +16,7 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.modules.navigation.RepositoryPagerModule;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
 
 /**
@@ -27,6 +28,7 @@ public class RepositoryPagerFragment extends Fragment
     private RepositoryPagerViewPresenter mPresenter;
     private FragmentHost mHost;
     private RepositoryPagerAdapter mAdapter;
+    private Component mComponent;
 
     public static RepositoryPagerFragment newInstance() {
         return new RepositoryPagerFragment();
@@ -51,8 +53,8 @@ public class RepositoryPagerFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).inject(this);
-        mPresenter.postInject(this);
+        mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerModule(this));
+        mComponent.inject(this);
         ArrayList<Repository> repositories = new ArrayList<>();
         mAdapter = new RepositoryPagerAdapter(getChildFragmentManager(), repositories);
         mPresenter.onCreate(savedInstanceState);
@@ -97,11 +99,16 @@ public class RepositoryPagerFragment extends Fragment
     @Override
     public RepositoryDetailsFragment.SuperComponent getSuperComponent(
             RepositoryDetailsFragment fragment) {
-        return mHost.getSuperComponent(this);
+        return mComponent;
     }
 
-    public interface SuperComponent extends RepositoryDetailsFragment.SuperComponent {
+
+    public interface Component extends RepositoryDetailsFragment.SuperComponent {
         void inject(RepositoryPagerFragment fragment);
+    }
+
+    public interface SuperComponent {
+        Component plus(RepositoryPagerModule module);
     }
 
     public interface FragmentHost {

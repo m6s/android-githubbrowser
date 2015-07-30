@@ -22,7 +22,7 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
 import info.mschmitt.githubapp.fragments.navigation.scenes.RepositoriesSplitSceneFragment;
 import info.mschmitt.githubapp.fragments.navigation.scenes.UsernameSceneFragment;
-import info.mschmitt.githubapp.modules.MainModule;
+import info.mschmitt.githubapp.modules.navigation.MainModule;
 import info.mschmitt.githubapp.presenters.navigation.MainViewPresenter;
 
 /**
@@ -73,10 +73,8 @@ public class MainFragment extends BugFixFragment
         setRetainInstance(true);
         setHasOptionsMenu(true);
         Application application = (Application) getActivity().getApplication();
-        SuperComponent superComponent = application.getSuperComponent(this);
-        superComponent.inject(this);
-        mPresenter.postInject(this);
-        mComponent = superComponent.plus(new MainModule());
+        mComponent = application.getSuperComponent(this).plus(new MainModule(this));
+        mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
     }
 
@@ -169,15 +167,11 @@ public class MainFragment extends BugFixFragment
 
     public interface Component extends RepositoriesSplitSceneFragment.SuperComponent,
             UsernameSceneFragment.SuperComponent {
-        void inject(UsernameSceneFragment fragment);
-
-        void inject(RepositoriesSplitSceneFragment fragment);
+        void inject(MainFragment fragment);
     }
 
     public interface SuperComponent {
         Component plus(MainModule module);
-
-        void inject(MainFragment fragment);
     }
 
     public interface Application {

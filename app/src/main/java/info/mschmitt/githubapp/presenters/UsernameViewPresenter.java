@@ -7,8 +7,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.Validator;
@@ -29,6 +27,7 @@ public class UsernameViewPresenter extends BaseObservable {
     private final Validator mValidator;
     private final GitHubService mGitHubService;
     private final AnalyticsManager mAnalyticsManager;
+    private final UsernameView mView;
     private String mUsername;
     private String mUsernameError;
     private final TextWatcher mUsernameTextWatcher = new TextWatcher() {
@@ -49,12 +48,11 @@ public class UsernameViewPresenter extends BaseObservable {
         }
     };
     private boolean mLoading;
-    private UsernameView mView;
     private final View.OnClickListener mOnShowRepositoriesClickListener = v -> showRepositories();
 
-    @Inject
-    public UsernameViewPresenter(Validator validator, GitHubService gitHubService,
-                                 AnalyticsManager analyticsManager) {
+    public UsernameViewPresenter(UsernameView view, Validator validator,
+                                 GitHubService gitHubService, AnalyticsManager analyticsManager) {
+        mView = view;
         mValidator = validator;
         mGitHubService = gitHubService;
         mAnalyticsManager = analyticsManager;
@@ -130,10 +128,6 @@ public class UsernameViewPresenter extends BaseObservable {
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
-    }
-
-    public void postInject(UsernameView view) {
-        mView = view;
     }
 
     public interface UsernameView {

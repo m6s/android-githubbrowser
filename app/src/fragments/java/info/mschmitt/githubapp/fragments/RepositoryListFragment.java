@@ -15,6 +15,7 @@ import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
+import info.mschmitt.githubapp.modules.navigation.RepositoryListModule;
 import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
 
 /**
@@ -50,8 +51,7 @@ public class RepositoryListFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).inject(this);
-        mPresenter.postInject(this);
+        mHost.getSuperComponent(this).plus(new RepositoryListModule(this)).inject(this);
         mAdapter = new RepositoryListAdapter(getActivity(), new ArrayList<>());
         mPresenter.onCreate(savedInstanceState);
     }
@@ -92,8 +92,12 @@ public class RepositoryListFragment extends Fragment
         mPresenter = presenter;
     }
 
-    public interface SuperComponent {
+    public interface Component {
         void inject(RepositoryListFragment fragment);
+    }
+
+    public interface SuperComponent {
+        Component plus(RepositoryListModule module);
     }
 
     public interface FragmentHost {

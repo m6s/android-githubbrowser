@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.presenters.navigation.scenes.RepositoriesSplitSceneViewPresenter;
@@ -23,21 +21,17 @@ import info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPre
 public class MainViewPresenter extends BaseObservable
         implements OnBackPressedListener, UsernameSceneViewPresenter.ParentPresenter,
         RepositoriesSplitSceneViewPresenter.ParentPresenter {
+    private final MainView mView;
     private boolean mLoading;
     private List<Object> mLoadingQueue = new ArrayList<>();
     private Map<Object, Runnable> mCancelHandlers = new HashMap<>();
-    private MainView mView;
 
-    @Inject
-    public MainViewPresenter() {
+    public MainViewPresenter(MainView view) {
+        mView = view;
     }
 
     @MainThread
     public void onCreate(Bundle savedState) {
-    }
-
-    public void postInject(MainView view) {
-        mView = view;
     }
 
     @MainThread

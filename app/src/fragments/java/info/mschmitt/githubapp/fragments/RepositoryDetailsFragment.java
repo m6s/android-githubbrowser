@@ -14,6 +14,7 @@ import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.modules.navigation.RepositoryDetailsModule;
 import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
 
 /**
@@ -48,8 +49,7 @@ public class RepositoryDetailsFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).inject(this);
-        mPresenter.postInject(this);
+        mHost.getSuperComponent(this).plus(new RepositoryDetailsModule(this)).inject(this);
         mPresenter.onCreate(savedInstanceState);
         mPresenter.setRepository((Repository) getArguments().getSerializable(ARG_REPOSITORY));
     }
@@ -95,8 +95,12 @@ public class RepositoryDetailsFragment extends Fragment
         return false;
     }
 
-    public interface SuperComponent {
+    public interface Component {
         void inject(RepositoryDetailsFragment fragment);
+    }
+
+    public interface SuperComponent {
+        Component plus(RepositoryDetailsModule module);
     }
 
     public interface FragmentHost {

@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
@@ -24,18 +22,19 @@ import rx.subscriptions.CompositeSubscription;
 public class RepositoryListViewPresenter extends BaseObservable implements OnBackPressedListener {
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final Observable<List<Repository>> mRepositories;
-    private RepositoryListView mView;
-    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener =
-            (parent, view, position, id) -> {
-                Repository repository = mView.getAdapter().getItem(position);
-                mView.getParentPresenter()
-                        .onRepositorySelected(RepositoryListViewPresenter.this, repository);
-            };
-    private Map<Repository, Integer> mRepositoryIndexes = new HashMap<>();
+    private final RepositoryListView mView;
+    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
+    private final Map<Repository, Integer> mRepositoryIndexes = new HashMap<>();
     private int mSelection;
 
-    @Inject
-    public RepositoryListViewPresenter(Observable<List<Repository>> repositories) {
+    public RepositoryListViewPresenter(RepositoryListView view,
+                                       Observable<List<Repository>> repositories) {
+        mView = view;
+        mOnRepositoryItemClickListener = (parent, listView, position, id) -> {
+            Repository repository = mView.getAdapter().getItem(position);
+            mView.getParentPresenter()
+                    .onRepositorySelected(RepositoryListViewPresenter.this, repository);
+        };
         mRepositories = repositories;
     }
 
@@ -50,10 +49,6 @@ public class RepositoryListViewPresenter extends BaseObservable implements OnBac
             }
             mView.getAdapter().notifyDataSetChanged();
         }));
-    }
-
-    public void postInject(RepositoryListView view) {
-        mView = view;
     }
 
     public void onSave(Bundle outState) {

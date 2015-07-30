@@ -14,17 +14,14 @@ import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
  */
 public class UsernameSceneViewPresenter extends BaseObservable
         implements UsernameViewPresenter.ParentPresenter {
-    private UsernameSceneView mView;
+    private final UsernameSceneView mView;
 
     @Inject
-    public UsernameSceneViewPresenter() {
+    public UsernameSceneViewPresenter(UsernameSceneView view) {
+        mView = view;
     }
 
     public void onCreate(Bundle savedState) {
-    }
-
-    public void postInject(UsernameSceneView view) {
-        mView = view;
     }
 
     public void onSave(Bundle outState) {

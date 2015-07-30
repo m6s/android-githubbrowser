@@ -17,7 +17,7 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.EmptyActionBarBinding;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitSceneViewBinding;
 import info.mschmitt.githubapp.fragments.RepositoriesSplitFragment;
-import info.mschmitt.githubapp.modules.RepositoriesSplitSceneModule;
+import info.mschmitt.githubapp.modules.navigation.scenes.RepositoriesSplitSceneModule;
 import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import info.mschmitt.githubapp.presenters.navigation.scenes.RepositoriesSplitSceneViewPresenter;
 
@@ -60,13 +60,10 @@ public class RepositoriesSplitSceneFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SuperComponent superComponent = mHost.getSuperComponent(this);
-        superComponent.inject(this);
-        mPresenter.postInject(this);
-        mComponent =
-                superComponent.plus(new RepositoriesSplitSceneModule(mPresenter.getRepositories()));
+        mComponent = mHost.getSuperComponent(this).plus(new RepositoriesSplitSceneModule(this,
+                getArguments().getString(ARG_USERNAME)));
+        mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
-        mPresenter.setUsername(getArguments().getString(ARG_USERNAME));
     }
 
     @Override
@@ -137,12 +134,11 @@ public class RepositoriesSplitSceneFragment extends Fragment
     }
 
     public interface Component extends RepositoriesSplitFragment.SuperComponent {
+        void inject(RepositoriesSplitSceneFragment fragment);
     }
 
     public interface SuperComponent {
         Component plus(RepositoriesSplitSceneModule module);
-
-        void inject(RepositoriesSplitSceneFragment fragment);
     }
 
     public interface FragmentHost {

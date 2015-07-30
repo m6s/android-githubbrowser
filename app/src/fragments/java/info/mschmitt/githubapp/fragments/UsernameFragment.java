@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
+import info.mschmitt.githubapp.modules.navigation.UsernameModule;
 import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
 
 
@@ -38,8 +39,7 @@ public class UsernameFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).inject(this);
-        mPresenter.postInject(this);
+        mHost.getSuperComponent(this).plus(new UsernameModule(this)).inject(this);
         mPresenter.onCreate(savedInstanceState);
     }
 
@@ -78,8 +78,12 @@ public class UsernameFragment extends Fragment
         mPresenter = presenter;
     }
 
-    public interface SuperComponent {
+    public interface Component {
         void inject(UsernameFragment fragment);
+    }
+
+    public interface SuperComponent {
+        Component plus(UsernameModule module);
     }
 
     public interface FragmentHost {
