@@ -13,7 +13,6 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
-import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.modules.navigation.RepositoryDetailsModule;
 import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
 
@@ -23,14 +22,14 @@ import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
 public class RepositoryDetailsFragment extends Fragment
         implements Presentable<RepositoryDetailsViewPresenter>,
         RepositoryDetailsViewPresenter.RepositoryDetailsView, OnBackPressedListener {
-    private static final String ARG_REPOSITORY = "arg_repository";
+    private static final String ARG_REPOSITORY_ID = "arg_repository_id";
     private RepositoryDetailsViewPresenter mPresenter;
     private FragmentHost mHost;
 
-    public static RepositoryDetailsFragment newInstance(Repository repository) {
+    public static RepositoryDetailsFragment newInstance(long repositoryId) {
         RepositoryDetailsFragment fragment = new RepositoryDetailsFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_REPOSITORY, repository);
+        args.putLong(ARG_REPOSITORY_ID, repositoryId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,9 +48,10 @@ public class RepositoryDetailsFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new RepositoryDetailsModule(this)).inject(this);
+        mHost.getSuperComponent(this)
+                .plus(new RepositoryDetailsModule(this, getArguments().getLong(ARG_REPOSITORY_ID)))
+                .inject(this);
         mPresenter.onCreate(savedInstanceState);
-        mPresenter.setRepository((Repository) getArguments().getSerializable(ARG_REPOSITORY));
     }
 
     @Override

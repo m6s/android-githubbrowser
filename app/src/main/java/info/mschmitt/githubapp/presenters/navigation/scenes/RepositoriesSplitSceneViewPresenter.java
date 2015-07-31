@@ -17,7 +17,7 @@ import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.subjects.PublishSubject;
+import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -29,7 +29,7 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
     private final AnalyticsManager mAnalyticsManager;
     private final GitHubService mGitHubService;
     private final Observable<List<Repository>> mRepositories;
-    private final PublishSubject<List<Repository>> mRepositoriesSubject;
+    private final BehaviorSubject<List<Repository>> mRepositoriesSubject;
     private final String mUsername;
     private RepositoriesSplitSceneView mView;
     private boolean mLoading;
@@ -41,7 +41,7 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
         mView = view;
         mAnalyticsManager = analyticsManager;
         mGitHubService = gitHubService;
-        mRepositoriesSubject = PublishSubject.create();
+        mRepositoriesSubject = BehaviorSubject.create();
         mRepositories = mRepositoriesSubject.asObservable();
     }
 

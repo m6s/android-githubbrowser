@@ -22,6 +22,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class RepositoryPagerViewPresenter extends BaseObservable
         implements OnBackPressedListener, RepositoryDetailsViewPresenter.ParentPresenter {
+    public static final String ARG_CURRENT_ITEM = "ARG_CURRENT_ITEM";
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
     private Observable<List<Repository>> mRepositories;
@@ -61,7 +62,7 @@ public class RepositoryPagerViewPresenter extends BaseObservable
     }
 
     public void onCreate(Bundle savedState) {
-        mAnalyticsManager.logScreenView(getClass().getName());
+        int lastCurrentItem = savedState != null ? savedState.getInt(ARG_CURRENT_ITEM) : -1;
         mSubscriptions.add(mRepositories.subscribe((repositories) -> {
             mRepositoryIndexes.clear();
             int i = 0;
@@ -71,11 +72,15 @@ public class RepositoryPagerViewPresenter extends BaseObservable
             mView.getAdapter().getRepositories().clear();
             mView.getAdapter().getRepositories().addAll(repositories);
             mView.getAdapter().notifyDataSetChanged();
+            if (lastCurrentItem != -1) {
+                setCurrentItem(lastCurrentItem);
+            }
         }));
+        mAnalyticsManager.logScreenView(getClass().getName());
     }
 
     public void onSave(Bundle outState) {
-
+        outState.putInt(ARG_CURRENT_ITEM, mCurrentItem);
     }
 
     public ViewPager.OnPageChangeListener getOnPageChangeListener() {
@@ -95,7 +100,7 @@ public class RepositoryPagerViewPresenter extends BaseObservable
         return mCurrentItem;
     }
 
-    public void setCurrentItem(int currentItem) {
+    private void setCurrentItem(int currentItem) {
         mIgnoreOnPageSelected = true;
         mCurrentItem = currentItem;
         notifyPropertyChanged(BR.currentItem);
