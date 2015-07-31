@@ -4,6 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import info.mschmitt.githubapp.AnalyticsManager;
@@ -28,8 +29,8 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
     private final GitHubService mGitHubService;
-    private final Observable<List<Repository>> mRepositories;
-    private final BehaviorSubject<List<Repository>> mRepositoriesSubject;
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositories;
+    private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoriesSubject;
     private final String mUsername;
     private RepositoriesSplitSceneView mView;
     private boolean mLoading;
@@ -56,12 +57,21 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
                 .observeOn(AndroidSchedulers.mainThread()).doOnUnsubscribe(() -> {
                     setLoading(false);
                     mView.getParentPresenter().onLoading(this, true, null);
-                }).subscribe(mRepositoriesSubject::onNext, throwable -> mView.getParentPresenter()
-                        .onError(RepositoriesSplitSceneViewPresenter.this, throwable,
-                                this::observe));
+                }).subscribe(repositories -> mRepositoriesSubject.onNext(indexById(repositories)),
+                        throwable -> mView.getParentPresenter()
+                                .onError(RepositoriesSplitSceneViewPresenter.this, throwable,
+                                        this::observe));
         mSubscriptions.add(subscription);
         setLoading(true);
         mView.getParentPresenter().onLoading(this, false, subscription::unsubscribe);
+    }
+
+    private static LinkedHashMap<Long, Repository> indexById(List<Repository> repositories) {
+        LinkedHashMap<Long, Repository> map = new LinkedHashMap<>();
+        for (Repository repository : repositories) {
+            map.put(repository.getId(), repository);
+        }
+        return map;
     }
 
     public void onSave(Bundle outState) {
@@ -81,7 +91,7 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
         notifyPropertyChanged(BR.loading);
     }
 
-    public Observable<List<Repository>> getRepositories() {
+    public Observable<LinkedHashMap<Long, Repository>> getRepositories() {
         return mRepositories;
     }
 

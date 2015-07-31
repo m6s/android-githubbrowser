@@ -1,6 +1,6 @@
 package info.mschmitt.githubapp.modules.navigation.scenes;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import javax.inject.Singleton;
 
@@ -27,7 +27,7 @@ public class RepositoriesSplitSceneModule {
     }
 
     @Provides
-    Observable<List<Repository>> provideRepositories(
+    Observable<LinkedHashMap<Long, Repository>> provideRepositories(
             RepositoriesSplitSceneViewPresenter presenter) {
         return presenter.getRepositories();
     }

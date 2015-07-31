@@ -1,6 +1,6 @@
 package info.mschmitt.githubapp.modules.navigation;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import javax.inject.Singleton;
 
@@ -28,7 +28,7 @@ public class RepositoryDetailsModule {
     @Provides
     @Singleton
     public RepositoryDetailsViewPresenter providePresenter(
-            Observable<List<Repository>> repositories, AnalyticsManager analyticsManager) {
+            Observable<LinkedHashMap<Long, Repository>> repositories, AnalyticsManager analyticsManager) {
         return new RepositoryDetailsViewPresenter(mView, repositories, mRepositoryId,
                 analyticsManager);
     }

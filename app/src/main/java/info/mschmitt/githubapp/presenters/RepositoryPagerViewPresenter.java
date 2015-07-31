@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import info.mschmitt.githubapp.AnalyticsManager;
@@ -22,14 +22,14 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class RepositoryPagerViewPresenter extends BaseObservable
         implements OnBackPressedListener, RepositoryDetailsViewPresenter.ParentPresenter {
-    public static final String ARG_CURRENT_ITEM = "ARG_CURRENT_ITEM";
+    private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
-    private Observable<List<Repository>> mRepositories;
-    private int mCurrentItem;
-    private Map<Repository, Integer> mRepositoryIndexes = new HashMap<>();
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositories;
+    private final Map<Long, Integer> mPageIndexes = new HashMap<>();
+    private final RepositoryPagerView mView;
     private boolean mIgnoreOnPageSelected;
-    private RepositoryPagerView mView;
+    private long mCurrentRepositoryId;
     private final ViewPager.OnPageChangeListener mOnPageChangeListener =
             new ViewPager.OnPageChangeListener() {
                 @Override
@@ -43,7 +43,8 @@ public class RepositoryPagerViewPresenter extends BaseObservable
                         mIgnoreOnPageSelected = false;
                         return;
                     }
-                    Repository repository = mView.getAdapter().getRepositories().get(position);
+                    Repository repository = mView.getAdapter().getRepository(position);
+                    setCurrentRepositoryId(repository.getId());
                     mView.getParentPresenter()
                             .onRepositorySelected(RepositoryPagerViewPresenter.this, repository);
                 }
@@ -54,7 +55,7 @@ public class RepositoryPagerViewPresenter extends BaseObservable
             };
 
     public RepositoryPagerViewPresenter(RepositoryPagerView view,
-                                        Observable<List<Repository>> repositories,
+                                        Observable<LinkedHashMap<Long, Repository>> repositories,
                                         AnalyticsManager analyticsManager) {
         mView = view;
         mRepositories = repositories;
@@ -62,25 +63,32 @@ public class RepositoryPagerViewPresenter extends BaseObservable
     }
 
     public void onCreate(Bundle savedState) {
-        int lastCurrentItem = savedState != null ? savedState.getInt(ARG_CURRENT_ITEM) : -1;
+        long lastRepositoryId =
+                savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
         mSubscriptions.add(mRepositories.subscribe((repositories) -> {
-            mRepositoryIndexes.clear();
+            mPageIndexes.clear();
             int i = 0;
-            for (Repository repository : repositories) {
-                mRepositoryIndexes.put(repository, i++);
+            for (long id : repositories.keySet()) {
+                mPageIndexes.put(id, i++);
             }
-            mView.getAdapter().getRepositories().clear();
-            mView.getAdapter().getRepositories().addAll(repositories);
+            mView.getAdapter().clear();
+            mView.getAdapter().addAll(repositories.values());
             mView.getAdapter().notifyDataSetChanged();
-            if (lastCurrentItem != -1) {
-                setCurrentItem(lastCurrentItem);
+            if (lastRepositoryId != -1) {
+                setCurrentRepositoryId(lastRepositoryId);
             }
         }));
         mAnalyticsManager.logScreenView(getClass().getName());
     }
 
+    private void setCurrentRepositoryId(long repositoryId) {
+        mIgnoreOnPageSelected = true;
+        mCurrentRepositoryId = repositoryId;
+        notifyPropertyChanged(BR.currentItem);
+    }
+
     public void onSave(Bundle outState) {
-        outState.putInt(ARG_CURRENT_ITEM, mCurrentItem);
+        outState.putLong(ARG_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
     }
 
     public ViewPager.OnPageChangeListener getOnPageChangeListener() {
@@ -92,18 +100,13 @@ public class RepositoryPagerViewPresenter extends BaseObservable
     }
 
     public void selectRepository(Repository repository) {
-        setCurrentItem(mRepositoryIndexes.get(repository));
+        setCurrentRepositoryId(repository.getId());
     }
 
     @Bindable
     public int getCurrentItem() {
-        return mCurrentItem;
-    }
-
-    private void setCurrentItem(int currentItem) {
-        mIgnoreOnPageSelected = true;
-        mCurrentItem = currentItem;
-        notifyPropertyChanged(BR.currentItem);
+        Integer integer = mPageIndexes.get(mCurrentRepositoryId);
+        return integer != null ? integer : -1;
     }
 
     public RepositoryPagerAdapter getAdapter() {

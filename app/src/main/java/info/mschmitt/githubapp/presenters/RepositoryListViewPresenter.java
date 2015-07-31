@@ -3,10 +3,11 @@ package info.mschmitt.githubapp.presenters;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.AdapterView;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import info.mschmitt.githubapp.BR;
@@ -20,39 +21,54 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 public class RepositoryListViewPresenter extends BaseObservable implements OnBackPressedListener {
+    private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
-    private final Observable<List<Repository>> mRepositories;
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositories;
     private final RepositoryListView mView;
-    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
-    private final Map<Repository, Integer> mRepositoryIndexes = new HashMap<>();
-    private int mSelection;
+    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener =
+            new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View listView, int position,
+                                        long id) {
+                    Repository repository = mView.getAdapter().getItem(position);
+                    mView.getParentPresenter()
+                            .onRepositorySelected(RepositoryListViewPresenter.this, repository);
+                }
+            };
+    private final Map<Long, Integer> mRowIndexes = new HashMap<>();
+    private long mCurrentRepositoryId;
 
     public RepositoryListViewPresenter(RepositoryListView view,
-                                       Observable<List<Repository>> repositories) {
+                                       Observable<LinkedHashMap<Long, Repository>> repositories) {
         mView = view;
-        mOnRepositoryItemClickListener = (parent, listView, position, id) -> {
-            Repository repository = mView.getAdapter().getItem(position);
-            mView.getParentPresenter()
-                    .onRepositorySelected(RepositoryListViewPresenter.this, repository);
-        };
         mRepositories = repositories;
     }
 
     public void onCreate(Bundle savedState) {
+        long lastRepositoryId =
+                savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
         mSubscriptions.add(mRepositories.subscribe((repositories) -> {
-            mView.getAdapter().clear();
-            mView.getAdapter().addAll(repositories);
-            mRepositoryIndexes.clear();
+            mRowIndexes.clear();
             int i = 0;
-            for (Repository repository : repositories) {
-                mRepositoryIndexes.put(repository, i++);
+            for (long id : repositories.keySet()) {
+                mRowIndexes.put(id, i++);
             }
+            mView.getAdapter().clear();
+            mView.getAdapter().addAll(repositories.values());
             mView.getAdapter().notifyDataSetChanged();
+            if (lastRepositoryId != -1) {
+                setCurrentRepositoryId(lastRepositoryId);
+            }
         }));
     }
 
-    public void onSave(Bundle outState) {
+    private void setCurrentRepositoryId(long repositoryId) {
+        mCurrentRepositoryId = repositoryId;
+        notifyPropertyChanged(BR.selection);
+    }
 
+    public void onSave(Bundle outState) {
+        outState.putLong(ARG_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
     }
 
     public AdapterView.OnItemClickListener getOnRepositoryItemClickListener() {
@@ -64,17 +80,13 @@ public class RepositoryListViewPresenter extends BaseObservable implements OnBac
     }
 
     public void selectRepository(Repository repository) {
-        setSelection(mRepositoryIndexes.get(repository));
+        setCurrentRepositoryId(repository.getId());
     }
 
     @Bindable
     public Integer getSelection() {
-        return mSelection;
-    }
-
-    public void setSelection(Integer selection) {
-        mSelection = selection;
-        notifyPropertyChanged(BR.selection);
+        Integer integer = mRowIndexes.get(mCurrentRepositoryId);
+        return integer != null ? integer : -1;
     }
 
     public RepositoryListAdapter getAdapter() {

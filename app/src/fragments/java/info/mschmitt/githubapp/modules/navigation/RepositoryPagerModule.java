@@ -1,6 +1,6 @@
 package info.mschmitt.githubapp.modules.navigation;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import javax.inject.Singleton;
 
@@ -24,8 +24,8 @@ public class RepositoryPagerModule {
 
     @Provides
     @Singleton
-    public RepositoryPagerViewPresenter providePresenter(Observable<List<Repository>> repositories,
-                                                         AnalyticsManager analyticsManager) {
+    public RepositoryPagerViewPresenter providePresenter(
+            Observable<LinkedHashMap<Long, Repository>> repositories, AnalyticsManager analyticsManager) {
         return new RepositoryPagerViewPresenter(mView, repositories, analyticsManager);
     }
 }
