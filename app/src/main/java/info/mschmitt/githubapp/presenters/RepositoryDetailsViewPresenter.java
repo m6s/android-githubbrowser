@@ -5,6 +5,8 @@ import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import info.mschmitt.githubapp.AnalyticsManager;
@@ -25,12 +27,6 @@ public class RepositoryDetailsViewPresenter extends BaseObservable {
     private String mRepositoryName;
 
     public RepositoryDetailsViewPresenter(RepositoryDetailsView view,
-                                          Observable<LinkedHashMap<Long, Repository>> repositories,
-                                          long repositoryId, AnalyticsManager analyticsManager) {
-        this(view, mapByRepositoryId(repositories, repositoryId), analyticsManager);
-    }
-
-    public RepositoryDetailsViewPresenter(RepositoryDetailsView view,
                                           Observable<Repository> repository,
                                           AnalyticsManager analyticsManager) {
         mView = view;
@@ -38,11 +34,36 @@ public class RepositoryDetailsViewPresenter extends BaseObservable {
         mAnalyticsManager = analyticsManager;
     }
 
+    public static RepositoryDetailsViewPresenter createForRepositoryId(RepositoryDetailsView view,
+                                                                       Observable<LinkedHashMap<Long, Repository>> repositories,
+                                                                       AnalyticsManager
+                                                                               analyticsManager,
+                                                                       long repositoryId) {
+        return new RepositoryDetailsViewPresenter(view,
+                mapByRepositoryId(repositories, repositoryId), analyticsManager);
+    }
+
     @NonNull
     private static Observable<Repository> mapByRepositoryId(
             Observable<LinkedHashMap<Long, Repository>> repositories, long repositoryId) {
         return repositories.map(nextRepositories -> nextRepositories.get(repositoryId))
                 .filter(nextRepository -> nextRepository != null);
+    }
+
+    public static RepositoryDetailsViewPresenter createForRepositoryPosition(
+            RepositoryDetailsView view, Observable<LinkedHashMap<Long, Repository>> repositories,
+            AnalyticsManager analyticsManager, int position) {
+        return new RepositoryDetailsViewPresenter(view,
+                mapByRepositoryPosition(repositories, position), analyticsManager);
+    }
+
+    @NonNull
+    private static Observable<Repository> mapByRepositoryPosition(
+            Observable<LinkedHashMap<Long, Repository>> repositories, int position) {
+        return repositories.map(nextRepositories -> {
+            Collection<Repository> values = nextRepositories.values();
+            return values.size() > position ? new ArrayList<>(values).get(position) : null;
+        }).filter(nextRepository -> nextRepository != null);
     }
 
     public void onCreate(Bundle savedState) {

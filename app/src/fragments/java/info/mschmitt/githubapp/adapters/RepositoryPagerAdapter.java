@@ -24,7 +24,7 @@ public class RepositoryPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return RepositoryDetailsFragment.newInstance(mRepositories.get(position).getId());
+        return RepositoryDetailsFragment.newInstanceForRepositoryPosition(position);
     }
 
     @Override

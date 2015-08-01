@@ -22,14 +22,15 @@ import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
 public class RepositoryDetailsFragment extends Fragment
         implements Presentable<RepositoryDetailsViewPresenter>,
         RepositoryDetailsViewPresenter.RepositoryDetailsView, OnBackPressedListener {
-    private static final String ARG_REPOSITORY_ID = "arg_repository_id";
+    private static final String ARG_REPOSITORY_POSITION = "ARG_REPOSITORY_POSITION";
     private RepositoryDetailsViewPresenter mPresenter;
     private FragmentHost mHost;
 
-    public static RepositoryDetailsFragment newInstance(long repositoryId) {
+    public static RepositoryDetailsFragment newInstanceForRepositoryPosition(
+            int repositoryPosition) {
         RepositoryDetailsFragment fragment = new RepositoryDetailsFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_REPOSITORY_ID, repositoryId);
+        args.putInt(ARG_REPOSITORY_POSITION, repositoryPosition);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,9 +49,8 @@ public class RepositoryDetailsFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this)
-                .plus(new RepositoryDetailsModule(this, getArguments().getLong(ARG_REPOSITORY_ID)))
-                .inject(this);
+        mHost.getSuperComponent(this).plus(new RepositoryDetailsModule(this,
+                getArguments().getInt(ARG_REPOSITORY_POSITION))).inject(this);
         mPresenter.onCreate(savedInstanceState);
     }
 

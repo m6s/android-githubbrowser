@@ -67,6 +67,9 @@ public class RepositoriesSplitSceneViewPresenter extends BaseObservable
     }
 
     private static LinkedHashMap<Long, Repository> indexById(List<Repository> repositories) {
+//        long seed = System.nanoTime();
+//        repositories = new ArrayList<>(repositories);
+//        Collections.shuffle(repositories, new Random(seed));
         LinkedHashMap<Long, Repository> map = new LinkedHashMap<>();
         for (Repository repository : repositories) {
             map.put(repository.getId(), repository);
