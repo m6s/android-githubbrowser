@@ -137,7 +137,7 @@ public class MainFragment extends BugFixFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_settings:
+            case R.id.action_about:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

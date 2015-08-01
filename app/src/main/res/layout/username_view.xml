@@ -12,38 +12,41 @@
             type="info.mschmitt.githubapp.presenters.UsernameViewPresenter"/>
     </data>
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:padding="16dp"
+        >
 
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/usernameInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp"
-            >
+            android:layout_alignParentTop="true">
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="@{!presenter.loading}"
-                android:hint="username"
+                android:hint="Username"
+                android:inputType="text"
                 android:text="@{presenter.username}"
                 bind:addTextChangedListener="@{presenter.usernameTextWatcher}"
                 bind:error="@{presenter.usernameError}"
                 />
+        </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:enabled="@{!presenter.loading}"
-                android:text="Show repositories"
-                bind:onClickListener="@{presenter.onShowRepositoriesClickListener}"
-                />
-        </LinearLayout>
-    </ScrollView>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/usernameInputLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:enabled="@{!presenter.loading}"
+            android:text="Show repositories"
+            bind:onClickListener="@{presenter.onShowRepositoriesClickListener}"
+            />
+    </RelativeLayout>
 </layout>
