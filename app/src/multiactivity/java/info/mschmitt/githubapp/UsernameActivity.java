@@ -22,7 +22,7 @@ public class UsernameActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UsernameActivityComponent activityComponent =
-                ((GitHubClientApplication) getApplicationContext()).getAppComponent()
+                ((Application) getApplicationContext()).getAppComponent()
                         .plus(new UsernameActivityModule());
         activityComponent.inject(this);
         mPresenter.onCreate(this, savedInstanceState);

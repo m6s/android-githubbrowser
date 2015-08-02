@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Subcomponent;
 import info.mschmitt.githubapp.fragments.RepositoryDetailsFragment;
-import info.mschmitt.githubapp.modules.navigation.RepositoryDetailsModule;
+import info.mschmitt.githubapp.modules.RepositoryDetailsModule;
 
 /**
  * @author Matthias Schmitt

@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import dagger.Subcomponent;
 import info.mschmitt.githubapp.components.RepositoriesSplitComponent;
 import info.mschmitt.githubapp.fragments.navigation.scenes.RepositoriesSplitSceneFragment;
-import info.mschmitt.githubapp.modules.navigation.RepositoriesSplitModule;
+import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
 import info.mschmitt.githubapp.modules.navigation.scenes.RepositoriesSplitSceneModule;
 
 /**

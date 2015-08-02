@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import dagger.Subcomponent;
 import info.mschmitt.githubapp.components.UsernameComponent;
 import info.mschmitt.githubapp.fragments.navigation.scenes.UsernameSceneFragment;
-import info.mschmitt.githubapp.modules.navigation.UsernameModule;
+import info.mschmitt.githubapp.modules.UsernameModule;
 import info.mschmitt.githubapp.modules.navigation.scenes.UsernameSceneModule;
 
 /**

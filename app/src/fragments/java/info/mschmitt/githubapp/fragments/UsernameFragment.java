@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
-import info.mschmitt.githubapp.modules.navigation.UsernameModule;
+import info.mschmitt.githubapp.modules.UsernameModule;
 import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
 
 

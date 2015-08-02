@@ -4,8 +4,8 @@ import javax.inject.Singleton;
 
 import dagger.Subcomponent;
 import info.mschmitt.githubapp.fragments.RepositoryPagerFragment;
-import info.mschmitt.githubapp.modules.navigation.RepositoryDetailsModule;
-import info.mschmitt.githubapp.modules.navigation.RepositoryPagerModule;
+import info.mschmitt.githubapp.modules.RepositoryDetailsModule;
+import info.mschmitt.githubapp.modules.RepositoryPagerModule;
 
 /**
  * @author Matthias Schmitt

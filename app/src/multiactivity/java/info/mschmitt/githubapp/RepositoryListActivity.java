@@ -40,7 +40,7 @@ public class RepositoryListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         String username = getIntent().getStringExtra(ARG_USERNAME);
         RepositoryListActivityComponent activityComponent =
-                ((GitHubClientApplication) getApplicationContext()).getAppComponent()
+                ((Application) getApplicationContext()).getAppComponent()
                         .plus(new RepositoryListActivityModule(username));
         activityComponent.inject(this);
         mPresenter.onCreate(this, savedInstanceState);

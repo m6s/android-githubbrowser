@@ -1,7 +1,5 @@
 package info.mschmitt.githubapp;
 
-import android.app.Application;
-
 import info.mschmitt.githubapp.fragments.navigation.MainFragment;
 import info.mschmitt.githubapp.modules.AppModule;
 import info.mschmitt.githubapp.modules.NetworkModule;
@@ -9,7 +7,7 @@ import info.mschmitt.githubapp.modules.NetworkModule;
 /**
  * @author Matthias Schmitt
  */
-public class GitHubClientApplication extends Application implements MainFragment.Application {
+public class Application extends android.app.Application implements MainFragment.Application {
     private AppComponent mAppComponent;
 
     @Override

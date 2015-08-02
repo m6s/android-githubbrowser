@@ -14,7 +14,7 @@ import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
-import info.mschmitt.githubapp.modules.navigation.RepositoriesSplitModule;
+import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
 import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;

@@ -15,7 +15,7 @@ import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
-import info.mschmitt.githubapp.modules.navigation.RepositoryListModule;
+import info.mschmitt.githubapp.modules.RepositoryListModule;
 import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
 
 /**

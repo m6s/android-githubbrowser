@@ -16,7 +16,7 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.modules.navigation.RepositoryPagerModule;
+import info.mschmitt.githubapp.modules.RepositoryPagerModule;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
 
 /**

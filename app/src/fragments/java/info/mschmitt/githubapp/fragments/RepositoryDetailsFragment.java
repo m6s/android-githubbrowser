@@ -13,7 +13,7 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
-import info.mschmitt.githubapp.modules.navigation.RepositoryDetailsModule;
+import info.mschmitt.githubapp.modules.RepositoryDetailsModule;
 import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
 
 /**

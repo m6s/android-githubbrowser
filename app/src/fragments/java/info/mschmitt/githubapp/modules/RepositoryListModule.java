@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.modules.navigation;
+package info.mschmitt.githubapp.modules;
 
 import java.util.LinkedHashMap;
 

@@ -34,7 +34,7 @@ public class RepositoryDetailsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         RepositoryDetailsActivityComponent component =
-                ((GitHubClientApplication) getApplicationContext()).getAppComponent()
+                ((Application) getApplicationContext()).getAppComponent()
                         .plus(new RepositoryDetailsActivityModule(this));
         component.inject(this);
         Bundle extras = getIntent().getExtras();
