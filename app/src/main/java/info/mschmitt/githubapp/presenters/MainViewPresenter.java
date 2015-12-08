@@ -12,15 +12,13 @@ import java.util.Map;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
-import info.mschmitt.githubapp.presenters.RepositoriesSplitSceneViewPresenter;
-import info.mschmitt.githubapp.presenters.UsernameSceneViewPresenter;
 
 /**
  * @author Matthias Schmitt
  */
 public class MainViewPresenter extends BaseObservable
         implements OnBackPressedListener, UsernameSceneViewPresenter.ParentPresenter,
-        RepositoriesSplitSceneViewPresenter.ParentPresenter {
+        RepositoriesSplitViewPresenter.ParentPresenter {
     private final MainView mView;
     private boolean mLoading;
     private List<Object> mLoadingQueue = new ArrayList<>();

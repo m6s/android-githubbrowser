@@ -18,18 +18,18 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.EmptyActionBarBinding;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitSceneViewBinding;
 import info.mschmitt.githubapp.modules.RepositoriesSplitSceneModule;
-import info.mschmitt.githubapp.presenters.RepositoriesSplitSceneViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
 
 
 public class RepositoriesSplitFragment extends Fragment
-        implements Presentable<RepositoriesSplitSceneViewPresenter>,
-        RepositoriesSplitSceneViewPresenter.RepositoriesSplitSceneView, ActionBarProvider,
+        implements Presentable<RepositoriesSplitViewPresenter>,
+        RepositoriesSplitViewPresenter.RepositoriesSplitSceneView, ActionBarProvider,
         RepositoryListFragment.FragmentHost, RepositoryPagerFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
-    private RepositoriesSplitSceneViewPresenter mPresenter;
+    private RepositoriesSplitViewPresenter mPresenter;
     private RepositoryListFragment mMasterFragment;
     private RepositoryPagerFragment mDetailsFragment;
     private Toolbar mActionBar;
@@ -63,7 +63,7 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     @Override
-    public RepositoriesSplitSceneViewPresenter.ParentPresenter getParentPresenter() {
+    public RepositoriesSplitViewPresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -184,12 +184,12 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     @Override
-    public RepositoriesSplitSceneViewPresenter getPresenter() {
+    public RepositoriesSplitViewPresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(RepositoriesSplitSceneViewPresenter presenter) {
+    public void setPresenter(RepositoriesSplitViewPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -205,6 +205,6 @@ public class RepositoriesSplitFragment extends Fragment
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoriesSplitFragment fragment);
 
-        RepositoriesSplitSceneViewPresenter.ParentPresenter getPresenter();
+        RepositoriesSplitViewPresenter.ParentPresenter getPresenter();
     }
 }

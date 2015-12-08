@@ -7,23 +7,27 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoriesSplitSceneViewPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter"/>
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
         android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
 
-        <FrameLayout
+    <FrameLayout
             android:id="@+id/masterView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"/>
 
         <FrameLayout
             android:id="@+id/detailsView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </FrameLayout>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"/>
+    </LinearLayout>
 </layout>

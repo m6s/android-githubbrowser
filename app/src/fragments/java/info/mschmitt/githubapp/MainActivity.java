@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
-import info.mschmitt.githubapp.fragments.navigation.MainFragment;
-import info.mschmitt.githubapp.presenters.navigation.MainViewPresenter;
+import info.mschmitt.githubapp.fragments.MainFragment;
+import info.mschmitt.githubapp.presenters.MainViewPresenter;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.FragmentHost {
     @Override

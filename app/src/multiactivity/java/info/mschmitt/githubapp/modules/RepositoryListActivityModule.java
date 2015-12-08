@@ -7,7 +7,7 @@ import dagger.Provides;
 import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.network.GitHubService;
-import info.mschmitt.githubapp.presenters.navigation.scenes.RepositoriesSplitSceneViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import rx.Observable;
 
 /**
@@ -22,17 +22,17 @@ public class RepositoryListActivityModule {
     }
 
     @Provides
-    RepositoriesSplitSceneViewPresenter provideRepositoriesSplitSceneViewPresenter(
+    RepositoriesSplitViewPresenter provideRepositoriesSplitSceneViewPresenter(
             GitHubService gitHubService, AnalyticsManager analyticsManager) {
-        RepositoriesSplitSceneViewPresenter repositoriesSplitSceneViewPresenter =
-                new RepositoriesSplitSceneViewPresenter(gitHubService, analyticsManager);
-        repositoriesSplitSceneViewPresenter.setUsername(mUsername);
-        return repositoriesSplitSceneViewPresenter;
+        RepositoriesSplitViewPresenter repositoriesSplitViewPresenter =
+                new RepositoriesSplitViewPresenter(gitHubService, analyticsManager);
+        repositoriesSplitViewPresenter.setUsername(mUsername);
+        return repositoriesSplitViewPresenter;
     }
 
 
     @Provides
-    Observable<List<Repository>> provideRepositories(RepositoriesSplitSceneViewPresenter presenter) {
+    Observable<List<Repository>> provideRepositories(RepositoriesSplitViewPresenter presenter) {
         return presenter.getRepositories();
     }
 }

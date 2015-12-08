@@ -3,11 +3,11 @@ package info.mschmitt.githubapp;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import info.mschmitt.githubapp.components.navigation.MainComponent;
-import info.mschmitt.githubapp.fragments.navigation.MainFragment;
+import info.mschmitt.githubapp.components.MainComponent;
+import info.mschmitt.githubapp.fragments.MainFragment;
 import info.mschmitt.githubapp.modules.AppModule;
 import info.mschmitt.githubapp.modules.NetworkModule;
-import info.mschmitt.githubapp.modules.navigation.MainModule;
+import info.mschmitt.githubapp.modules.MainModule;
 
 /**
  * @author Matthias Schmitt

@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import info.mschmitt.githubapp.presenters.navigation.MainViewPresenter;
+import info.mschmitt.githubapp.presenters.MainViewPresenter;
 
 /**
  * @author Matthias Schmitt

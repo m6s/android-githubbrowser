@@ -16,7 +16,7 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.UsernameSceneActionBarBinding;
 import info.mschmitt.githubapp.databinding.UsernameSceneViewBinding;
 import info.mschmitt.githubapp.modules.UsernameSceneModule;
-import info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPresenter;
+import info.mschmitt.githubapp.presenters.UsernameSceneViewPresenter;
 
 
 public class UsernameSceneFragment extends Fragment
@@ -41,7 +41,7 @@ public class UsernameSceneFragment extends Fragment
     public void showRepositories(Object sender, String username) {
         getFragmentManager().beginTransaction()
                 .replace(FragmentUtils.getContainerViewId(UsernameSceneFragment.this),
-                        RepositoriesSplitSceneFragment.newInstance(username)).addToBackStack(null)
+                        RepositoriesSplitFragment.newInstance(username)).addToBackStack(null)
                 .commit();
     }
 
@@ -65,7 +65,7 @@ public class UsernameSceneFragment extends Fragment
         UsernameSceneActionBarBinding actionBarBinding =
                 UsernameSceneActionBarBinding.inflate(inflater);
         actionBarBinding.setPresenter(mPresenter);
-        mActionBar = (Toolbar) actionBarBinding.getRoot();
+        mActionBar = actionBarBinding.toolbar;
         UsernameSceneViewBinding binding =
                 UsernameSceneViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
@@ -73,7 +73,7 @@ public class UsernameSceneFragment extends Fragment
             getChildFragmentManager().beginTransaction()
                     .add(binding.contentView.getId(), UsernameFragment.newInstance()).commit();
         }
-        return binding.getRoot();
+        return binding.contentView;
     }
 
     @Override

@@ -20,17 +20,15 @@ import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
-import info.mschmitt.githubapp.fragments.navigation.scenes.RepositoriesSplitSceneFragment;
-import info.mschmitt.githubapp.fragments.navigation.scenes.UsernameSceneFragment;
 import info.mschmitt.githubapp.modules.MainModule;
-import info.mschmitt.githubapp.presenters.navigation.MainViewPresenter;
+import info.mschmitt.githubapp.presenters.MainViewPresenter;
 
 /**
  * @author Matthias Schmitt
  */
 public class MainFragment extends BugFixFragment
         implements Presentable<MainViewPresenter>, MainViewPresenter.MainView,
-        UsernameSceneFragment.FragmentHost, RepositoriesSplitSceneFragment.FragmentHost {
+        UsernameSceneFragment.FragmentHost, RepositoriesSplitFragment.FragmentHost {
     private FragmentHost mHost;
     private MainViewPresenter mPresenter;
     private Component mComponent;
@@ -150,8 +148,8 @@ public class MainFragment extends BugFixFragment
     }
 
     @Override
-    public RepositoriesSplitSceneFragment.SuperComponent getSuperComponent(
-            RepositoriesSplitSceneFragment fragment) {
+    public RepositoriesSplitFragment.SuperComponent getSuperComponent(
+            RepositoriesSplitFragment fragment) {
         return mComponent;
     }
 
@@ -165,7 +163,7 @@ public class MainFragment extends BugFixFragment
         mPresenter = presenter;
     }
 
-    public interface Component extends RepositoriesSplitSceneFragment.SuperComponent,
+    public interface Component extends RepositoriesSplitFragment.SuperComponent,
             UsernameSceneFragment.SuperComponent {
         void inject(MainFragment fragment);
     }

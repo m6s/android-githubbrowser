@@ -5,10 +5,11 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPresenter"/>
+            type="info.mschmitt.githubapp.presenters.UsernameSceneViewPresenter"/>
     </data>
 
     <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"

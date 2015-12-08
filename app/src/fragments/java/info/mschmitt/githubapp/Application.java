@@ -1,6 +1,6 @@
 package info.mschmitt.githubapp;
 
-import info.mschmitt.githubapp.fragments.navigation.MainFragment;
+import info.mschmitt.githubapp.fragments.MainFragment;
 import info.mschmitt.githubapp.modules.AppModule;
 import info.mschmitt.githubapp.modules.NetworkModule;
 

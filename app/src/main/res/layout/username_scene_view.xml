@@ -5,7 +5,7 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPresenter"/>
+            type="info.mschmitt.githubapp.presenters.UsernameSceneViewPresenter"/>
     </data>
 
     <FrameLayout
