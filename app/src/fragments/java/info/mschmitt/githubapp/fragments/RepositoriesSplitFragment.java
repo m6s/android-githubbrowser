@@ -4,18 +4,19 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.android.presentation.ActionBarProvider;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
-import info.mschmitt.githubapp.databinding.EmptyActionBarBinding;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
 import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
 import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
@@ -25,14 +26,13 @@ import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
 
 public class RepositoriesSplitFragment extends Fragment
         implements Presentable<RepositoriesSplitViewPresenter>,
-        RepositoriesSplitViewPresenter.RepositoriesSplitSceneView, ActionBarProvider,
+        RepositoriesSplitViewPresenter.RepositoriesSplitSceneView,
         RepositoryListFragment.FragmentHost, RepositoryPagerFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
     private RepositoriesSplitViewPresenter mPresenter;
     private RepositoryListFragment mMasterFragment;
     private RepositoryPagerFragment mDetailsFragment;
-    private Toolbar mActionBar;
     private Component mComponent;
 
     public static RepositoriesSplitFragment newInstance(String username) {
@@ -98,14 +98,12 @@ public class RepositoriesSplitFragment extends Fragment
                 .plus(new RepositoriesSplitModule(this, getArguments().getString(ARG_USERNAME)));
         mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        EmptyActionBarBinding actionBarBinding = EmptyActionBarBinding.inflate(inflater);
-        actionBarBinding.setPresenter(mPresenter);
-        mActionBar = actionBarBinding.toolbar;
         RepositoriesSplitViewBinding binding =
                 RepositoriesSplitViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
@@ -123,6 +121,7 @@ public class RepositoriesSplitFragment extends Fragment
             getChildFragmentManager().beginTransaction()
                     .add(binding.detailsView.getId(), mDetailsFragment).commit();
         }
+        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
         return binding.contentView;
     }
 
@@ -149,12 +148,6 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     @Override
-    public void onDestroyView() {
-        mActionBar = null;
-        super.onDestroyView();
-    }
-
-    @Override
     public void onDestroy() {
         mPresenter.onDestroy();
         super.onDestroy();
@@ -167,8 +160,19 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     @Override
-    public Toolbar getActionBar() {
-        return mActionBar;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_about:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

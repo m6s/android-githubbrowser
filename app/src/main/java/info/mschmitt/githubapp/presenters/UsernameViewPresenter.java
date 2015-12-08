@@ -50,7 +50,6 @@ public class UsernameViewPresenter extends BaseObservable {
         }
     };
     private boolean mLoading;
-    private final View.OnClickListener mOnShowRepositoriesClickListener = v -> showRepositories();
 
     @Inject
     public UsernameViewPresenter(UsernameSceneView view, Validator validator,
@@ -65,6 +64,11 @@ public class UsernameViewPresenter extends BaseObservable {
         return mUsername;
     }
 
+    @SuppressWarnings("unused")
+    public void onShowRepositoriesClick(View view) {
+        showRepositories();
+    }
+
     private void showRepositories() {
         if (!mValidator.validateUsername(mUsername)) {
             setUsernameError("Validation error");
@@ -75,21 +79,12 @@ public class UsernameViewPresenter extends BaseObservable {
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
                             mView.getParentPresenter().onLoading(this, true, null);
-                        }).subscribe(
-                        user -> onShowRepositories(UsernameViewPresenter.this, mUsername),
+                        }).subscribe(user -> mView.showRepositories(this, mUsername),
                         throwable -> mView.getParentPresenter().onError(this, throwable,
                                 this::showRepositories));
         mSubscriptions.add(subscription);
         setLoading(true);
         mView.getParentPresenter().onLoading(this, false, subscription::unsubscribe);
-    }
-
-    public void onShowRepositories(Object sender, String username) {
-        mView.showRepositories(sender, username);
-    }
-
-    public View.OnClickListener getOnShowRepositoriesClickListener() {
-        return mOnShowRepositoriesClickListener;
     }
 
     public TextWatcher getUsernameTextWatcher() {

@@ -15,17 +15,9 @@
         android:layout_height="match_parent">
 
         <FrameLayout
-            android:id="@+id/actionBarView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"/>
-
-        <FrameLayout
             android:id="@+id/contentView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/actionBarView"/>
+            android:layout_height="match_parent"/>
 
         <ProgressBar
             android:layout_width="wrap_content"

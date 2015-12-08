@@ -14,20 +14,34 @@
         android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
+        android:orientation="vertical">
 
-    <FrameLayout
-            android:id="@+id/masterView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.4"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
-        <FrameLayout
-            android:id="@+id/detailsView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.6"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
+
+            <FrameLayout
+                android:id="@+id/masterView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"/>
+
+            <FrameLayout
+                android:id="@+id/detailsView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"/>
+        </LinearLayout>
     </LinearLayout>
 </layout>

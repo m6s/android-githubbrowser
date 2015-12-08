@@ -3,28 +3,28 @@ package info.mschmitt.githubapp.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubapp.android.presentation.ActionBarProvider;
+import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
-import info.mschmitt.githubapp.databinding.UsernameSceneActionBarBinding;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.modules.UsernameModule;
 import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
 
 
 public class UsernameFragment extends Fragment
-        implements Presentable<UsernameViewPresenter>, UsernameViewPresenter.UsernameSceneView,
-        ActionBarProvider {
+        implements Presentable<UsernameViewPresenter>, UsernameViewPresenter.UsernameSceneView {
     private FragmentHost mHost;
     private UsernameViewPresenter mPresenter;
-    private Toolbar mActionBar;
     private Component mComponent;
 
     public static UsernameFragment newInstance() {
@@ -56,18 +56,15 @@ public class UsernameFragment extends Fragment
         mComponent = mHost.getSuperComponent(this).plus(new UsernameModule(this));
         mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        UsernameSceneActionBarBinding actionBarBinding =
-                UsernameSceneActionBarBinding.inflate(inflater);
-        actionBarBinding.setPresenter(mPresenter);
-        mActionBar = actionBarBinding.toolbar;
-
         UsernameViewBinding binding = UsernameViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
         return binding.contentView;
     }
 
@@ -78,7 +75,6 @@ public class UsernameFragment extends Fragment
 
     @Override
     public void onDestroyView() {
-        mActionBar = null;
         super.onDestroyView();
     }
 
@@ -95,8 +91,19 @@ public class UsernameFragment extends Fragment
     }
 
     @Override
-    public Toolbar getActionBar() {
-        return mActionBar;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_about:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

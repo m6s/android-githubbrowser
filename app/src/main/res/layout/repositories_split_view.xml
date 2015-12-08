@@ -10,20 +10,34 @@
             type="info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter"/>
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <FrameLayout
-            android:id="@+id/masterView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
 
-        <FrameLayout
-            android:id="@+id/detailsView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </FrameLayout>
+            <FrameLayout
+                android:id="@+id/masterView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <FrameLayout
+                android:id="@+id/detailsView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </FrameLayout>
+    </LinearLayout>
 </layout>
