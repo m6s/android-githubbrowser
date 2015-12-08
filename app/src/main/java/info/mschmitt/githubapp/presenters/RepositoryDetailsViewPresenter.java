@@ -67,14 +67,14 @@ public class RepositoryDetailsViewPresenter extends BaseObservable {
     }
 
     public void onCreate(Bundle savedState) {
-        mSubscriptions.add(mRepository.subscribe(this::setLastRepository));
+        mSubscriptions.add(mRepository.subscribe(this::setRepository));
         mAnalyticsManager.logScreenView(getClass().getName());
     }
 
     public void onSave(Bundle outState) {
     }
 
-    public void setLastRepository(Repository repository) {
+    private void setRepository(Repository repository) {
         mRepositoryName = repository.getName();
         mRepositoryUrl = repository.getUrl();
         notifyPropertyChanged(BR.repositoryName);
