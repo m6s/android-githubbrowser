@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.presenters.navigation;
+package info.mschmitt.githubapp.presenters;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
@@ -12,8 +12,8 @@ import java.util.Map;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
-import info.mschmitt.githubapp.presenters.navigation.scenes.RepositoriesSplitSceneViewPresenter;
-import info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoriesSplitSceneViewPresenter;
+import info.mschmitt.githubapp.presenters.UsernameSceneViewPresenter;
 
 /**
  * @author Matthias Schmitt

@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.presenters.navigation.scenes;
+package info.mschmitt.githubapp.presenters;
 
 import android.databinding.BaseObservable;
 import android.os.Bundle;

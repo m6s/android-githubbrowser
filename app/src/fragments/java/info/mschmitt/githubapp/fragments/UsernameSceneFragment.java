@@ -1,6 +1,6 @@
-package info.mschmitt.githubapp.fragments.navigation.scenes;
+package info.mschmitt.githubapp.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -15,8 +15,7 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.UsernameSceneActionBarBinding;
 import info.mschmitt.githubapp.databinding.UsernameSceneViewBinding;
-import info.mschmitt.githubapp.fragments.UsernameFragment;
-import info.mschmitt.githubapp.modules.navigation.scenes.UsernameSceneModule;
+import info.mschmitt.githubapp.modules.UsernameSceneModule;
 import info.mschmitt.githubapp.presenters.navigation.scenes.UsernameSceneViewPresenter;
 
 
@@ -47,8 +46,8 @@ public class UsernameSceneFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         mHost = FragmentUtils.getParent(this, FragmentHost.class);
     }
 

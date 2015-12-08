@@ -7,12 +7,14 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RepositoriesSplitSceneViewPresenter"/>
     </data>
 
     <FrameLayout
+        android:id="@+id/contentView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
 
         <FrameLayout
             android:id="@+id/masterView"

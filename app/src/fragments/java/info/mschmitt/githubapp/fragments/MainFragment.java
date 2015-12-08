@@ -1,6 +1,6 @@
-package info.mschmitt.githubapp.fragments.navigation;
+package info.mschmitt.githubapp.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +22,7 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
 import info.mschmitt.githubapp.fragments.navigation.scenes.RepositoriesSplitSceneFragment;
 import info.mschmitt.githubapp.fragments.navigation.scenes.UsernameSceneFragment;
-import info.mschmitt.githubapp.modules.navigation.MainModule;
+import info.mschmitt.githubapp.modules.MainModule;
 import info.mschmitt.githubapp.presenters.navigation.MainViewPresenter;
 
 /**
@@ -62,8 +62,8 @@ public class MainFragment extends BugFixFragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         mHost = FragmentUtils.getParent(this, FragmentHost.class);
     }
 
