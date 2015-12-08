@@ -14,9 +14,9 @@ import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
  */
 @Module
 public class UsernameModule {
-    private UsernameViewPresenter.UsernameView mView;
+    private UsernameViewPresenter.UsernameSceneView mView;
 
-    public UsernameModule(UsernameViewPresenter.UsernameView view) {
+    public UsernameModule(UsernameViewPresenter.UsernameSceneView view) {
         mView = view;
     }
 

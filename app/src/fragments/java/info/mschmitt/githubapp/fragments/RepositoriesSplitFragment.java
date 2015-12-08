@@ -16,8 +16,8 @@ import info.mschmitt.githubapp.android.presentation.ActionBarProvider;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.EmptyActionBarBinding;
-import info.mschmitt.githubapp.databinding.RepositoriesSplitSceneViewBinding;
-import info.mschmitt.githubapp.modules.RepositoriesSplitSceneModule;
+import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
+import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
 import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
@@ -55,7 +55,7 @@ public class RepositoriesSplitFragment extends Fragment
 
     @Override
     public void showDetailsView() {
-        RepositoriesSplitSceneViewBinding binding = getBinding();
+        RepositoriesSplitViewBinding binding = getBinding();
         if (!isInSplitMode()) {
             binding.masterView.setVisibility(View.GONE);
         }
@@ -74,14 +74,14 @@ public class RepositoriesSplitFragment extends Fragment
 
     @Override
     public void hideDetailsView() {
-        RepositoriesSplitSceneViewBinding binding = getBinding();
+        RepositoriesSplitViewBinding binding = getBinding();
         binding.masterView.setVisibility(View.VISIBLE);
         if (!isInSplitMode()) {
             binding.detailsView.setVisibility(View.GONE);
         }
     }
 
-    private RepositoriesSplitSceneViewBinding getBinding() {
+    private RepositoriesSplitViewBinding getBinding() {
         return DataBindingUtil.findBinding(getView());
     }
 
@@ -94,10 +94,36 @@ public class RepositoriesSplitFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new RepositoriesSplitSceneModule(this,
-                getArguments().getString(ARG_USERNAME)));
+        mComponent = mHost.getSuperComponent(this)
+                .plus(new RepositoriesSplitModule(this, getArguments().getString(ARG_USERNAME)));
         mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        EmptyActionBarBinding actionBarBinding = EmptyActionBarBinding.inflate(inflater);
+        actionBarBinding.setPresenter(mPresenter);
+        mActionBar = actionBarBinding.toolbar;
+        RepositoriesSplitViewBinding binding =
+                RepositoriesSplitViewBinding.inflate(inflater, container, false);
+        binding.setPresenter(mPresenter);
+        mMasterFragment = (RepositoryListFragment) getChildFragmentManager()
+                .findFragmentById(binding.masterView.getId());
+        if (mMasterFragment == null) {
+            mMasterFragment = RepositoryListFragment.newInstance();
+            getChildFragmentManager().beginTransaction()
+                    .add(binding.masterView.getId(), mMasterFragment).commit();
+        }
+        mDetailsFragment = (RepositoryPagerFragment) getChildFragmentManager()
+                .findFragmentById(binding.detailsView.getId());
+        if (mDetailsFragment == null) {
+            mDetailsFragment = RepositoryPagerFragment.newInstance();
+            getChildFragmentManager().beginTransaction()
+                    .add(binding.detailsView.getId(), mDetailsFragment).commit();
+        }
+        return binding.contentView;
     }
 
     @Override
@@ -115,32 +141,6 @@ public class RepositoriesSplitFragment extends Fragment
                 getBinding().detailsView.setVisibility(View.GONE);
             }
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        EmptyActionBarBinding actionBarBinding = EmptyActionBarBinding.inflate(inflater);
-        actionBarBinding.setPresenter(mPresenter);
-        mActionBar = actionBarBinding.toolbar;
-        RepositoriesSplitSceneViewBinding binding =
-                RepositoriesSplitSceneViewBinding.inflate(inflater, container, false);
-        binding.setPresenter(mPresenter);
-        mMasterFragment = (RepositoryListFragment) getChildFragmentManager()
-                .findFragmentById(binding.masterView.getId());
-        if (mMasterFragment == null) {
-            mMasterFragment = RepositoryListFragment.newInstance();
-            getChildFragmentManager().beginTransaction()
-                    .add(binding.masterView.getId(), mMasterFragment).commit();
-        }
-        mDetailsFragment = (RepositoryPagerFragment) getChildFragmentManager()
-                .findFragmentById(binding.detailsView.getId());
-        if (mDetailsFragment == null) {
-            mDetailsFragment = RepositoryPagerFragment.newInstance();
-            getChildFragmentManager().beginTransaction()
-                    .add(binding.detailsView.getId(), mDetailsFragment).commit();
-        }
-        return binding.contentView;
     }
 
     @Override
@@ -199,7 +199,7 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     public interface SuperComponent {
-        Component plus(RepositoriesSplitSceneModule module);
+        Component plus(RepositoriesSplitModule module);
     }
 
     public interface FragmentHost {

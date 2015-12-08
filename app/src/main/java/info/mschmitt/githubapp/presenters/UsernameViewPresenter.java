@@ -7,6 +7,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.Validator;
@@ -27,7 +29,7 @@ public class UsernameViewPresenter extends BaseObservable {
     private final Validator mValidator;
     private final GitHubService mGitHubService;
     private final AnalyticsManager mAnalyticsManager;
-    private final UsernameView mView;
+    private final UsernameSceneView mView;
     private String mUsername;
     private String mUsernameError;
     private final TextWatcher mUsernameTextWatcher = new TextWatcher() {
@@ -50,7 +52,8 @@ public class UsernameViewPresenter extends BaseObservable {
     private boolean mLoading;
     private final View.OnClickListener mOnShowRepositoriesClickListener = v -> showRepositories();
 
-    public UsernameViewPresenter(UsernameView view, Validator validator,
+    @Inject
+    public UsernameViewPresenter(UsernameSceneView view, Validator validator,
                                  GitHubService gitHubService, AnalyticsManager analyticsManager) {
         mView = view;
         mValidator = validator;
@@ -72,14 +75,17 @@ public class UsernameViewPresenter extends BaseObservable {
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
                             mView.getParentPresenter().onLoading(this, true, null);
-                        }).subscribe(user -> mView.getParentPresenter()
-                                .onShowRepositories(UsernameViewPresenter.this, mUsername),
-                        throwable -> mView.getParentPresenter()
-                                .onError(UsernameViewPresenter.this, throwable,
-                                        this::showRepositories));
+                        }).subscribe(
+                        user -> onShowRepositories(UsernameViewPresenter.this, mUsername),
+                        throwable -> mView.getParentPresenter().onError(this, throwable,
+                                this::showRepositories));
         mSubscriptions.add(subscription);
         setLoading(true);
         mView.getParentPresenter().onLoading(this, false, subscription::unsubscribe);
+    }
+
+    public void onShowRepositories(Object sender, String username) {
+        mView.showRepositories(sender, username);
     }
 
     public View.OnClickListener getOnShowRepositoriesClickListener() {
@@ -130,11 +136,12 @@ public class UsernameViewPresenter extends BaseObservable {
         mSubscriptions.unsubscribe();
     }
 
-    public interface UsernameView {
+    public interface UsernameSceneView {
         ParentPresenter getParentPresenter();
+
+        void showRepositories(Object sender, String username);
     }
 
     public interface ParentPresenter extends OnLoadingListener, OnErrorListener {
-        void onShowRepositories(Object sender, String username);
     }
 }

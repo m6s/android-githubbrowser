@@ -28,7 +28,7 @@ import info.mschmitt.githubapp.presenters.MainViewPresenter;
  */
 public class MainFragment extends BugFixFragment
         implements Presentable<MainViewPresenter>, MainViewPresenter.MainView,
-        UsernameSceneFragment.FragmentHost, RepositoriesSplitFragment.FragmentHost {
+        UsernameFragment.FragmentHost, RepositoriesSplitFragment.FragmentHost {
     private FragmentHost mHost;
     private MainViewPresenter mPresenter;
     private Component mComponent;
@@ -102,7 +102,7 @@ public class MainFragment extends BugFixFragment
         });
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
-                    .add(binding.contentView.getId(), UsernameSceneFragment.newInstance()).commit();
+                    .add(binding.contentView.getId(), UsernameFragment.newInstance()).commit();
         }
         binding.setPresenter(mPresenter);
         return binding.getRoot();
@@ -143,7 +143,7 @@ public class MainFragment extends BugFixFragment
     }
 
     @Override
-    public UsernameSceneFragment.SuperComponent getSuperComponent(UsernameSceneFragment fragment) {
+    public UsernameFragment.SuperComponent getSuperComponent(UsernameFragment fragment) {
         return mComponent;
     }
 
@@ -164,7 +164,7 @@ public class MainFragment extends BugFixFragment
     }
 
     public interface Component extends RepositoriesSplitFragment.SuperComponent,
-            UsernameSceneFragment.SuperComponent {
+            UsernameFragment.SuperComponent {
         void inject(MainFragment fragment);
     }
 

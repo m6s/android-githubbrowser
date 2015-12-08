@@ -17,7 +17,7 @@ import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
  * @author Matthias Schmitt
  */
 public class MainViewPresenter extends BaseObservable
-        implements OnBackPressedListener, UsernameSceneViewPresenter.ParentPresenter,
+        implements OnBackPressedListener, UsernameViewPresenter.ParentPresenter,
         RepositoriesSplitViewPresenter.ParentPresenter {
     private final MainView mView;
     private boolean mLoading;
