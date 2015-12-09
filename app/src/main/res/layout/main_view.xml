@@ -7,7 +7,7 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.GitHubBrowserPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RootPresenter"/>
     </data>
 
     <RelativeLayout

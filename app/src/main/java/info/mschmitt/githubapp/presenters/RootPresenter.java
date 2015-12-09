@@ -17,17 +17,17 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class GitHubBrowserPresenter extends BaseObservable
+public class RootPresenter extends BaseObservable
         implements OnBackPressedListener, UsernamePresenter.ParentPresenter,
         RepositorySplitPresenter.ParentPresenter {
-    private GitHubBrowserView mView;
+    private RootView mView;
     private CompositeSubscription mSubscriptions;
     private boolean mLoading;
     private List<Object> mLoadingQueue = new ArrayList<>();
     private Map<Object, Runnable> mCancelHandlers = new HashMap<>();
 
     @MainThread
-    public void onCreate(GitHubBrowserView view, Bundle savedState) {
+    public void onCreate(RootView view, Bundle savedState) {
         mSubscriptions = new CompositeSubscription();
         mView = view;
     }
@@ -99,7 +99,7 @@ public class GitHubBrowserPresenter extends BaseObservable
         mView.showErrorDialog(throwable, retryHandler);
     }
 
-    public interface GitHubBrowserView {
+    public interface RootView {
         ParentPresenter getParentPresenter();
 
         Object getChildPresenter();

@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
-import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
+import info.mschmitt.githubapp.presenters.RootPresenter;
 
 public class FragmentActivity extends AppCompatActivity implements RootFragment.FragmentHost {
     @Override
@@ -28,7 +28,7 @@ public class FragmentActivity extends AppCompatActivity implements RootFragment.
     }
 
     @Override
-    public GitHubBrowserPresenter.ParentPresenter getPresenter() {
+    public RootPresenter.ParentPresenter getPresenter() {
         return null;
     }
 }

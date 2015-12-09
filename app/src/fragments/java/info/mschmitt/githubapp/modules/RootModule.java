@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
+import info.mschmitt.githubapp.presenters.RootPresenter;
 
 /**
  * @author Matthias Schmitt
@@ -13,7 +13,7 @@ import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
 public class RootModule {
     @Provides
     @Singleton
-    public GitHubBrowserPresenter providePresenter() {
-        return new GitHubBrowserPresenter();
+    public RootPresenter providePresenter() {
+        return new RootPresenter();
     }
 }

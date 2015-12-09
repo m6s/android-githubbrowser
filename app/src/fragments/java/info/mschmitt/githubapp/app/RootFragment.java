@@ -14,16 +14,16 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
 import info.mschmitt.githubapp.modules.RootModule;
-import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
+import info.mschmitt.githubapp.presenters.RootPresenter;
 
 /**
  * @author Matthias Schmitt
  */
 public class RootFragment extends BugFixFragment
-        implements Presentable<GitHubBrowserPresenter>, GitHubBrowserPresenter.GitHubBrowserView,
+        implements Presentable<RootPresenter>, RootPresenter.RootView,
         UsernameFragment.FragmentHost, RepositoriesSplitFragment.FragmentHost {
     private FragmentHost mHost;
-    private GitHubBrowserPresenter mPresenter;
+    private RootPresenter mPresenter;
     private Component mComponent;
 
     public static RootFragment newInstance() {
@@ -31,7 +31,7 @@ public class RootFragment extends BugFixFragment
     }
 
     @Override
-    public GitHubBrowserPresenter.ParentPresenter getParentPresenter() {
+    public RootPresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -110,12 +110,12 @@ public class RootFragment extends BugFixFragment
     }
 
     @Override
-    public GitHubBrowserPresenter getPresenter() {
+    public RootPresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(GitHubBrowserPresenter presenter) {
+    public void setPresenter(RootPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -133,6 +133,6 @@ public class RootFragment extends BugFixFragment
     }
 
     public interface FragmentHost {
-        GitHubBrowserPresenter.ParentPresenter getPresenter();
+        RootPresenter.ParentPresenter getPresenter();
     }
 }
