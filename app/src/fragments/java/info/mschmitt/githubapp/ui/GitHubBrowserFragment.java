@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.fragments;
+package info.mschmitt.githubapp.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,31 +8,31 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubapp.AlertDialogs;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
-import info.mschmitt.githubapp.modules.MainModule;
-import info.mschmitt.githubapp.presenters.MainViewPresenter;
+import info.mschmitt.githubapp.modules.GitHubBrowserModule;
+import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
+import info.mschmitt.githubapp.utils.AlertDialogs;
 
 /**
  * @author Matthias Schmitt
  */
-public class MainFragment extends BugFixFragment
-        implements Presentable<MainViewPresenter>, MainViewPresenter.MainView,
+public class GitHubBrowserFragment extends BugFixFragment
+        implements Presentable<GitHubBrowserPresenter>, GitHubBrowserPresenter.MainView,
         UsernameFragment.FragmentHost, RepositoriesSplitFragment.FragmentHost {
     private FragmentHost mHost;
-    private MainViewPresenter mPresenter;
+    private GitHubBrowserPresenter mPresenter;
     private Component mComponent;
 
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public static GitHubBrowserFragment newInstance() {
+        return new GitHubBrowserFragment();
     }
 
     @Override
-    public MainViewPresenter.ParentPresenter getParentPresenter() {
+    public GitHubBrowserPresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -64,7 +64,7 @@ public class MainFragment extends BugFixFragment
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Application application = (Application) getActivity().getApplication();
-        mComponent = application.getSuperComponent(this).plus(new MainModule(this));
+        mComponent = application.getSuperComponent(this).plus(new GitHubBrowserModule(this));
         mComponent.inject(this);
         mPresenter.onCreate(savedInstanceState);
     }
@@ -111,29 +111,29 @@ public class MainFragment extends BugFixFragment
     }
 
     @Override
-    public MainViewPresenter getPresenter() {
+    public GitHubBrowserPresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(MainViewPresenter presenter) {
+    public void setPresenter(GitHubBrowserPresenter presenter) {
         mPresenter = presenter;
     }
 
     public interface Component
             extends RepositoriesSplitFragment.SuperComponent, UsernameFragment.SuperComponent {
-        void inject(MainFragment fragment);
+        void inject(GitHubBrowserFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(MainModule module);
+        Component plus(GitHubBrowserModule module);
     }
 
     public interface Application {
-        SuperComponent getSuperComponent(MainFragment fragment);
+        SuperComponent getSuperComponent(GitHubBrowserFragment fragment);
     }
 
     public interface FragmentHost {
-        MainViewPresenter.ParentPresenter getPresenter();
+        GitHubBrowserPresenter.ParentPresenter getPresenter();
     }
 }

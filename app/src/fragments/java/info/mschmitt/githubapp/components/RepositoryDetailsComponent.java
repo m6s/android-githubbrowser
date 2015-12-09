@@ -3,8 +3,8 @@ package info.mschmitt.githubapp.components;
 import javax.inject.Singleton;
 
 import dagger.Subcomponent;
-import info.mschmitt.githubapp.fragments.RepositoryDetailsFragment;
 import info.mschmitt.githubapp.modules.RepositoryDetailsModule;
+import info.mschmitt.githubapp.ui.RepositoryDetailsFragment;
 
 /**
  * @author Matthias Schmitt

@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryListPresenter;
 import rx.Observable;
 
 /**
@@ -15,16 +15,16 @@ import rx.Observable;
  */
 @Module
 public class RepositoryListModule {
-    private RepositoryListViewPresenter.RepositoryListView mView;
+    private RepositoryListPresenter.RepositoryListView mView;
 
-    public RepositoryListModule(RepositoryListViewPresenter.RepositoryListView view) {
+    public RepositoryListModule(RepositoryListPresenter.RepositoryListView view) {
         mView = view;
     }
 
     @Provides
     @Singleton
-    public RepositoryListViewPresenter providePresenter(
+    public RepositoryListPresenter providePresenter(
             Observable<LinkedHashMap<Long, Repository>> repositories) {
-        return new RepositoryListViewPresenter(mView, repositories);
+        return new RepositoryListPresenter(mView, repositories);
     }
 }

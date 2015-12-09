@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp;
+package info.mschmitt.githubapp.domain;
 
 import android.text.TextUtils;
 

@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.fragments;
+package info.mschmitt.githubapp.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,16 +14,16 @@ import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryDetailsModule;
-import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryDetailsPresenter;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryDetailsFragment extends Fragment
-        implements Presentable<RepositoryDetailsViewPresenter>,
-        RepositoryDetailsViewPresenter.RepositoryDetailsView, OnBackPressedListener {
+        implements Presentable<RepositoryDetailsPresenter>,
+        RepositoryDetailsPresenter.RepositoryDetailsView, OnBackPressedListener {
     private static final String ARG_REPOSITORY_POSITION = "ARG_REPOSITORY_POSITION";
-    private RepositoryDetailsViewPresenter mPresenter;
+    private RepositoryDetailsPresenter mPresenter;
     private FragmentHost mHost;
 
     public static RepositoryDetailsFragment newInstanceForRepositoryPosition(
@@ -36,7 +36,7 @@ public class RepositoryDetailsFragment extends Fragment
     }
 
     @Override
-    public RepositoryDetailsViewPresenter.ParentPresenter getParentPresenter() {
+    public RepositoryDetailsPresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -81,12 +81,12 @@ public class RepositoryDetailsFragment extends Fragment
     }
 
     @Override
-    public RepositoryDetailsViewPresenter getPresenter() {
+    public RepositoryDetailsPresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(RepositoryDetailsViewPresenter presenter) {
+    public void setPresenter(RepositoryDetailsPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -106,6 +106,6 @@ public class RepositoryDetailsFragment extends Fragment
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoryDetailsFragment fragment);
 
-        RepositoryDetailsViewPresenter.ParentPresenter getPresenter();
+        RepositoryDetailsPresenter.ParentPresenter getPresenter();
     }
 }

@@ -12,17 +12,17 @@ import info.mschmitt.githubapp.components.RepositoryDetailsActivityComponent;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.modules.RepositoryDetailsActivityModule;
-import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryDetailsPresenter;
 
 
 /**
  * @author Matthias Schmitt
  */
 public class RepositoryDetailsActivity extends AppCompatActivity
-        implements RepositoryDetailsViewPresenter.RepositoryDetailsView,
-        RepositoryDetailsViewPresenter.ParentPresenter {
+        implements RepositoryDetailsPresenter.RepositoryDetailsView,
+        RepositoryDetailsPresenter.ParentPresenter {
     private static final String ARG_REPOSITORY = "arg_repository";
-    private RepositoryDetailsViewPresenter mPresenter;
+    private RepositoryDetailsPresenter mPresenter;
 
     public static void startWithRepository(Repository repository, Context packageContext) {
         Intent intent = new Intent(packageContext, RepositoryDetailsActivity.class);
@@ -34,7 +34,7 @@ public class RepositoryDetailsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         RepositoryDetailsActivityComponent component =
-                ((Application) getApplicationContext()).getAppComponent()
+                ((GitHubApplication) getApplicationContext()).getAppComponent()
                         .plus(new RepositoryDetailsActivityModule(this));
         component.inject(this);
         Bundle extras = getIntent().getExtras();
@@ -53,12 +53,12 @@ public class RepositoryDetailsActivity extends AppCompatActivity
     }
 
     @Inject
-    public void setPresenter(RepositoryDetailsViewPresenter presenter) {
+    public void setPresenter(RepositoryDetailsPresenter presenter) {
         mPresenter = presenter;
     }
 
     @Override
-    public RepositoryDetailsViewPresenter.ParentPresenter getParentPresenter() {
+    public RepositoryDetailsPresenter.ParentPresenter getParentPresenter() {
         return this;
     }
 }

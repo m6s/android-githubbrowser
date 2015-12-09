@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.fragments;
+package info.mschmitt.githubapp.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
@@ -16,29 +14,23 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryListModule;
-import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryListPresenter;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryListFragment extends Fragment
-        implements Presentable<RepositoryListViewPresenter>,
-        RepositoryListViewPresenter.RepositoryListView {
-    private RepositoryListViewPresenter mPresenter;
+        implements Presentable<RepositoryListPresenter>,
+        RepositoryListPresenter.RepositoryListView {
+    private RepositoryListPresenter mPresenter;
     private FragmentHost mHost;
-    private RepositoryListAdapter mAdapter;
 
     public static RepositoryListFragment newInstance() {
         return new RepositoryListFragment();
     }
 
     @Override
-    public RepositoryListAdapter getAdapter() {
-        return mAdapter;
-    }
-
-    @Override
-    public RepositoryListViewPresenter.ParentPresenter getParentPresenter() {
+    public RepositoryListPresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -52,7 +44,6 @@ public class RepositoryListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).plus(new RepositoryListModule(this)).inject(this);
-        mAdapter = new RepositoryListAdapter(getActivity(), new ArrayList<>());
         mPresenter.onCreate(savedInstanceState);
     }
 
@@ -62,6 +53,7 @@ public class RepositoryListFragment extends Fragment
         RepositoryListViewBinding binding =
                 RepositoryListViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
+        binding.setAdapter(new RepositoryListAdapter(getActivity(), mPresenter.getRepositories()));
         return binding.getRoot();
     }
 
@@ -83,12 +75,12 @@ public class RepositoryListFragment extends Fragment
     }
 
     @Override
-    public RepositoryListViewPresenter getPresenter() {
+    public RepositoryListPresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(RepositoryListViewPresenter presenter) {
+    public void setPresenter(RepositoryListPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -103,6 +95,6 @@ public class RepositoryListFragment extends Fragment
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoryListFragment fragment);
 
-        RepositoryListViewPresenter.ParentPresenter getPresenter();
+        RepositoryListPresenter.ParentPresenter getPresenter();
     }
 }

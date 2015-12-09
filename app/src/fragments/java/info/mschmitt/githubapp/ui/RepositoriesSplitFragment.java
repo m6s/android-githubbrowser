@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.fragments;
+package info.mschmitt.githubapp.ui;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -19,18 +19,18 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
 import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
-import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
-import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
-import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryListPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryPagerPresenter;
+import info.mschmitt.githubapp.presenters.RepositorySplitPresenter;
 
 
 public class RepositoriesSplitFragment extends Fragment
-        implements Presentable<RepositoriesSplitViewPresenter>,
-        RepositoriesSplitViewPresenter.RepositoriesSplitSceneView,
+        implements Presentable<RepositorySplitPresenter>,
+        RepositorySplitPresenter.RepositoriesSplitView,
         RepositoryListFragment.FragmentHost, RepositoryPagerFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
-    private RepositoriesSplitViewPresenter mPresenter;
+    private RepositorySplitPresenter mPresenter;
     private RepositoryListFragment mMasterFragment;
     private RepositoryPagerFragment mDetailsFragment;
     private Component mComponent;
@@ -44,12 +44,12 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     @Override
-    public RepositoryListViewPresenter getMasterPresenter() {
+    public RepositoryListPresenter getMasterPresenter() {
         return mMasterFragment.getPresenter();
     }
 
     @Override
-    public RepositoryPagerViewPresenter getDetailsPresenter() {
+    public RepositoryPagerPresenter getDetailsPresenter() {
         return mDetailsFragment.getPresenter();
     }
 
@@ -63,7 +63,7 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     @Override
-    public RepositoriesSplitViewPresenter.ParentPresenter getParentPresenter() {
+    public RepositorySplitPresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -122,7 +122,7 @@ public class RepositoriesSplitFragment extends Fragment
                     .add(binding.detailsView.getId(), mDetailsFragment).commit();
         }
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
-        return binding.contentView;
+        return binding.getRoot();
     }
 
     @Override
@@ -188,12 +188,12 @@ public class RepositoriesSplitFragment extends Fragment
     }
 
     @Override
-    public RepositoriesSplitViewPresenter getPresenter() {
+    public RepositorySplitPresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(RepositoriesSplitViewPresenter presenter) {
+    public void setPresenter(RepositorySplitPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -209,6 +209,6 @@ public class RepositoriesSplitFragment extends Fragment
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoriesSplitFragment fragment);
 
-        RepositoriesSplitViewPresenter.ParentPresenter getPresenter();
+        RepositorySplitPresenter.ParentPresenter getPresenter();
     }
 }

@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:bind="http://schemas.android.com/apk/res-auto"
-    >
+        xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
+            name="adapter"
+            type="android.support.v4.view.PagerAdapter"/>
+
+        <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RepositoryPagerPresenter"/>
     </data>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        bind:adapter="@{presenter.adapter}"
+        bind:adapter="@{adapter}"
         bind:currentItem="@{presenter.currentItem}"
         bind:onPageChangeListener="@{presenter.onPageChangeListener}"/>
 </layout>

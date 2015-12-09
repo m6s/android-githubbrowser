@@ -1,14 +1,14 @@
-package info.mschmitt.githubapp;
+package info.mschmitt.githubapp.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
-import info.mschmitt.githubapp.fragments.MainFragment;
-import info.mschmitt.githubapp.presenters.MainViewPresenter;
+import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.FragmentHost {
+public class GitHubBrowserActivity extends AppCompatActivity implements GitHubBrowserFragment.FragmentHost {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Frag
     }
 
     @Override
-    public MainViewPresenter.ParentPresenter getPresenter() {
+    public GitHubBrowserPresenter.ParentPresenter getPresenter() {
         return null;
     }
 }

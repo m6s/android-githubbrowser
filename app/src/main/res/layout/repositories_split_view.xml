@@ -7,11 +7,10 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RepositorySplitPresenter"/>
     </data>
 
     <LinearLayout
-        android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

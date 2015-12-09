@@ -2,6 +2,8 @@ package info.mschmitt.githubapp.presenters;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
@@ -9,10 +11,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
+import info.mschmitt.githubapp.domain.AnalyticsManager;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -20,12 +21,13 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class RepositoryPagerViewPresenter extends BaseObservable
-        implements OnBackPressedListener, RepositoryDetailsViewPresenter.ParentPresenter {
+public class RepositoryPagerPresenter extends BaseObservable
+        implements OnBackPressedListener, RepositoryDetailsPresenter.ParentPresenter {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
-    private final Observable<LinkedHashMap<Long, Repository>> mRepositories;
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
+    private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
     private final RepositoryPagerView mView;
     private boolean mIgnoreOnPageSelected;
@@ -43,10 +45,10 @@ public class RepositoryPagerViewPresenter extends BaseObservable
                         mIgnoreOnPageSelected = false;
                         return;
                     }
-                    Repository repository = mView.getAdapter().getRepository(position);
+                    Repository repository = mRepositories.get(position);
                     setCurrentRepositoryId(repository.getId());
                     mView.getParentPresenter()
-                            .onRepositorySelected(RepositoryPagerViewPresenter.this, repository);
+                            .onRepositorySelected(RepositoryPagerPresenter.this, repository);
                 }
 
                 @Override
@@ -54,26 +56,26 @@ public class RepositoryPagerViewPresenter extends BaseObservable
                 }
             };
 
-    public RepositoryPagerViewPresenter(RepositoryPagerView view,
-                                        Observable<LinkedHashMap<Long, Repository>> repositories,
-                                        AnalyticsManager analyticsManager) {
+    public RepositoryPagerPresenter(RepositoryPagerView view,
+                                    Observable<LinkedHashMap<Long, Repository>>
+                                            repositoryMapObservable,
+                                    AnalyticsManager analyticsManager) {
         mView = view;
-        mRepositories = repositories;
+        mRepositoryMapObservable = repositoryMapObservable;
         mAnalyticsManager = analyticsManager;
     }
 
     public void onCreate(Bundle savedState) {
         long lastRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
-        mSubscriptions.add(mRepositories.subscribe((repositories) -> {
+        mSubscriptions.add(mRepositoryMapObservable.subscribe((repositoryMap) -> {
             mPageIndexes.clear();
             int i = 0;
-            for (long id : repositories.keySet()) {
+            for (long id : repositoryMap.keySet()) {
                 mPageIndexes.put(id, i++);
             }
-            mView.getAdapter().clear();
-            mView.getAdapter().addAll(repositories.values());
-            mView.getAdapter().notifyDataSetChanged();
+            mRepositories.clear();
+            mRepositories.addAll(repositoryMap.values());
             if (lastRepositoryId != -1) {
                 setCurrentRepositoryId(lastRepositoryId);
             }
@@ -109,18 +111,16 @@ public class RepositoryPagerViewPresenter extends BaseObservable
         return integer != null ? integer : -1;
     }
 
-    public RepositoryPagerAdapter getAdapter() {
-        return mView.getAdapter();
-    }
-
     @Override
     public boolean onBackPressed() {
         return false;
     }
 
-    public interface RepositoryPagerView {
-        RepositoryPagerAdapter getAdapter();
+    public ObservableList<Repository> getRepositories() {
+        return mRepositories;
+    }
 
+    public interface RepositoryPagerView {
         ParentPresenter getParentPresenter();
     }
 

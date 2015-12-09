@@ -16,15 +16,15 @@ import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 /**
  * @author Matthias Schmitt
  */
-public class MainViewPresenter extends BaseObservable
-        implements OnBackPressedListener, UsernameViewPresenter.ParentPresenter,
-        RepositoriesSplitViewPresenter.ParentPresenter {
+public class GitHubBrowserPresenter extends BaseObservable
+        implements OnBackPressedListener, UsernamePresenter.ParentPresenter,
+        RepositorySplitPresenter.ParentPresenter {
     private final MainView mView;
     private boolean mLoading;
     private List<Object> mLoadingQueue = new ArrayList<>();
     private Map<Object, Runnable> mCancelHandlers = new HashMap<>();
 
-    public MainViewPresenter(MainView view) {
+    public GitHubBrowserPresenter(MainView view) {
         mView = view;
     }
 

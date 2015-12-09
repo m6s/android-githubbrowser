@@ -6,10 +6,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import info.mschmitt.githubapp.AnalyticsManager;
+import info.mschmitt.githubapp.domain.AnalyticsManager;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.network.GitHubService;
-import info.mschmitt.githubapp.presenters.RepositoriesSplitViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositorySplitPresenter;
 import rx.Observable;
 
 /**
@@ -17,10 +17,10 @@ import rx.Observable;
  */
 @Module
 public class RepositoriesSplitModule {
-    private RepositoriesSplitViewPresenter.RepositoriesSplitSceneView mView;
+    private RepositorySplitPresenter.RepositoriesSplitView mView;
     private String mUsername;
 
-    public RepositoriesSplitModule(RepositoriesSplitViewPresenter.RepositoriesSplitSceneView view,
+    public RepositoriesSplitModule(RepositorySplitPresenter.RepositoriesSplitView view,
                                    String username) {
         mView = view;
         mUsername = username;
@@ -28,15 +28,14 @@ public class RepositoriesSplitModule {
 
     @Provides
     Observable<LinkedHashMap<Long, Repository>> provideRepositories(
-            RepositoriesSplitViewPresenter presenter) {
+            RepositorySplitPresenter presenter) {
         return presenter.getRepositories();
     }
 
     @Provides
     @Singleton
-    public RepositoriesSplitViewPresenter providePresenter(GitHubService gitHubService,
-                                                                AnalyticsManager analyticsManager) {
-        return new RepositoriesSplitViewPresenter(mUsername, mView, gitHubService,
-                analyticsManager);
+    public RepositorySplitPresenter providePresenter(GitHubService gitHubService,
+                                                     AnalyticsManager analyticsManager) {
+        return new RepositorySplitPresenter(mUsername, mView, gitHubService, analyticsManager);
     }
 }

@@ -3,10 +3,10 @@ package info.mschmitt.githubapp.components;
 import javax.inject.Singleton;
 
 import dagger.Subcomponent;
-import info.mschmitt.githubapp.fragments.RepositoriesSplitFragment;
 import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
 import info.mschmitt.githubapp.modules.RepositoryListModule;
 import info.mschmitt.githubapp.modules.RepositoryPagerModule;
+import info.mschmitt.githubapp.ui.RepositoriesSplitFragment;
 
 /**
  * @author Matthias Schmitt

@@ -6,9 +6,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import info.mschmitt.githubapp.AnalyticsManager;
+import info.mschmitt.githubapp.domain.AnalyticsManager;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.presenters.RepositoryDetailsViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryDetailsPresenter;
 import rx.Observable;
 
 /**
@@ -17,9 +17,9 @@ import rx.Observable;
 @Module
 public class RepositoryDetailsModule {
     private final int mPosition;
-    private final RepositoryDetailsViewPresenter.RepositoryDetailsView mView;
+    private final RepositoryDetailsPresenter.RepositoryDetailsView mView;
 
-    public RepositoryDetailsModule(RepositoryDetailsViewPresenter.RepositoryDetailsView view,
+    public RepositoryDetailsModule(RepositoryDetailsPresenter.RepositoryDetailsView view,
                                    int position) {
         mView = view;
         mPosition = position;
@@ -27,10 +27,10 @@ public class RepositoryDetailsModule {
 
     @Provides
     @Singleton
-    public RepositoryDetailsViewPresenter providePresenter(
+    public RepositoryDetailsPresenter providePresenter(
             Observable<LinkedHashMap<Long, Repository>> repositories,
             AnalyticsManager analyticsManager) {
-        return RepositoryDetailsViewPresenter
+        return RepositoryDetailsPresenter
                 .createForRepositoryPosition(mView, repositories, analyticsManager, mPosition);
     }
 }

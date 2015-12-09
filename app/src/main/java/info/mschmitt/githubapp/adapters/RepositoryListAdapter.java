@@ -1,22 +1,23 @@
 package info.mschmitt.githubapp.adapters;
 
 import android.content.Context;
+import android.databinding.ObservableList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
-
+import info.mschmitt.githubapp.android.presentation.BaseAdapterOnListChangedCallback;
 import info.mschmitt.githubapp.entities.Repository;
 
 /**
  * @author Matthias Schmitt
  */
 public class RepositoryListAdapter extends ArrayAdapter<Repository> {
-    public RepositoryListAdapter(Context context, List<Repository> objects) {
-        super(context, 0, objects);
+    public RepositoryListAdapter(Context context, ObservableList<Repository> repositories) {
+        super(context, 0, repositories);
+        repositories.addOnListChangedCallback(new BaseAdapterOnListChangedCallback<>(this));
     }
 
     @Override

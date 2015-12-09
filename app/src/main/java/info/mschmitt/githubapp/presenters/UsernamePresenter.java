@@ -9,12 +9,12 @@ import android.view.View;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.Validator;
 import info.mschmitt.githubapp.android.presentation.ObjectsBackport;
 import info.mschmitt.githubapp.android.presentation.OnErrorListener;
 import info.mschmitt.githubapp.android.presentation.OnLoadingListener;
+import info.mschmitt.githubapp.domain.AnalyticsManager;
+import info.mschmitt.githubapp.domain.Validator;
 import info.mschmitt.githubapp.network.GitHubService;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,13 +23,13 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class UsernameViewPresenter extends BaseObservable {
+public class UsernamePresenter extends BaseObservable {
     public static final String STATE_USER_NAME = "STATE_USER_NAME";
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final Validator mValidator;
     private final GitHubService mGitHubService;
     private final AnalyticsManager mAnalyticsManager;
-    private final UsernameSceneView mView;
+    private final UsernameView mView;
     private String mUsername;
     private String mUsernameError;
     private final TextWatcher mUsernameTextWatcher = new TextWatcher() {
@@ -52,8 +52,8 @@ public class UsernameViewPresenter extends BaseObservable {
     private boolean mLoading;
 
     @Inject
-    public UsernameViewPresenter(UsernameSceneView view, Validator validator,
-                                 GitHubService gitHubService, AnalyticsManager analyticsManager) {
+    public UsernamePresenter(UsernameView view, Validator validator, GitHubService gitHubService,
+                             AnalyticsManager analyticsManager) {
         mView = view;
         mValidator = validator;
         mGitHubService = gitHubService;
@@ -131,7 +131,7 @@ public class UsernameViewPresenter extends BaseObservable {
         mSubscriptions.unsubscribe();
     }
 
-    public interface UsernameSceneView {
+    public interface UsernameView {
         ParentPresenter getParentPresenter();
 
         void showRepositories(Object sender, String username);

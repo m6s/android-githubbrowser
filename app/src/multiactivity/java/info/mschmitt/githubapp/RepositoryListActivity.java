@@ -15,19 +15,19 @@ import info.mschmitt.githubapp.components.RepositoryListActivityComponent;
 import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.modules.RepositoryListActivityModule;
-import info.mschmitt.githubapp.presenters.RepositoryListViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryListPresenter;
 
 
 /**
  * @author Matthias Schmitt
  */
 public class RepositoryListActivity extends AppCompatActivity
-        implements RepositoryListViewPresenter.RepositoryListView,
-        RepositoryListViewPresenter.ParentPresenter {
+        implements RepositoryListPresenter.RepositoryListView,
+        RepositoryListPresenter.ParentPresenter {
     private static final String ARG_USERNAME = "arg_username";
     private final RepositoryListAdapter mAdapter =
             new RepositoryListAdapter(this, new ArrayList<>());
-    private RepositoryListViewPresenter mPresenter;
+    private RepositoryListPresenter mPresenter;
 
     public static void startWithUsername(String username, Context packageContext) {
         Intent intent = new Intent(packageContext, RepositoryListActivity.class);
@@ -40,7 +40,7 @@ public class RepositoryListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         String username = getIntent().getStringExtra(ARG_USERNAME);
         RepositoryListActivityComponent activityComponent =
-                ((Application) getApplicationContext()).getAppComponent()
+                ((GitHubApplication) getApplicationContext()).getAppComponent()
                         .plus(new RepositoryListActivityModule(username));
         activityComponent.inject(this);
         mPresenter.onCreate(this, savedInstanceState);
@@ -56,7 +56,7 @@ public class RepositoryListActivity extends AppCompatActivity
     }
 
     @Inject
-    public void setPresenter(RepositoryListViewPresenter presenter) {
+    public void setPresenter(RepositoryListPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -66,7 +66,7 @@ public class RepositoryListActivity extends AppCompatActivity
     }
 
     @Override
-    public RepositoryListViewPresenter.ParentPresenter getParentPresenter() {
+    public RepositoryListPresenter.ParentPresenter getParentPresenter() {
         return this;
     }
 

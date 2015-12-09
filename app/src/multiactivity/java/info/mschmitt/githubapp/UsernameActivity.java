@@ -9,20 +9,20 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.components.UsernameActivityComponent;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.modules.UsernameActivityModule;
-import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
+import info.mschmitt.githubapp.presenters.UsernamePresenter;
 
 /**
  * @author Matthias Schmitt
  */
 public class UsernameActivity extends AppCompatActivity
-        implements UsernameViewPresenter.UsernameView, UsernameViewPresenter.ParentPresenter {
-    private UsernameViewPresenter mPresenter;
+        implements UsernamePresenter.UsernameView, UsernamePresenter.ParentPresenter {
+    private UsernamePresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UsernameActivityComponent activityComponent =
-                ((Application) getApplicationContext()).getAppComponent()
+                ((GitHubApplication) getApplicationContext()).getAppComponent()
                         .plus(new UsernameActivityModule());
         activityComponent.inject(this);
         mPresenter.onCreate(this, savedInstanceState);
@@ -43,12 +43,12 @@ public class UsernameActivity extends AppCompatActivity
     }
 
     @Inject
-    public void setPresenter(UsernameViewPresenter presenter) {
+    public void setPresenter(UsernamePresenter presenter) {
         mPresenter = presenter;
     }
 
     @Override
-    public UsernameViewPresenter.ParentPresenter getParentPresenter() {
+    public UsernamePresenter.ParentPresenter getParentPresenter() {
         return this;
     }
 

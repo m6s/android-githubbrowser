@@ -7,11 +7,11 @@ import android.os.Bundle;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.OnErrorListener;
 import info.mschmitt.githubapp.android.presentation.OnLoadingListener;
+import info.mschmitt.githubapp.domain.AnalyticsManager;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.network.GitHubService;
 import rx.Observable;
@@ -23,9 +23,9 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class RepositoriesSplitViewPresenter extends BaseObservable
-        implements OnBackPressedListener, RepositoryListViewPresenter.ParentPresenter,
-        RepositoryPagerViewPresenter.ParentPresenter {
+public class RepositorySplitPresenter extends BaseObservable
+        implements OnBackPressedListener, RepositoryListPresenter.ParentPresenter,
+        RepositoryPagerPresenter.ParentPresenter {
     private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
@@ -34,12 +34,12 @@ public class RepositoriesSplitViewPresenter extends BaseObservable
     private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoriesSubject;
     private final String mUsername;
     private boolean mDetailsViewActive;
-    private RepositoriesSplitSceneView mView;
+    private RepositoriesSplitView mView;
     private boolean mLoading;
 
-    public RepositoriesSplitViewPresenter(String username, RepositoriesSplitSceneView view,
-                                          GitHubService gitHubService,
-                                          AnalyticsManager analyticsManager) {
+    public RepositorySplitPresenter(String username, RepositoriesSplitView view,
+                                    GitHubService gitHubService, AnalyticsManager
+                                            analyticsManager) {
         mUsername = username;
         mView = view;
         mAnalyticsManager = analyticsManager;
@@ -64,7 +64,7 @@ public class RepositoriesSplitViewPresenter extends BaseObservable
                     mView.getParentPresenter().onLoading(this, true, null);
                 }).subscribe(repositories -> mRepositoriesSubject.onNext(indexById(repositories)),
                         throwable -> mView.getParentPresenter()
-                                .onError(RepositoriesSplitViewPresenter.this, throwable,
+                                .onError(RepositorySplitPresenter.this, throwable,
                                         this::observe));
         mSubscriptions.add(subscription);
         setLoading(true);
@@ -136,10 +136,10 @@ public class RepositoriesSplitViewPresenter extends BaseObservable
         }
     }
 
-    public interface RepositoriesSplitSceneView {
-        RepositoryListViewPresenter getMasterPresenter();
+    public interface RepositoriesSplitView {
+        RepositoryListPresenter getMasterPresenter();
 
-        RepositoryPagerViewPresenter getDetailsPresenter();
+        RepositoryPagerPresenter getDetailsPresenter();
 
         void showDetailsView();
 

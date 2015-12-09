@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.fragments;
+package info.mschmitt.githubapp.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,13 +18,13 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.modules.UsernameModule;
-import info.mschmitt.githubapp.presenters.UsernameViewPresenter;
+import info.mschmitt.githubapp.presenters.UsernamePresenter;
 
 
 public class UsernameFragment extends Fragment
-        implements Presentable<UsernameViewPresenter>, UsernameViewPresenter.UsernameSceneView {
+        implements Presentable<UsernamePresenter>, UsernamePresenter.UsernameView {
     private FragmentHost mHost;
-    private UsernameViewPresenter mPresenter;
+    private UsernamePresenter mPresenter;
     private Component mComponent;
 
     public static UsernameFragment newInstance() {
@@ -32,7 +32,7 @@ public class UsernameFragment extends Fragment
     }
 
     @Override
-    public UsernameViewPresenter.ParentPresenter getParentPresenter() {
+    public UsernamePresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -65,7 +65,7 @@ public class UsernameFragment extends Fragment
         UsernameViewBinding binding = UsernameViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
-        return binding.contentView;
+        return binding.getRoot();
     }
 
     @Override
@@ -107,12 +107,12 @@ public class UsernameFragment extends Fragment
     }
 
     @Override
-    public UsernameViewPresenter getPresenter() {
+    public UsernamePresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(UsernameViewPresenter presenter) {
+    public void setPresenter(UsernamePresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -127,6 +127,6 @@ public class UsernameFragment extends Fragment
     public interface FragmentHost {
         SuperComponent getSuperComponent(UsernameFragment fragment);
 
-        UsernameViewPresenter.ParentPresenter getPresenter();
+        UsernamePresenter.ParentPresenter getPresenter();
     }
 }

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-import info.mschmitt.githubapp.AnalyticsManager;
 import info.mschmitt.githubapp.BR;
+import info.mschmitt.githubapp.domain.AnalyticsManager;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -18,7 +18,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class RepositoryDetailsViewPresenter extends BaseObservable {
+public class RepositoryDetailsPresenter extends BaseObservable {
     private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final Observable<Repository> mRepository;
     private final AnalyticsManager mAnalyticsManager;
@@ -26,20 +26,19 @@ public class RepositoryDetailsViewPresenter extends BaseObservable {
     private String mRepositoryUrl;
     private String mRepositoryName;
 
-    public RepositoryDetailsViewPresenter(RepositoryDetailsView view,
-                                          Observable<Repository> repository,
-                                          AnalyticsManager analyticsManager) {
+    public RepositoryDetailsPresenter(RepositoryDetailsView view, Observable<Repository> repository,
+                                      AnalyticsManager analyticsManager) {
         mView = view;
         mRepository = repository;
         mAnalyticsManager = analyticsManager;
     }
 
-    public static RepositoryDetailsViewPresenter createForRepositoryId(RepositoryDetailsView view,
+    public static RepositoryDetailsPresenter createForRepositoryId(RepositoryDetailsView view,
                                                                        Observable<LinkedHashMap<Long, Repository>> repositories,
                                                                        AnalyticsManager
                                                                                analyticsManager,
                                                                        long repositoryId) {
-        return new RepositoryDetailsViewPresenter(view,
+        return new RepositoryDetailsPresenter(view,
                 mapByRepositoryId(repositories, repositoryId), analyticsManager);
     }
 
@@ -50,10 +49,10 @@ public class RepositoryDetailsViewPresenter extends BaseObservable {
                 .filter(nextRepository -> nextRepository != null);
     }
 
-    public static RepositoryDetailsViewPresenter createForRepositoryPosition(
+    public static RepositoryDetailsPresenter createForRepositoryPosition(
             RepositoryDetailsView view, Observable<LinkedHashMap<Long, Repository>> repositories,
             AnalyticsManager analyticsManager, int position) {
-        return new RepositoryDetailsViewPresenter(view,
+        return new RepositoryDetailsPresenter(view,
                 mapByRepositoryPosition(repositories, position), analyticsManager);
     }
 

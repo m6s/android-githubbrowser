@@ -1,25 +1,24 @@
 package info.mschmitt.githubapp.adapters;
 
+import android.databinding.ObservableList;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import info.mschmitt.githubapp.android.presentation.PagerAdapterOnListChangedCallback;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.fragments.RepositoryDetailsFragment;
+import info.mschmitt.githubapp.ui.RepositoryDetailsFragment;
 
 /**
  * @author Matthias Schmitt
  */
 public class RepositoryPagerAdapter extends FragmentStatePagerAdapter {
-    private List<Repository> mRepositories = new ArrayList<>();
+    private final ObservableList<Repository> mRepositories;
 
-    public RepositoryPagerAdapter(FragmentManager fm, List<Repository> repositories) {
+    public RepositoryPagerAdapter(FragmentManager fm, ObservableList<Repository> repositories) {
         super(fm);
         mRepositories = repositories;
+        mRepositories.addOnListChangedCallback(new PagerAdapterOnListChangedCallback<>(this));
     }
 
     @Override
@@ -30,17 +29,5 @@ public class RepositoryPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return mRepositories.size();
-    }
-
-    public Repository getRepository(int position) {
-        return mRepositories.get(position);
-    }
-
-    public void clear() {
-        mRepositories.clear();
-    }
-
-    public void addAll(Collection<Repository> repositories) {
-        mRepositories.addAll(repositories);
     }
 }

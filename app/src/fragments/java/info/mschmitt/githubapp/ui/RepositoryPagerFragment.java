@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.fragments;
+package info.mschmitt.githubapp.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,17 +17,16 @@ import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.modules.RepositoryPagerModule;
-import info.mschmitt.githubapp.presenters.RepositoryPagerViewPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryPagerPresenter;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryPagerFragment extends Fragment
-        implements Presentable<RepositoryPagerViewPresenter>,
-        RepositoryPagerViewPresenter.RepositoryPagerView, RepositoryDetailsFragment.FragmentHost {
-    private RepositoryPagerViewPresenter mPresenter;
+        implements Presentable<RepositoryPagerPresenter>,
+        RepositoryPagerPresenter.RepositoryPagerView, RepositoryDetailsFragment.FragmentHost {
+    private RepositoryPagerPresenter mPresenter;
     private FragmentHost mHost;
-    private RepositoryPagerAdapter mAdapter;
     private Component mComponent;
 
     public static RepositoryPagerFragment newInstance() {
@@ -35,12 +34,7 @@ public class RepositoryPagerFragment extends Fragment
     }
 
     @Override
-    public RepositoryPagerAdapter getAdapter() {
-        return mAdapter;
-    }
-
-    @Override
-    public RepositoryPagerViewPresenter.ParentPresenter getParentPresenter() {
+    public RepositoryPagerPresenter.ParentPresenter getParentPresenter() {
         return mHost.getPresenter();
     }
 
@@ -56,7 +50,6 @@ public class RepositoryPagerFragment extends Fragment
         mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerModule(this));
         mComponent.inject(this);
         ArrayList<Repository> repositories = new ArrayList<>();
-        mAdapter = new RepositoryPagerAdapter(getChildFragmentManager(), repositories);
         mPresenter.onCreate(savedInstanceState);
     }
 
@@ -66,6 +59,8 @@ public class RepositoryPagerFragment extends Fragment
         RepositoryPagerViewBinding binding =
                 RepositoryPagerViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
+        binding.setAdapter(new RepositoryPagerAdapter(getChildFragmentManager(),
+                mPresenter.getRepositories()));
         return binding.getRoot();
     }
 
@@ -87,12 +82,12 @@ public class RepositoryPagerFragment extends Fragment
     }
 
     @Override
-    public RepositoryPagerViewPresenter getPresenter() {
+    public RepositoryPagerPresenter getPresenter() {
         return mPresenter;
     }
 
     @Inject
-    public void setPresenter(RepositoryPagerViewPresenter presenter) {
+    public void setPresenter(RepositoryPagerPresenter presenter) {
         mPresenter = presenter;
     }
 
@@ -114,6 +109,6 @@ public class RepositoryPagerFragment extends Fragment
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoryPagerFragment fragment);
 
-        RepositoryPagerViewPresenter.ParentPresenter getPresenter();
+        RepositoryPagerPresenter.ParentPresenter getPresenter();
     }
 }
