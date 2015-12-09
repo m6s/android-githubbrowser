@@ -27,33 +27,33 @@ public class RepositorySplitPresenter extends BaseObservable
         implements OnBackPressedListener, RepositoryListPresenter.ParentPresenter,
         RepositoryPagerPresenter.ParentPresenter {
     private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
-    private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
     private final GitHubService mGitHubService;
     private final Observable<LinkedHashMap<Long, Repository>> mRepositories;
     private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoriesSubject;
-    private final String mUsername;
+    private String mUsername;
+    private CompositeSubscription mSubscriptions;
     private boolean mDetailsViewActive;
     private RepositoriesSplitView mView;
     private boolean mLoading;
 
-    public RepositorySplitPresenter(String username, RepositoriesSplitView view,
-                                    GitHubService gitHubService, AnalyticsManager
-                                            analyticsManager) {
-        mUsername = username;
-        mView = view;
+    public RepositorySplitPresenter(GitHubService gitHubService,
+                                    AnalyticsManager analyticsManager) {
         mAnalyticsManager = analyticsManager;
         mGitHubService = gitHubService;
         mRepositoriesSubject = BehaviorSubject.create();
         mRepositories = mRepositoriesSubject.asObservable();
     }
 
-    public void onCreate(Bundle savedState) {
-        observe();
-        mAnalyticsManager.logScreenView(getClass().getName());
+    public void onCreate(RepositoriesSplitView view, String username, Bundle savedState) {
+        mSubscriptions = new CompositeSubscription();
+        mUsername = username;
+        mView = view;
         if (savedState != null) {
             mDetailsViewActive = savedState.getBoolean(STATE_DETAILS_VIEW_ACTIVE); //TODO presenter
         }
+        mAnalyticsManager.logScreenView(getClass().getName());
+        observe();
     }
 
     private void observe() {
@@ -64,8 +64,7 @@ public class RepositorySplitPresenter extends BaseObservable
                     mView.getParentPresenter().onLoading(this, true, null);
                 }).subscribe(repositories -> mRepositoriesSubject.onNext(indexById(repositories)),
                         throwable -> mView.getParentPresenter()
-                                .onError(RepositorySplitPresenter.this, throwable,
-                                        this::observe));
+                                .onError(RepositorySplitPresenter.this, throwable, this::observe));
         mSubscriptions.add(subscription);
         setLoading(true);
         mView.getParentPresenter().onLoading(this, false, subscription::unsubscribe);
@@ -92,6 +91,7 @@ public class RepositorySplitPresenter extends BaseObservable
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
+        mView = null;
     }
 
     @Bindable

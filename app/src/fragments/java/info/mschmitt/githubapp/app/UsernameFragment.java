@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.ui;
+package info.mschmitt.githubapp.app;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -53,9 +53,9 @@ public class UsernameFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new UsernameModule(this));
+        mComponent = mHost.getSuperComponent(this).plus(new UsernameModule());
         mComponent.inject(this);
-        mPresenter.onCreate(savedInstanceState);
+        mPresenter.onCreate(this, savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -71,11 +71,6 @@ public class UsernameFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mPresenter.onSave(outState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
     }
 
     @Override

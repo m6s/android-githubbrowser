@@ -16,17 +16,11 @@ import rx.Observable;
  */
 @Module
 public class RepositoryPagerModule {
-    private RepositoryPagerPresenter.RepositoryPagerView mView;
-
-    public RepositoryPagerModule(RepositoryPagerPresenter.RepositoryPagerView view) {
-        mView = view;
-    }
-
     @Provides
     @Singleton
     public RepositoryPagerPresenter providePresenter(
             Observable<LinkedHashMap<Long, Repository>> repositories,
             AnalyticsManager analyticsManager) {
-        return new RepositoryPagerPresenter(mView, repositories, analyticsManager);
+        return new RepositoryPagerPresenter(repositories, analyticsManager);
     }
 }

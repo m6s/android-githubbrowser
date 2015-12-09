@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.ui;
+package info.mschmitt.githubapp.app;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -49,9 +49,9 @@ public class RepositoryDetailsFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new RepositoryDetailsModule(this,
-                getArguments().getInt(ARG_REPOSITORY_POSITION))).inject(this);
-        mPresenter.onCreate(savedInstanceState);
+        mHost.getSuperComponent(this).plus(new RepositoryDetailsModule()).inject(this);
+        mPresenter.onCreateForPosition(this, getArguments().getInt(ARG_REPOSITORY_POSITION),
+                savedInstanceState);
     }
 
     @Override

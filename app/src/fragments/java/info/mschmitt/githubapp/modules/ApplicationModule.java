@@ -13,10 +13,10 @@ import dagger.Provides;
  * @author Matthias Schmitt
  */
 @Module
-public class GitHubBrowserApplicationModule {
+public class ApplicationModule {
     private Application mApplication;
 
-    public GitHubBrowserApplicationModule(Application application) {
+    public ApplicationModule(Application application) {
         mApplication = application;
     }
 

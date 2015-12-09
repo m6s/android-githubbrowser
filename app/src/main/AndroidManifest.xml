@@ -5,9 +5,9 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:name=".ui.GitHubBrowserApplication"
+        android:name=".app.FragmentApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/github10_48dp"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
     </application>

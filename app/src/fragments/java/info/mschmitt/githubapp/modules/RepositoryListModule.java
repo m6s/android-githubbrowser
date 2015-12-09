@@ -15,16 +15,10 @@ import rx.Observable;
  */
 @Module
 public class RepositoryListModule {
-    private RepositoryListPresenter.RepositoryListView mView;
-
-    public RepositoryListModule(RepositoryListPresenter.RepositoryListView view) {
-        mView = view;
-    }
-
     @Provides
     @Singleton
     public RepositoryListPresenter providePresenter(
             Observable<LinkedHashMap<Long, Repository>> repositories) {
-        return new RepositoryListPresenter(mView, repositories);
+        return new RepositoryListPresenter(repositories);
     }
 }

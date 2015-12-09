@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.ui;
+package info.mschmitt.githubapp.app;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -26,8 +26,8 @@ import info.mschmitt.githubapp.presenters.RepositorySplitPresenter;
 
 public class RepositoriesSplitFragment extends Fragment
         implements Presentable<RepositorySplitPresenter>,
-        RepositorySplitPresenter.RepositoriesSplitView,
-        RepositoryListFragment.FragmentHost, RepositoryPagerFragment.FragmentHost {
+        RepositorySplitPresenter.RepositoriesSplitView, RepositoryListFragment.FragmentHost,
+        RepositoryPagerFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
     private RepositorySplitPresenter mPresenter;
@@ -94,10 +94,9 @@ public class RepositoriesSplitFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this)
-                .plus(new RepositoriesSplitModule(this, getArguments().getString(ARG_USERNAME)));
+        mComponent = mHost.getSuperComponent(this).plus(new RepositoriesSplitModule());
         mComponent.inject(this);
-        mPresenter.onCreate(savedInstanceState);
+        mPresenter.onCreate(this, getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
 

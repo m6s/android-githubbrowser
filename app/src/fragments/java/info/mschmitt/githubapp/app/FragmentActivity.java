@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.ui;
+package info.mschmitt.githubapp.app;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +8,7 @@ import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
 
-public class GitHubBrowserActivity extends AppCompatActivity implements GitHubBrowserFragment.FragmentHost {
+public class FragmentActivity extends AppCompatActivity implements RootFragment.FragmentHost {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

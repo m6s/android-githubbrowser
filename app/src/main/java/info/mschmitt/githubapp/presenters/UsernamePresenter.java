@@ -25,11 +25,11 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class UsernamePresenter extends BaseObservable {
     public static final String STATE_USER_NAME = "STATE_USER_NAME";
-    private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final Validator mValidator;
     private final GitHubService mGitHubService;
     private final AnalyticsManager mAnalyticsManager;
-    private final UsernameView mView;
+    private CompositeSubscription mSubscriptions;
+    private UsernameView mView;
     private String mUsername;
     private String mUsernameError;
     private final TextWatcher mUsernameTextWatcher = new TextWatcher() {
@@ -52,9 +52,8 @@ public class UsernamePresenter extends BaseObservable {
     private boolean mLoading;
 
     @Inject
-    public UsernamePresenter(UsernameView view, Validator validator, GitHubService gitHubService,
+    public UsernamePresenter(Validator validator, GitHubService gitHubService,
                              AnalyticsManager analyticsManager) {
-        mView = view;
         mValidator = validator;
         mGitHubService = gitHubService;
         mAnalyticsManager = analyticsManager;
@@ -117,7 +116,9 @@ public class UsernamePresenter extends BaseObservable {
         notifyPropertyChanged(BR.loading);
     }
 
-    public void onCreate(Bundle savedState) {
+    public void onCreate(UsernameView view, Bundle savedState) {
+        mSubscriptions = new CompositeSubscription();
+        mView = view;
         if (savedState != null) {
             mUsername = savedState.getString(STATE_USER_NAME);
         }
@@ -129,6 +130,7 @@ public class UsernamePresenter extends BaseObservable {
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
+        mView = null;
     }
 
     public interface UsernameView {

@@ -17,15 +17,6 @@ import rx.Observable;
  */
 @Module
 public class RepositoriesSplitModule {
-    private RepositorySplitPresenter.RepositoriesSplitView mView;
-    private String mUsername;
-
-    public RepositoriesSplitModule(RepositorySplitPresenter.RepositoriesSplitView view,
-                                   String username) {
-        mView = view;
-        mUsername = username;
-    }
-
     @Provides
     Observable<LinkedHashMap<Long, Repository>> provideRepositories(
             RepositorySplitPresenter presenter) {
@@ -36,6 +27,6 @@ public class RepositoriesSplitModule {
     @Singleton
     public RepositorySplitPresenter providePresenter(GitHubService gitHubService,
                                                      AnalyticsManager analyticsManager) {
-        return new RepositorySplitPresenter(mUsername, mView, gitHubService, analyticsManager);
+        return new RepositorySplitPresenter(gitHubService, analyticsManager);
     }
 }

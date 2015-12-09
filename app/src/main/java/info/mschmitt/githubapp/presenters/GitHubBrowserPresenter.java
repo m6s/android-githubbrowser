@@ -12,6 +12,7 @@ import java.util.Map;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * @author Matthias Schmitt
@@ -19,17 +20,16 @@ import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
 public class GitHubBrowserPresenter extends BaseObservable
         implements OnBackPressedListener, UsernamePresenter.ParentPresenter,
         RepositorySplitPresenter.ParentPresenter {
-    private final MainView mView;
+    private GitHubBrowserView mView;
+    private CompositeSubscription mSubscriptions;
     private boolean mLoading;
     private List<Object> mLoadingQueue = new ArrayList<>();
     private Map<Object, Runnable> mCancelHandlers = new HashMap<>();
 
-    public GitHubBrowserPresenter(MainView view) {
-        mView = view;
-    }
-
     @MainThread
-    public void onCreate(Bundle savedState) {
+    public void onCreate(GitHubBrowserView view, Bundle savedState) {
+        mSubscriptions = new CompositeSubscription();
+        mView = view;
     }
 
     @MainThread
@@ -38,7 +38,8 @@ public class GitHubBrowserPresenter extends BaseObservable
 
     @MainThread
     public void onDestroy() {
-        // stop long running operations
+        mSubscriptions.unsubscribe();
+        mView = null;
     }
 
     @MainThread
@@ -98,7 +99,7 @@ public class GitHubBrowserPresenter extends BaseObservable
         mView.showErrorDialog(throwable, retryHandler);
     }
 
-    public interface MainView {
+    public interface GitHubBrowserView {
         ParentPresenter getParentPresenter();
 
         Object getChildPresenter();

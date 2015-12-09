@@ -10,16 +10,10 @@ import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
  * @author Matthias Schmitt
  */
 @Module
-public class GitHubBrowserModule {
-    private GitHubBrowserPresenter.MainView mView;
-
-    public GitHubBrowserModule(GitHubBrowserPresenter.MainView view) {
-        mView = view;
-    }
-
+public class RootModule {
     @Provides
     @Singleton
     public GitHubBrowserPresenter providePresenter() {
-        return new GitHubBrowserPresenter(mView);
+        return new GitHubBrowserPresenter();
     }
 }

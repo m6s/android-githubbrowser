@@ -19,41 +19,23 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 public class RepositoryDetailsPresenter extends BaseObservable {
-    private final CompositeSubscription mSubscriptions = new CompositeSubscription();
-    private final Observable<Repository> mRepository;
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositories;
     private final AnalyticsManager mAnalyticsManager;
-    private final RepositoryDetailsView mView;
+    private Observable<Repository> mRepository;
+    private CompositeSubscription mSubscriptions;
+    private RepositoryDetailsView mView;
     private String mRepositoryUrl;
     private String mRepositoryName;
 
-    public RepositoryDetailsPresenter(RepositoryDetailsView view, Observable<Repository> repository,
+    public RepositoryDetailsPresenter(Observable<LinkedHashMap<Long, Repository>> repositories,
                                       AnalyticsManager analyticsManager) {
-        mView = view;
-        mRepository = repository;
+        mRepositories = repositories;
         mAnalyticsManager = analyticsManager;
     }
 
-    public static RepositoryDetailsPresenter createForRepositoryId(RepositoryDetailsView view,
-                                                                       Observable<LinkedHashMap<Long, Repository>> repositories,
-                                                                       AnalyticsManager
-                                                                               analyticsManager,
-                                                                       long repositoryId) {
-        return new RepositoryDetailsPresenter(view,
-                mapByRepositoryId(repositories, repositoryId), analyticsManager);
-    }
-
-    @NonNull
-    private static Observable<Repository> mapByRepositoryId(
-            Observable<LinkedHashMap<Long, Repository>> repositories, long repositoryId) {
-        return repositories.map(nextRepositories -> nextRepositories.get(repositoryId))
-                .filter(nextRepository -> nextRepository != null);
-    }
-
-    public static RepositoryDetailsPresenter createForRepositoryPosition(
-            RepositoryDetailsView view, Observable<LinkedHashMap<Long, Repository>> repositories,
-            AnalyticsManager analyticsManager, int position) {
-        return new RepositoryDetailsPresenter(view,
-                mapByRepositoryPosition(repositories, position), analyticsManager);
+    public void onCreateForPosition(RepositoryDetailsView view, int position, Bundle savedState) {
+        mRepository = mapByRepositoryPosition(mRepositories, position);
+        onCreate(view, savedState);
     }
 
     @NonNull
@@ -65,9 +47,23 @@ public class RepositoryDetailsPresenter extends BaseObservable {
         }).filter(nextRepository -> nextRepository != null);
     }
 
-    public void onCreate(Bundle savedState) {
+    private void onCreate(RepositoryDetailsView view, Bundle savedState) {
+        mSubscriptions = new CompositeSubscription();
+        mView = view;
         mSubscriptions.add(mRepository.subscribe(this::setRepository));
         mAnalyticsManager.logScreenView(getClass().getName());
+    }
+
+    public void onCreateForId(RepositoryDetailsView view, long repositoryId, Bundle savedState) {
+        mRepository = mapByRepositoryId(mRepositories, repositoryId);
+        onCreate(view, savedState);
+    }
+
+    @NonNull
+    private static Observable<Repository> mapByRepositoryId(
+            Observable<LinkedHashMap<Long, Repository>> repositories, long repositoryId) {
+        return repositories.map(nextRepositories -> nextRepositories.get(repositoryId))
+                .filter(nextRepository -> nextRepository != null);
     }
 
     public void onSave(Bundle outState) {
@@ -92,6 +88,7 @@ public class RepositoryDetailsPresenter extends BaseObservable {
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
+        mView = null;
     }
 
     public interface RepositoryDetailsView {

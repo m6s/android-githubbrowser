@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.ui;
+package info.mschmitt.githubapp.app;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,15 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
-import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.modules.RepositoryPagerModule;
 import info.mschmitt.githubapp.presenters.RepositoryPagerPresenter;
 
@@ -47,10 +44,9 @@ public class RepositoryPagerFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerModule(this));
+        mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerModule());
         mComponent.inject(this);
-        ArrayList<Repository> repositories = new ArrayList<>();
-        mPresenter.onCreate(savedInstanceState);
+        mPresenter.onCreate(this, savedInstanceState);
     }
 
     @Override

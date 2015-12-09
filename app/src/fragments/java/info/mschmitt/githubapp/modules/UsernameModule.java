@@ -14,16 +14,10 @@ import info.mschmitt.githubapp.presenters.UsernamePresenter;
  */
 @Module
 public class UsernameModule {
-    private UsernamePresenter.UsernameView mView;
-
-    public UsernameModule(UsernamePresenter.UsernameView view) {
-        mView = view;
-    }
-
     @Provides
     @Singleton
     public UsernamePresenter providePresenter(Validator validator, GitHubService gitHubService,
                                               AnalyticsManager analyticsManager) {
-        return new UsernamePresenter(mView, validator, gitHubService, analyticsManager);
+        return new UsernamePresenter(validator, gitHubService, analyticsManager);
     }
 }

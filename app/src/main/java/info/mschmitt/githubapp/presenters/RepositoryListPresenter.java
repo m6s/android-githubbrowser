@@ -23,11 +23,11 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class RepositoryListPresenter extends BaseObservable implements OnBackPressedListener {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
-    private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
-    private final RepositoryListView mView;
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
+    private CompositeSubscription mSubscriptions;
+    private RepositoryListView mView;
     private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener =
             new AdapterView.OnItemClickListener() {
                 @Override
@@ -39,10 +39,9 @@ public class RepositoryListPresenter extends BaseObservable implements OnBackPre
                 }
             };
     private long mCurrentRepositoryId;
-    public RepositoryListPresenter(RepositoryListView view,
-                                   Observable<LinkedHashMap<Long, Repository>>
-                                           repositoryMapObservable) {
-        mView = view;
+
+    public RepositoryListPresenter(
+            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable) {
         mRepositoryMapObservable = repositoryMapObservable;
     }
 
@@ -50,7 +49,9 @@ public class RepositoryListPresenter extends BaseObservable implements OnBackPre
         return mRepositories;
     }
 
-    public void onCreate(Bundle savedState) {
+    public void onCreate(RepositoryListView view, Bundle savedState) {
+        mSubscriptions = new CompositeSubscription();
+        mView = view;
         long lastRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
         mSubscriptions.add(mRepositoryMapObservable.subscribe((repositoryMap) -> {
@@ -82,6 +83,7 @@ public class RepositoryListPresenter extends BaseObservable implements OnBackPre
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
+        mView = null;
     }
 
     public void selectRepository(Repository repository) {

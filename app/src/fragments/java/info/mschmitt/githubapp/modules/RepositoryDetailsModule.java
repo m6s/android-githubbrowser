@@ -16,21 +16,11 @@ import rx.Observable;
  */
 @Module
 public class RepositoryDetailsModule {
-    private final int mPosition;
-    private final RepositoryDetailsPresenter.RepositoryDetailsView mView;
-
-    public RepositoryDetailsModule(RepositoryDetailsPresenter.RepositoryDetailsView view,
-                                   int position) {
-        mView = view;
-        mPosition = position;
-    }
-
     @Provides
     @Singleton
     public RepositoryDetailsPresenter providePresenter(
             Observable<LinkedHashMap<Long, Repository>> repositories,
             AnalyticsManager analyticsManager) {
-        return RepositoryDetailsPresenter
-                .createForRepositoryPosition(mView, repositories, analyticsManager, mPosition);
+        return new RepositoryDetailsPresenter(repositories, analyticsManager);
     }
 }

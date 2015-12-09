@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.utils;
+package info.mschmitt.githubapp.app;
 
 import android.content.Context;
 import android.support.v7.app.AlertDialog;

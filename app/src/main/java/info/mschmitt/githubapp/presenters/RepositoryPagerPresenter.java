@@ -24,12 +24,12 @@ import rx.subscriptions.CompositeSubscription;
 public class RepositoryPagerPresenter extends BaseObservable
         implements OnBackPressedListener, RepositoryDetailsPresenter.ParentPresenter {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
-    private final CompositeSubscription mSubscriptions = new CompositeSubscription();
     private final AnalyticsManager mAnalyticsManager;
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
-    private final RepositoryPagerView mView;
+    private CompositeSubscription mSubscriptions;
+    private RepositoryPagerView mView;
     private boolean mIgnoreOnPageSelected;
     private long mCurrentRepositoryId;
     private final ViewPager.OnPageChangeListener mOnPageChangeListener =
@@ -56,16 +56,16 @@ public class RepositoryPagerPresenter extends BaseObservable
                 }
             };
 
-    public RepositoryPagerPresenter(RepositoryPagerView view,
-                                    Observable<LinkedHashMap<Long, Repository>>
-                                            repositoryMapObservable,
-                                    AnalyticsManager analyticsManager) {
-        mView = view;
+    public RepositoryPagerPresenter(
+            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable,
+            AnalyticsManager analyticsManager) {
         mRepositoryMapObservable = repositoryMapObservable;
         mAnalyticsManager = analyticsManager;
     }
 
-    public void onCreate(Bundle savedState) {
+    public void onCreate(RepositoryPagerView view, Bundle savedState) {
+        mSubscriptions = new CompositeSubscription();
+        mView = view;
         long lastRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
         mSubscriptions.add(mRepositoryMapObservable.subscribe((repositoryMap) -> {
@@ -99,6 +99,7 @@ public class RepositoryPagerPresenter extends BaseObservable
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
+        mView = null;
     }
 
     public void selectRepository(Repository repository) {

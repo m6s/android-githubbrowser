@@ -40,7 +40,7 @@ public class RepositoryDetailsActivity extends AppCompatActivity
         Bundle extras = getIntent().getExtras();
         Repository repository = (Repository) extras.getSerializable(ARG_REPOSITORY);
         mPresenter.setRepository(repository);
-        mPresenter.onCreate(this, savedInstanceState);
+        mPresenter.onCreateForPosition(this, savedInstanceState);
         RepositoryDetailsViewBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.repository_details_view);
         binding.setPresenter(mPresenter);

@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.ui;
+package info.mschmitt.githubapp.app;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,22 +13,21 @@ import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
-import info.mschmitt.githubapp.modules.GitHubBrowserModule;
+import info.mschmitt.githubapp.modules.RootModule;
 import info.mschmitt.githubapp.presenters.GitHubBrowserPresenter;
-import info.mschmitt.githubapp.utils.AlertDialogs;
 
 /**
  * @author Matthias Schmitt
  */
-public class GitHubBrowserFragment extends BugFixFragment
-        implements Presentable<GitHubBrowserPresenter>, GitHubBrowserPresenter.MainView,
+public class RootFragment extends BugFixFragment
+        implements Presentable<GitHubBrowserPresenter>, GitHubBrowserPresenter.GitHubBrowserView,
         UsernameFragment.FragmentHost, RepositoriesSplitFragment.FragmentHost {
     private FragmentHost mHost;
     private GitHubBrowserPresenter mPresenter;
     private Component mComponent;
 
-    public static GitHubBrowserFragment newInstance() {
-        return new GitHubBrowserFragment();
+    public static RootFragment newInstance() {
+        return new RootFragment();
     }
 
     @Override
@@ -64,9 +63,9 @@ public class GitHubBrowserFragment extends BugFixFragment
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Application application = (Application) getActivity().getApplication();
-        mComponent = application.getSuperComponent(this).plus(new GitHubBrowserModule(this));
+        mComponent = application.getSuperComponent(this).plus(new RootModule());
         mComponent.inject(this);
-        mPresenter.onCreate(savedInstanceState);
+        mPresenter.onCreate(this, savedInstanceState);
     }
 
     @Override
@@ -122,15 +121,15 @@ public class GitHubBrowserFragment extends BugFixFragment
 
     public interface Component
             extends RepositoriesSplitFragment.SuperComponent, UsernameFragment.SuperComponent {
-        void inject(GitHubBrowserFragment fragment);
+        void inject(RootFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(GitHubBrowserModule module);
+        Component plus(RootModule module);
     }
 
     public interface Application {
-        SuperComponent getSuperComponent(GitHubBrowserFragment fragment);
+        SuperComponent getSuperComponent(RootFragment fragment);
     }
 
     public interface FragmentHost {
