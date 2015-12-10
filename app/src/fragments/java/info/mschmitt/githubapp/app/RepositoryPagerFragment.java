@@ -25,6 +25,7 @@ public class RepositoryPagerFragment extends Fragment
     private RepositoryPagerPresenter mPresenter;
     private FragmentHost mHost;
     private Component mComponent;
+    private RepositoryPagerAdapter mAdapter;
 
     public static RepositoryPagerFragment newInstance() {
         return new RepositoryPagerFragment();
@@ -47,6 +48,8 @@ public class RepositoryPagerFragment extends Fragment
         mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerModule());
         mComponent.inject(this);
         mPresenter.onCreate(this, savedInstanceState);
+        mAdapter =
+                new RepositoryPagerAdapter(getChildFragmentManager(), mPresenter.getRepositories());
     }
 
     @Override
@@ -55,14 +58,20 @@ public class RepositoryPagerFragment extends Fragment
         RepositoryPagerViewBinding binding =
                 RepositoryPagerViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
-        binding.setAdapter(new RepositoryPagerAdapter(getChildFragmentManager(),
-                mPresenter.getRepositories()));
+        mAdapter.onCreateView(savedInstanceState);
+        binding.setAdapter(mAdapter);
         return binding.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mPresenter.onSave(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        mAdapter.onDestroyView();
+        super.onDestroyView();
     }
 
     @Override

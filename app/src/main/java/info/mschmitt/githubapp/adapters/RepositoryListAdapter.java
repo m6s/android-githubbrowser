@@ -2,6 +2,7 @@ package info.mschmitt.githubapp.adapters;
 
 import android.content.Context;
 import android.databinding.ObservableList;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,13 @@ import info.mschmitt.githubapp.entities.Repository;
  * @author Matthias Schmitt
  */
 public class RepositoryListAdapter extends ArrayAdapter<Repository> {
+    private final ObservableList<Repository> mRepositories;
+    private final BaseAdapterOnListChangedCallback<Repository> mCallback =
+            new BaseAdapterOnListChangedCallback<>(this);
+
     public RepositoryListAdapter(Context context, ObservableList<Repository> repositories) {
         super(context, 0, repositories);
-        repositories.addOnListChangedCallback(new BaseAdapterOnListChangedCallback<>(this));
+        mRepositories = repositories;
     }
 
     @Override
@@ -34,6 +39,14 @@ public class RepositoryListAdapter extends ArrayAdapter<Repository> {
         Repository repository = getItem(position);
         holder.text1.setText(repository.getName());
         return convertView;
+    }
+
+    public void onCreateView(Bundle savedInstanceState) {
+        mRepositories.addOnListChangedCallback(mCallback);
+    }
+
+    public void onDestroyView() {
+        mRepositories.removeOnListChangedCallback(mCallback);
     }
 
     static class RepositoryHolder {

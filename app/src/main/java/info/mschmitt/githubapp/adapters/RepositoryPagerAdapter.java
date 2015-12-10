@@ -1,6 +1,7 @@
 package info.mschmitt.githubapp.adapters;
 
 import android.databinding.ObservableList;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -14,11 +15,12 @@ import info.mschmitt.githubapp.entities.Repository;
  */
 public class RepositoryPagerAdapter extends FragmentStatePagerAdapter {
     private final ObservableList<Repository> mRepositories;
+    private final PagerAdapterOnListChangedCallback<Repository> mCallback =
+            new PagerAdapterOnListChangedCallback<>(this);
 
     public RepositoryPagerAdapter(FragmentManager fm, ObservableList<Repository> repositories) {
         super(fm);
         mRepositories = repositories;
-        mRepositories.addOnListChangedCallback(new PagerAdapterOnListChangedCallback<>(this));
     }
 
     @Override
@@ -29,5 +31,13 @@ public class RepositoryPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return mRepositories.size();
+    }
+
+    public void onCreateView(Bundle savedInstanceState) {
+        mRepositories.addOnListChangedCallback(mCallback);
+    }
+
+    public void onDestroyView() {
+        mRepositories.removeOnListChangedCallback(mCallback);
     }
 }

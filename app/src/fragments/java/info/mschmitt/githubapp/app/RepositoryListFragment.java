@@ -24,6 +24,7 @@ public class RepositoryListFragment extends Fragment
         RepositoryListPresenter.RepositoryListView {
     private RepositoryListPresenter mPresenter;
     private FragmentHost mHost;
+    private RepositoryListAdapter mAdapter;
 
     public static RepositoryListFragment newInstance() {
         return new RepositoryListFragment();
@@ -45,6 +46,7 @@ public class RepositoryListFragment extends Fragment
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).plus(new RepositoryListModule()).inject(this);
         mPresenter.onCreate(this, savedInstanceState);
+        mAdapter = new RepositoryListAdapter(getActivity(), mPresenter.getRepositories());
     }
 
     @Override
@@ -53,13 +55,20 @@ public class RepositoryListFragment extends Fragment
         RepositoryListViewBinding binding =
                 RepositoryListViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
-        binding.setAdapter(new RepositoryListAdapter(getActivity(), mPresenter.getRepositories()));
+        mAdapter.onCreateView(savedInstanceState);
+        binding.setAdapter(mAdapter);
         return binding.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mPresenter.onSave(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        mAdapter.onDestroyView();
+        super.onDestroyView();
     }
 
     @Override
