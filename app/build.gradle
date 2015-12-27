@@ -44,16 +44,6 @@ android {
         versionCode 6
         versionName "1.0.6"
     }
-    productFlavors {
-        multiactivity {
-            applicationId "info.mschmitt.githubapp.ma"
-            versionName "1.0.6-ma"
-        }
-        fragments {
-            applicationId "info.mschmitt.githubapp.f"
-            versionName "1.0.6-f"
-        }
-    }
 }
 
 dependencies {
