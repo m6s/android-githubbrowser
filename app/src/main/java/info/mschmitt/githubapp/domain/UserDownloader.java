@@ -20,6 +20,8 @@ public class UserDownloader {
     }
 
     public Observable<User> download(String username) {
-        return mGitHubService.getUser(username);
+        return mGitHubService.getUser(username)
+                .map(response -> new User(response.login, response.id, response.url,
+                        response.email));
     }
 }

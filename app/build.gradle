@@ -3,6 +3,20 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.github.triplet.play'
 
+/*
+ * Gets the version name from the latest Git tag.
+ *
+ * See http://ryanharter.com/blog/2013/07/30/automatic-versioning-with-git-and-gradle/
+ */
+def getGitTag = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'describe', '--tags'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 android {
     if (project.rootProject.file('playstore.properties').exists()) {
         Properties properties = new Properties()
@@ -38,11 +52,16 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "info.mschmitt.githubapp"
+        applicationId "info.mschmitt.githubapp.f"
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 6
         versionName "1.0.6"
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
     }
 }
 

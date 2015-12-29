@@ -1,5 +1,8 @@
 package info.mschmitt.githubapp.network;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
@@ -10,6 +13,7 @@ import dagger.Module;
 import dagger.Provides;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
+import retrofit.converter.GsonConverter;
 
 /**
  * @author Matthias Schmitt
@@ -33,9 +37,17 @@ class RetrofitNetworkModule {
 
     @Provides
     @Singleton
-    RestAdapter provideRestAdapter(OkHttpClient okHttpClient) {
+    Gson provideGson() {
+        return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+    }
+
+    @Provides
+    @Singleton
+    RestAdapter provideRestAdapter(OkHttpClient okHttpClient, Gson gson) {
         RestAdapter.Builder builder = new RestAdapter.Builder();
-        builder.setClient(new OkClient(okHttpClient)).setEndpoint(mEndpoint);
+        builder.setClient(new OkClient(okHttpClient)).setEndpoint(mEndpoint)
+                .setConverter(new GsonConverter(gson));
         if (BuildConfig.DEBUG) {
             builder.setLogLevel(RestAdapter.LogLevel.FULL);
         }
@@ -44,13 +56,7 @@ class RetrofitNetworkModule {
 
     @Provides
     @Singleton
-    GitHubRetrofitService provideGitHubRetrofitService(RestAdapter restAdapter) {
-        return restAdapter.create(GitHubRetrofitService.class);
-    }
-
-    @Provides
-    @Singleton
-    GitHubService provideGitHubService(GitHubRetrofitService gitHubRetrofitService) {
-        return new GitHubService(gitHubRetrofitService);
+    GitHubService provideGitHubService(RestAdapter restAdapter) {
+        return restAdapter.create(GitHubService.class);
     }
 }
