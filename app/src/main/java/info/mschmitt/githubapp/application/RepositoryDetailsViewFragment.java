@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
-import info.mschmitt.githubapp.modules.RepositoryDetailsViewModule;
+import info.mschmitt.githubapp.di.RepositoryDetailsViewModule;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 
 /**

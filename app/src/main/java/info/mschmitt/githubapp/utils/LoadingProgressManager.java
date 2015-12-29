@@ -15,6 +15,7 @@ import rx.subjects.BehaviorSubject;
 /**
  * @author Matthias Schmitt
  */
+@Singleton
 public class LoadingProgressManager {
     private final List<Object> mLoadingQueue = new ArrayList<>();
     private final Map<Object, Runnable> mCancellationHandlers = new HashMap<>();
@@ -22,7 +23,6 @@ public class LoadingProgressManager {
     private boolean mLoading;
 
     @Inject
-    @Singleton
     public LoadingProgressManager() {
 
     }

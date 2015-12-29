@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositorySplitViewBinding;
-import info.mschmitt.githubapp.modules.RepositorySplitViewModule;
+import info.mschmitt.githubapp.di.RepositorySplitViewModule;
 import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 
 

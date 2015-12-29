@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.modules;
+package info.mschmitt.githubapp.di;
 
 import android.content.Context;
 

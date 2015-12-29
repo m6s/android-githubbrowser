@@ -25,6 +25,7 @@ import rx.subjects.BehaviorSubject;
 /**
  * @author Matthias Schmitt
  */
+@Singleton
 public class NavigationManager
         implements UsernameViewModel.NavigationHandler, RepositorySplitViewModel.NavigationHandler,
         RepositoryListViewModel.NavigationHandler, RepositoryPagerViewModel.NavigationHandler,
@@ -43,7 +44,6 @@ public class NavigationManager
     private boolean mDetailsViewActive;
 
     @Inject
-    @Singleton
     public NavigationManager(LoadingProgressManager loadingProgressManager) {
         mLoadingProgressManager = loadingProgressManager;
     }

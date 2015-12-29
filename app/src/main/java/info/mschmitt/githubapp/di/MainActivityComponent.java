@@ -1,10 +1,9 @@
-package info.mschmitt.githubapp.components;
+package info.mschmitt.githubapp.di;
 
 import javax.inject.Singleton;
 
 import dagger.Subcomponent;
 import info.mschmitt.githubapp.application.MainActivity;
-import info.mschmitt.githubapp.modules.MainActivityModule;
 
 /**
  * @author Matthias Schmitt

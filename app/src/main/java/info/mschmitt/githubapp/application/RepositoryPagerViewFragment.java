@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
-import info.mschmitt.githubapp.modules.RepositoryPagerViewModule;
+import info.mschmitt.githubapp.di.RepositoryPagerViewModule;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
 
 /**

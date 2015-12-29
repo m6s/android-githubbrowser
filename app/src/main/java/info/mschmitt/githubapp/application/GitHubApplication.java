@@ -2,9 +2,9 @@ package info.mschmitt.githubapp.application;
 
 import android.app.Application;
 
-import info.mschmitt.githubapp.components.DaggerGitHubApplicationComponent;
-import info.mschmitt.githubapp.modules.GitHubApplicationModule;
-import info.mschmitt.githubapp.modules.NetworkModule;
+import info.mschmitt.githubapp.di.DaggerGitHubApplicationComponent;
+import info.mschmitt.githubapp.di.GitHubApplicationModule;
+import info.mschmitt.githubapp.di.NetworkModule;
 
 /**
  * @author Matthias Schmitt

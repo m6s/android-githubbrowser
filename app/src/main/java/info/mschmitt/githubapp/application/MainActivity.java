@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.modules.MainActivityModule;
+import info.mschmitt.githubapp.di.MainActivityModule;
 
 public class MainActivity extends AppCompatActivity implements RootViewFragment.FragmentHost {
     private NavigationManager mNavigationManager;

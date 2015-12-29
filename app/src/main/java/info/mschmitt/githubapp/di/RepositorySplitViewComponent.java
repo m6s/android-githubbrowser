@@ -1,12 +1,9 @@
-package info.mschmitt.githubapp.components;
+package info.mschmitt.githubapp.di;
 
 import javax.inject.Singleton;
 
 import dagger.Subcomponent;
 import info.mschmitt.githubapp.application.RepositorySplitViewFragment;
-import info.mschmitt.githubapp.modules.RepositoryListViewModule;
-import info.mschmitt.githubapp.modules.RepositoryPagerViewModule;
-import info.mschmitt.githubapp.modules.RepositorySplitViewModule;
 
 /**
  * @author Matthias Schmitt
