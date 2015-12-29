@@ -14,7 +14,7 @@ import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 public class RepositoryListViewModule {
     @Provides
     @Singleton
-    public RepositoryListViewModel providePresenter(NavigationManager navigationManager) {
+    public RepositoryListViewModel provideViewModel(NavigationManager navigationManager) {
         return new RepositoryListViewModel(navigationManager);
     }
 }

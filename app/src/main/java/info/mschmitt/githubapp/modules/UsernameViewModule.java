@@ -18,7 +18,7 @@ import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 public class UsernameViewModule {
     @Provides
     @Singleton
-    public UsernameViewModel providePresenter(Validator validator, GitHubService gitHubService,
+    public UsernameViewModel provideViewModel(Validator validator, GitHubService gitHubService,
                                               AnalyticsService analyticsService,
                                               LoadingProgressManager loadingProgressManager,
                                               NavigationManager navigationManager) {

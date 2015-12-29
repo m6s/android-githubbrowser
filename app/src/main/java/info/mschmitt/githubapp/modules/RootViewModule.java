@@ -15,7 +15,7 @@ import info.mschmitt.githubapp.viewmodels.RootViewModel;
 public class RootViewModule {
     @Provides
     @Singleton
-    public RootViewModel providePresenter(LoadingProgressManager loadingProgressManager,
+    public RootViewModel provideViewModel(LoadingProgressManager loadingProgressManager,
                                           NavigationManager navigationManager) {
         return new RootViewModel(loadingProgressManager, navigationManager);
     }

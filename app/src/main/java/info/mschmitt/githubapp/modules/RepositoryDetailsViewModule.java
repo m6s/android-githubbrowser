@@ -15,7 +15,7 @@ import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 public class RepositoryDetailsViewModule {
     @Provides
     @Singleton
-    public RepositoryDetailsViewModel providePresenter(AnalyticsService analyticsService,
+    public RepositoryDetailsViewModel provideViewModel(AnalyticsService analyticsService,
                                                        NavigationManager navigationManager) {
         return new RepositoryDetailsViewModel(analyticsService, navigationManager);
     }

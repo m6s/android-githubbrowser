@@ -15,7 +15,7 @@ import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
 public class RepositoryPagerViewModule {
     @Provides
     @Singleton
-    public RepositoryPagerViewModel providePresenter(AnalyticsService analyticsService,
+    public RepositoryPagerViewModel provideViewModel(AnalyticsService analyticsService,
                                                      NavigationManager navigationManager) {
         return new RepositoryPagerViewModel(analyticsService, navigationManager);
     }

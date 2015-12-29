@@ -1,9 +1,10 @@
 package info.mschmitt.githubapp.domain;
 
-import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
@@ -11,11 +12,11 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class AnalyticsService {
-    private Application mApplication;
+    private Context mContext;
 
     @Inject
-    public AnalyticsService(Application application) {
-        mApplication = application;
+    public AnalyticsService(@Named("ApplicationContext") Context context) {
+        mContext = context;
     }
 
     public void logScreenView(String screenName) {

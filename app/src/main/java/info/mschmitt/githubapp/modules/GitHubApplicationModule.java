@@ -24,12 +24,6 @@ public class GitHubApplicationModule {
 
     @Provides
     @Singleton
-    public Application provideApplication() {
-        return mApplication;
-    }
-
-    @Provides
-    @Singleton
     public LoadingProgressManager provideLoadingProgressManager() {
         return new LoadingProgressManager();
     }

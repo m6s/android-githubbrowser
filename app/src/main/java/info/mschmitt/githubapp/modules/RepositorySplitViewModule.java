@@ -17,7 +17,7 @@ import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 public class RepositorySplitViewModule {
     @Provides
     @Singleton
-    public RepositorySplitViewModel providePresenter(GitHubService gitHubService,
+    public RepositorySplitViewModel provideViewModel(GitHubService gitHubService,
                                                      AnalyticsService analyticsService,
                                                      LoadingProgressManager loadingProgressManager,
                                                      NavigationManager navigationManager) {
