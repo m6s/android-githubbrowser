@@ -8,7 +8,7 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.UsernamePresenter"/>
+            type="info.mschmitt.githubapp.presenters.UsernameViewModel"/>
     </data>
 
     <RelativeLayout

@@ -15,33 +15,18 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.modules.UsernameModule;
-import info.mschmitt.githubapp.presenters.UsernamePresenter;
+import info.mschmitt.githubapp.presenters.UsernameViewModel;
 
 
-public class UsernameFragment extends Fragment
-        implements Presentable<UsernamePresenter>, UsernamePresenter.UsernameView {
+public class UsernameFragment extends Fragment {
     private FragmentHost mHost;
-    private UsernamePresenter mPresenter;
-    private Component mComponent;
+    private UsernameViewModel mPresenter;
+    private NavigationManager mNavigationManager;
 
     public static UsernameFragment newInstance() {
         return new UsernameFragment();
-    }
-
-    @Override
-    public UsernamePresenter.ParentPresenter getParentPresenter() {
-        return mHost.getPresenter();
-    }
-
-    @Override
-    public void showRepositories(Object sender, String username) {
-        getFragmentManager().beginTransaction()
-                .replace(FragmentUtils.getContainerViewId(UsernameFragment.this),
-                        RepositoriesSplitFragment.newInstance(username)).addToBackStack(null)
-                .commit();
     }
 
     @Override
@@ -53,9 +38,9 @@ public class UsernameFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new UsernameModule());
-        mComponent.inject(this);
-        mPresenter.onCreate(this, savedInstanceState);
+        mHost.getSuperComponent(this).plus(new UsernameModule()).inject(this);
+        mNavigationManager.onCreate(this);
+        mPresenter.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -76,6 +61,7 @@ public class UsernameFragment extends Fragment
     @Override
     public void onDestroy() {
         mPresenter.onDestroy();
+        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -101,14 +87,14 @@ public class UsernameFragment extends Fragment
         }
     }
 
-    @Override
-    public UsernamePresenter getPresenter() {
-        return mPresenter;
+    @Inject
+    public void setPresenter(UsernameViewModel presenter) {
+        mPresenter = presenter;
     }
 
     @Inject
-    public void setPresenter(UsernamePresenter presenter) {
-        mPresenter = presenter;
+    public void setNavigationManager(NavigationManager navigationManager) {
+        mNavigationManager = navigationManager;
     }
 
     public interface Component {
@@ -121,7 +107,5 @@ public class UsernameFragment extends Fragment
 
     public interface FragmentHost {
         SuperComponent getSuperComponent(UsernameFragment fragment);
-
-        UsernamePresenter.ParentPresenter getPresenter();
     }
 }

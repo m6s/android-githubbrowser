@@ -5,7 +5,7 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoryDetailsPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RepositoryDetailsViewModel"/>
     </data>
 
     <ScrollView

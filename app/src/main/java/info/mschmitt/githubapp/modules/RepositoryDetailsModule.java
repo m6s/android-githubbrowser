@@ -1,15 +1,12 @@
 package info.mschmitt.githubapp.modules;
 
-import java.util.LinkedHashMap;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.app.NavigationManager;
 import info.mschmitt.githubapp.domain.AnalyticsManager;
-import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.presenters.RepositoryDetailsPresenter;
-import rx.Observable;
+import info.mschmitt.githubapp.presenters.RepositoryDetailsViewModel;
 
 /**
  * @author Matthias Schmitt
@@ -18,9 +15,8 @@ import rx.Observable;
 public class RepositoryDetailsModule {
     @Provides
     @Singleton
-    public RepositoryDetailsPresenter providePresenter(
-            Observable<LinkedHashMap<Long, Repository>> repositories,
-            AnalyticsManager analyticsManager) {
-        return new RepositoryDetailsPresenter(repositories, analyticsManager);
+    public RepositoryDetailsViewModel providePresenter(AnalyticsManager analyticsManager,
+                                                       NavigationManager navigationManager) {
+        return new RepositoryDetailsViewModel(analyticsManager, navigationManager);
     }
 }

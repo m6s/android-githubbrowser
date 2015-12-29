@@ -5,7 +5,6 @@ import android.databinding.Bindable;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.AdapterView;
 
 import java.util.HashMap;
@@ -21,40 +20,32 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class RepositoryListPresenter extends BaseObservable implements OnBackPressedListener {
+public class RepositoryListViewModel extends BaseObservable implements OnBackPressedListener {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
-    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
+    private final NavigationHandler mNavigationHandler;
+    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
     private CompositeSubscription mSubscriptions;
-    private RepositoryListView mView;
-    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener =
-            new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View listView, int position,
-                                        long id) {
-                    Repository repository = mRepositories.get(position);
-                    mView.getParentPresenter()
-                            .onRepositorySelected(RepositoryListPresenter.this, repository);
-                }
-            };
     private long mCurrentRepositoryId;
 
-    public RepositoryListPresenter(
-            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable) {
-        mRepositoryMapObservable = repositoryMapObservable;
+    public RepositoryListViewModel(NavigationHandler navigationHandler) {
+        mNavigationHandler = navigationHandler;
+        mOnRepositoryItemClickListener = (ignore1, ignore2, position, ignore3) -> {
+            Repository repository = mRepositories.get(position);
+            mNavigationHandler.showRepository(repository);
+        };
     }
 
     public ObservableList<Repository> getRepositories() {
         return mRepositories;
     }
 
-    public void onCreate(RepositoryListView view, Bundle savedState) {
+    public void onCreate(Bundle savedState) {
         mSubscriptions = new CompositeSubscription();
-        mView = view;
         long lastRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
-        mSubscriptions.add(mRepositoryMapObservable.subscribe((repositoryMap) -> {
+        mSubscriptions.add(mNavigationHandler.getRepositoryMap().subscribe((repositoryMap) -> {
             mRowIndexes.clear();
             int i = 0;
             for (long id : repositoryMap.keySet()) {
@@ -66,6 +57,7 @@ public class RepositoryListPresenter extends BaseObservable implements OnBackPre
                 setCurrentRepositoryId(lastRepositoryId);
             }
         }));
+        mSubscriptions.add(mNavigationHandler.getRepository().subscribe(this::selectRepository));
     }
 
     private void setCurrentRepositoryId(long repositoryId) {
@@ -83,7 +75,6 @@ public class RepositoryListPresenter extends BaseObservable implements OnBackPre
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
-        mView = null;
     }
 
     public void selectRepository(Repository repository) {
@@ -101,11 +92,11 @@ public class RepositoryListPresenter extends BaseObservable implements OnBackPre
         return false;
     }
 
-    public interface RepositoryListView {
-        ParentPresenter getParentPresenter();
-    }
+    public interface NavigationHandler {
+        void showRepository(Repository repository);
 
-    public interface ParentPresenter {
-        void onRepositorySelected(Object sender, Repository repository);
+        Observable<LinkedHashMap<Long, Repository>> getRepositoryMap();
+
+        Observable<Repository> getRepository();
     }
 }

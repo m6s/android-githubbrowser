@@ -18,24 +18,23 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class RepositoryDetailsPresenter extends BaseObservable {
-    private final Observable<LinkedHashMap<Long, Repository>> mRepositories;
+public class RepositoryDetailsViewModel extends BaseObservable {
     private final AnalyticsManager mAnalyticsManager;
+    private final NavigationHandler mNavigationHandler;
     private Observable<Repository> mRepository;
     private CompositeSubscription mSubscriptions;
-    private RepositoryDetailsView mView;
     private String mRepositoryUrl;
     private String mRepositoryName;
 
-    public RepositoryDetailsPresenter(Observable<LinkedHashMap<Long, Repository>> repositories,
-                                      AnalyticsManager analyticsManager) {
-        mRepositories = repositories;
+    public RepositoryDetailsViewModel(AnalyticsManager analyticsManager,
+                                      NavigationHandler navigationHandler) {
         mAnalyticsManager = analyticsManager;
+        mNavigationHandler = navigationHandler;
     }
 
-    public void onCreateForPosition(RepositoryDetailsView view, int position, Bundle savedState) {
-        mRepository = mapByRepositoryPosition(mRepositories, position);
-        onCreate(view, savedState);
+    public void onCreateForPosition(int position, Bundle savedState) {
+        mRepository = mapByRepositoryPosition(mNavigationHandler.getRepositoryMap(), position);
+        onCreate(savedState);
     }
 
     @NonNull
@@ -47,16 +46,15 @@ public class RepositoryDetailsPresenter extends BaseObservable {
         }).filter(nextRepository -> nextRepository != null);
     }
 
-    private void onCreate(RepositoryDetailsView view, Bundle savedState) {
+    private void onCreate(Bundle savedState) {
         mSubscriptions = new CompositeSubscription();
-        mView = view;
         mSubscriptions.add(mRepository.subscribe(this::setRepository));
         mAnalyticsManager.logScreenView(getClass().getName());
     }
 
-    public void onCreateForId(RepositoryDetailsView view, long repositoryId, Bundle savedState) {
-        mRepository = mapByRepositoryId(mRepositories, repositoryId);
-        onCreate(view, savedState);
+    public void onCreateForId(long repositoryId, Bundle savedState) {
+        mRepository = mapByRepositoryId(mNavigationHandler.getRepositoryMap(), repositoryId);
+        onCreate(savedState);
     }
 
     @NonNull
@@ -88,13 +86,9 @@ public class RepositoryDetailsPresenter extends BaseObservable {
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
-        mView = null;
     }
 
-    public interface RepositoryDetailsView {
-        ParentPresenter getParentPresenter();
-    }
-
-    public interface ParentPresenter {
+    public interface NavigationHandler {
+        Observable<LinkedHashMap<Long, Repository>> getRepositoryMap();
     }
 }

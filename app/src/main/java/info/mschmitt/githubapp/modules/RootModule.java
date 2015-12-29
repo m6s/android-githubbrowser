@@ -4,7 +4,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import info.mschmitt.githubapp.presenters.RootPresenter;
+import info.mschmitt.githubapp.app.NavigationManager;
+import info.mschmitt.githubapp.domain.LoadingProgressManager;
+import info.mschmitt.githubapp.presenters.RootViewModel;
 
 /**
  * @author Matthias Schmitt
@@ -13,7 +15,8 @@ import info.mschmitt.githubapp.presenters.RootPresenter;
 public class RootModule {
     @Provides
     @Singleton
-    public RootPresenter providePresenter() {
-        return new RootPresenter();
+    public RootViewModel providePresenter(LoadingProgressManager loadingProgressManager,
+                                          NavigationManager navigationManager) {
+        return new RootViewModel(loadingProgressManager, navigationManager);
     }
 }

@@ -8,48 +8,24 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
 import info.mschmitt.githubapp.modules.RootModule;
-import info.mschmitt.githubapp.presenters.RootPresenter;
+import info.mschmitt.githubapp.presenters.RootViewModel;
 
 /**
  * @author Matthias Schmitt
  */
 public class RootFragment extends BugFixFragment
-        implements Presentable<RootPresenter>, RootPresenter.RootView,
-        UsernameFragment.FragmentHost, RepositoriesSplitFragment.FragmentHost {
+        implements UsernameFragment.FragmentHost, RepositorySplitFragment.FragmentHost {
     private FragmentHost mHost;
-    private RootPresenter mPresenter;
+    private RootViewModel mPresenter;
     private Component mComponent;
+    private NavigationManager mNavigationManager;
 
     public static RootFragment newInstance() {
         return new RootFragment();
-    }
-
-    @Override
-    public RootPresenter.ParentPresenter getParentPresenter() {
-        return mHost.getPresenter();
-    }
-
-    @Override
-    public Object getChildPresenter() {
-        Presentable fragment =
-                (Presentable) getChildFragmentManager().findFragmentById(R.id.contentView);
-        return fragment.getPresenter();
-    }
-
-    @Override
-    public boolean tryShowPreviousChildView() {
-        return getChildFragmentManager().popBackStackImmediate();
-    }
-
-    @Override
-    public void showErrorDialog(Throwable throwable, Runnable retryHandler) {
-        AlertDialogs.showErrorDialog(getActivity(), throwable, retryHandler);
     }
 
     @Override
@@ -65,7 +41,8 @@ public class RootFragment extends BugFixFragment
         Application application = (Application) getActivity().getApplication();
         mComponent = application.getSuperComponent(this).plus(new RootModule());
         mComponent.inject(this);
-        mPresenter.onCreate(this, savedInstanceState);
+        mNavigationManager.onCreate(this);
+        mPresenter.onCreate(savedInstanceState);
     }
 
     @Override
@@ -88,6 +65,7 @@ public class RootFragment extends BugFixFragment
     @Override
     public void onDestroy() {
         mPresenter.onDestroy();
+        mNavigationManager.onDestroy(this);
         mComponent = null;
         super.onDestroy();
     }
@@ -104,23 +82,23 @@ public class RootFragment extends BugFixFragment
     }
 
     @Override
-    public RepositoriesSplitFragment.SuperComponent getSuperComponent(
-            RepositoriesSplitFragment fragment) {
+    public RepositorySplitFragment.SuperComponent getSuperComponent(
+            RepositorySplitFragment fragment) {
         return mComponent;
     }
 
-    @Override
-    public RootPresenter getPresenter() {
-        return mPresenter;
-    }
-
     @Inject
-    public void setPresenter(RootPresenter presenter) {
+    public void setPresenter(RootViewModel presenter) {
         mPresenter = presenter;
     }
 
+    @Inject
+    public void setNavigationManager(NavigationManager navigationManager) {
+        mNavigationManager = navigationManager;
+    }
+
     public interface Component
-            extends RepositoriesSplitFragment.SuperComponent, UsernameFragment.SuperComponent {
+            extends RepositorySplitFragment.SuperComponent, UsernameFragment.SuperComponent {
         void inject(RootFragment fragment);
     }
 
@@ -133,6 +111,5 @@ public class RootFragment extends BugFixFragment
     }
 
     public interface FragmentHost {
-        RootPresenter.ParentPresenter getPresenter();
     }
 }

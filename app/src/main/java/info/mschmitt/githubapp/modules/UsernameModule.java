@@ -4,10 +4,12 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.app.NavigationManager;
 import info.mschmitt.githubapp.domain.AnalyticsManager;
+import info.mschmitt.githubapp.domain.LoadingProgressManager;
 import info.mschmitt.githubapp.domain.Validator;
 import info.mschmitt.githubapp.network.GitHubService;
-import info.mschmitt.githubapp.presenters.UsernamePresenter;
+import info.mschmitt.githubapp.presenters.UsernameViewModel;
 
 /**
  * @author Matthias Schmitt
@@ -16,8 +18,11 @@ import info.mschmitt.githubapp.presenters.UsernamePresenter;
 public class UsernameModule {
     @Provides
     @Singleton
-    public UsernamePresenter providePresenter(Validator validator, GitHubService gitHubService,
-                                              AnalyticsManager analyticsManager) {
-        return new UsernamePresenter(validator, gitHubService, analyticsManager);
+    public UsernameViewModel providePresenter(Validator validator, GitHubService gitHubService,
+                                              AnalyticsManager analyticsManager,
+                                              LoadingProgressManager loadingProgressManager,
+                                              NavigationManager navigationManager) {
+        return new UsernameViewModel(validator, gitHubService, analyticsManager,
+                loadingProgressManager, navigationManager);
     }
 }

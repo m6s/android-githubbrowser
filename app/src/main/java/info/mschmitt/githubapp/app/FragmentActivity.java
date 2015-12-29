@@ -3,32 +3,50 @@ package info.mschmitt.githubapp.app;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
-import info.mschmitt.githubapp.android.presentation.Presentable;
-import info.mschmitt.githubapp.presenters.RootPresenter;
+import info.mschmitt.githubapp.modules.ActivityModule;
 
 public class FragmentActivity extends AppCompatActivity implements RootFragment.FragmentHost {
+    private NavigationManager mNavigationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((Application) getApplication()).getSuperComponent(this).plus(new ActivityModule())
+                .inject(this);
+        mNavigationManager.onCreate(this);
         setContentView(R.layout.activity);
     }
 
     @Override
+    protected void onDestroy() {
+        mNavigationManager.onDestroy(this);
+        super.onDestroy();
+    }
+
+    @Inject
+    public void setNavigationManager(NavigationManager navigationManager) {
+        mNavigationManager = navigationManager;
+    }
+
+    @Override
     public void onBackPressed() {
-        Presentable presentable =
-                (Presentable) getSupportFragmentManager().findFragmentById(R.id.fragment);
-        Object presenter = presentable.getPresenter();
-        boolean handled = presenter instanceof OnBackPressedListener &&
-                ((OnBackPressedListener) presenter).onBackPressed();
-        if (!handled) {
+        if (!mNavigationManager.onBackPressed()) {
             super.onBackPressed();
         }
     }
 
-    @Override
-    public RootPresenter.ParentPresenter getPresenter() {
-        return null;
+    public interface Component {
+        void inject(FragmentActivity activity);
+    }
+
+    public interface SuperComponent {
+        Component plus(ActivityModule module);
+    }
+
+    public interface Application {
+        SuperComponent getSuperComponent(FragmentActivity activity);
     }
 }

@@ -11,28 +11,21 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryListModule;
-import info.mschmitt.githubapp.presenters.RepositoryListPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryListViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RepositoryListFragment extends Fragment
-        implements Presentable<RepositoryListPresenter>,
-        RepositoryListPresenter.RepositoryListView {
-    private RepositoryListPresenter mPresenter;
+public class RepositoryListFragment extends Fragment {
+    private RepositoryListViewModel mPresenter;
     private FragmentHost mHost;
     private RepositoryListAdapter mAdapter;
+    private NavigationManager mNavigationManager;
 
     public static RepositoryListFragment newInstance() {
         return new RepositoryListFragment();
-    }
-
-    @Override
-    public RepositoryListPresenter.ParentPresenter getParentPresenter() {
-        return mHost.getPresenter();
     }
 
     @Override
@@ -45,7 +38,8 @@ public class RepositoryListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).plus(new RepositoryListModule()).inject(this);
-        mPresenter.onCreate(this, savedInstanceState);
+        mNavigationManager.onCreate(this);
+        mPresenter.onCreate(savedInstanceState);
         mAdapter = new RepositoryListAdapter(getActivity(), mPresenter.getRepositories());
     }
 
@@ -74,6 +68,7 @@ public class RepositoryListFragment extends Fragment
     @Override
     public void onDestroy() {
         mPresenter.onDestroy();
+        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -83,13 +78,13 @@ public class RepositoryListFragment extends Fragment
         super.onDetach();
     }
 
-    @Override
-    public RepositoryListPresenter getPresenter() {
-        return mPresenter;
+    @Inject
+    public void setNavigationManager(NavigationManager navigationManager) {
+        mNavigationManager = navigationManager;
     }
 
     @Inject
-    public void setPresenter(RepositoryListPresenter presenter) {
+    public void setPresenter(RepositoryListViewModel presenter) {
         mPresenter = presenter;
     }
 
@@ -103,7 +98,5 @@ public class RepositoryListFragment extends Fragment
 
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoryListFragment fragment);
-
-        RepositoryListPresenter.ParentPresenter getPresenter();
     }
 }

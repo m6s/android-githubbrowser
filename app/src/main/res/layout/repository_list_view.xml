@@ -10,7 +10,7 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoryListPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RepositoryListViewModel"/>
     </data>
 
     <ListView

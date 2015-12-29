@@ -10,21 +10,18 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
-import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryDetailsModule;
-import info.mschmitt.githubapp.presenters.RepositoryDetailsPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryDetailsViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RepositoryDetailsFragment extends Fragment
-        implements Presentable<RepositoryDetailsPresenter>,
-        RepositoryDetailsPresenter.RepositoryDetailsView, OnBackPressedListener {
+public class RepositoryDetailsFragment extends Fragment {
     private static final String ARG_REPOSITORY_POSITION = "ARG_REPOSITORY_POSITION";
-    private RepositoryDetailsPresenter mPresenter;
+    private RepositoryDetailsViewModel mPresenter;
     private FragmentHost mHost;
+    private NavigationManager mNavigationManager;
 
     public static RepositoryDetailsFragment newInstanceForRepositoryPosition(
             int repositoryPosition) {
@@ -33,11 +30,6 @@ public class RepositoryDetailsFragment extends Fragment
         args.putInt(ARG_REPOSITORY_POSITION, repositoryPosition);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public RepositoryDetailsPresenter.ParentPresenter getParentPresenter() {
-        return mHost.getPresenter();
     }
 
     @Override
@@ -50,7 +42,8 @@ public class RepositoryDetailsFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).plus(new RepositoryDetailsModule()).inject(this);
-        mPresenter.onCreateForPosition(this, getArguments().getInt(ARG_REPOSITORY_POSITION),
+        mNavigationManager.onCreate(this);
+        mPresenter.onCreateForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
                 savedInstanceState);
     }
 
@@ -71,6 +64,7 @@ public class RepositoryDetailsFragment extends Fragment
     @Override
     public void onDestroy() {
         mPresenter.onDestroy();
+        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -80,19 +74,14 @@ public class RepositoryDetailsFragment extends Fragment
         super.onDetach();
     }
 
-    @Override
-    public RepositoryDetailsPresenter getPresenter() {
-        return mPresenter;
+    @Inject
+    public void setNavigationManager(NavigationManager navigationManager) {
+        mNavigationManager = navigationManager;
     }
 
     @Inject
-    public void setPresenter(RepositoryDetailsPresenter presenter) {
+    public void setPresenter(RepositoryDetailsViewModel presenter) {
         mPresenter = presenter;
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        return false;
     }
 
     public interface Component {
@@ -105,7 +94,5 @@ public class RepositoryDetailsFragment extends Fragment
 
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoryDetailsFragment fragment);
-
-        RepositoryDetailsPresenter.ParentPresenter getPresenter();
     }
 }

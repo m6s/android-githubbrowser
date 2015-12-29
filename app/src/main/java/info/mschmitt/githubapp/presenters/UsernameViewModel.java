@@ -11,9 +11,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.ObjectsBackport;
-import info.mschmitt.githubapp.android.presentation.OnErrorListener;
-import info.mschmitt.githubapp.android.presentation.OnLoadingListener;
 import info.mschmitt.githubapp.domain.AnalyticsManager;
+import info.mschmitt.githubapp.domain.LoadingProgressManager;
 import info.mschmitt.githubapp.domain.Validator;
 import info.mschmitt.githubapp.network.GitHubService;
 import rx.Subscription;
@@ -23,13 +22,14 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class UsernamePresenter extends BaseObservable {
+public class UsernameViewModel extends BaseObservable {
     public static final String STATE_USER_NAME = "STATE_USER_NAME";
     private final Validator mValidator;
     private final GitHubService mGitHubService;
     private final AnalyticsManager mAnalyticsManager;
+    private final LoadingProgressManager mLoadingProgressManager;
+    private final NavigationHandler mNavigationHandler;
     private CompositeSubscription mSubscriptions;
-    private UsernameView mView;
     private String mUsername;
     private String mUsernameError;
     private final TextWatcher mUsernameTextWatcher = new TextWatcher() {
@@ -52,11 +52,15 @@ public class UsernamePresenter extends BaseObservable {
     private boolean mLoading;
 
     @Inject
-    public UsernamePresenter(Validator validator, GitHubService gitHubService,
-                             AnalyticsManager analyticsManager) {
+    public UsernameViewModel(Validator validator, GitHubService gitHubService,
+                             AnalyticsManager analyticsManager,
+                             LoadingProgressManager loadingProgressManager,
+                             NavigationHandler navigationHandler) {
         mValidator = validator;
         mGitHubService = gitHubService;
         mAnalyticsManager = analyticsManager;
+        mLoadingProgressManager = loadingProgressManager;
+        mNavigationHandler = navigationHandler;
     }
 
     public String getUsername() {
@@ -77,13 +81,13 @@ public class UsernamePresenter extends BaseObservable {
                 mGitHubService.getUser(mUsername).observeOn(AndroidSchedulers.mainThread())
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
-                            mView.getParentPresenter().onLoading(this, true, null);
-                        }).subscribe(user -> mView.showRepositories(this, mUsername),
-                        throwable -> mView.getParentPresenter().onError(this, throwable,
-                                this::showRepositories));
+                            mLoadingProgressManager.notifyLoading(this, true, null);
+                        }).subscribe(user -> mNavigationHandler.showRepositorySplitView(mUsername),
+                        throwable -> mNavigationHandler
+                                .showError(throwable, this::showRepositories));
         mSubscriptions.add(subscription);
         setLoading(true);
-        mView.getParentPresenter().onLoading(this, false, subscription::unsubscribe);
+        mLoadingProgressManager.notifyLoading(this, false, subscription::unsubscribe);
     }
 
     public TextWatcher getUsernameTextWatcher() {
@@ -116,9 +120,8 @@ public class UsernamePresenter extends BaseObservable {
         notifyPropertyChanged(BR.loading);
     }
 
-    public void onCreate(UsernameView view, Bundle savedState) {
+    public void onCreate(Bundle savedState) {
         mSubscriptions = new CompositeSubscription();
-        mView = view;
         if (savedState != null) {
             mUsername = savedState.getString(STATE_USER_NAME);
         }
@@ -130,15 +133,11 @@ public class UsernamePresenter extends BaseObservable {
 
     public void onDestroy() {
         mSubscriptions.unsubscribe();
-        mView = null;
     }
 
-    public interface UsernameView {
-        ParentPresenter getParentPresenter();
+    public interface NavigationHandler {
+        void showRepositorySplitView(String username);
 
-        void showRepositories(Object sender, String username);
-    }
-
-    public interface ParentPresenter extends OnLoadingListener, OnErrorListener {
+        void showError(Throwable throwable, Runnable retryHandler);
     }
 }

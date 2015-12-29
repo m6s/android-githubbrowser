@@ -11,29 +11,23 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryPagerModule;
-import info.mschmitt.githubapp.presenters.RepositoryPagerPresenter;
+import info.mschmitt.githubapp.presenters.RepositoryPagerViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryPagerFragment extends Fragment
-        implements Presentable<RepositoryPagerPresenter>,
-        RepositoryPagerPresenter.RepositoryPagerView, RepositoryDetailsFragment.FragmentHost {
-    private RepositoryPagerPresenter mPresenter;
+        implements RepositoryDetailsFragment.FragmentHost {
+    private RepositoryPagerViewModel mPresenter;
     private FragmentHost mHost;
     private Component mComponent;
     private RepositoryPagerAdapter mAdapter;
+    private NavigationManager mNavigationManager;
 
     public static RepositoryPagerFragment newInstance() {
         return new RepositoryPagerFragment();
-    }
-
-    @Override
-    public RepositoryPagerPresenter.ParentPresenter getParentPresenter() {
-        return mHost.getPresenter();
     }
 
     @Override
@@ -47,7 +41,8 @@ public class RepositoryPagerFragment extends Fragment
         super.onCreate(savedInstanceState);
         mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerModule());
         mComponent.inject(this);
-        mPresenter.onCreate(this, savedInstanceState);
+        mNavigationManager.onCreate(this);
+        mPresenter.onCreate(savedInstanceState);
         mAdapter =
                 new RepositoryPagerAdapter(getChildFragmentManager(), mPresenter.getRepositories());
     }
@@ -77,6 +72,7 @@ public class RepositoryPagerFragment extends Fragment
     @Override
     public void onDestroy() {
         mPresenter.onDestroy();
+        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -86,13 +82,13 @@ public class RepositoryPagerFragment extends Fragment
         super.onDetach();
     }
 
-    @Override
-    public RepositoryPagerPresenter getPresenter() {
-        return mPresenter;
+    @Inject
+    public void setNavigationManager(NavigationManager navigationManager) {
+        mNavigationManager = navigationManager;
     }
 
     @Inject
-    public void setPresenter(RepositoryPagerPresenter presenter) {
+    public void setPresenter(RepositoryPagerViewModel presenter) {
         mPresenter = presenter;
     }
 
@@ -113,7 +109,5 @@ public class RepositoryPagerFragment extends Fragment
 
     public interface FragmentHost {
         SuperComponent getSuperComponent(RepositoryPagerFragment fragment);
-
-        RepositoryPagerPresenter.ParentPresenter getPresenter();
     }
 }

@@ -10,7 +10,7 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoryPagerPresenter"/>
+            type="info.mschmitt.githubapp.presenters.RepositoryPagerViewModel"/>
     </data>
 
     <android.support.v4.view.ViewPager

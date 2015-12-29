@@ -3,17 +3,17 @@ package info.mschmitt.githubapp.components;
 import javax.inject.Singleton;
 
 import dagger.Subcomponent;
-import info.mschmitt.githubapp.app.RepositoriesSplitFragment;
-import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
+import info.mschmitt.githubapp.app.RepositorySplitFragment;
 import info.mschmitt.githubapp.modules.RepositoryListModule;
 import info.mschmitt.githubapp.modules.RepositoryPagerModule;
+import info.mschmitt.githubapp.modules.RepositorySplitModule;
 
 /**
  * @author Matthias Schmitt
  */
 @Singleton
-@Subcomponent(modules = {RepositoriesSplitModule.class})
-public interface RepositoriesSplitComponent extends RepositoriesSplitFragment.Component {
+@Subcomponent(modules = {RepositorySplitModule.class})
+public interface RepositoriesSplitComponent extends RepositorySplitFragment.Component {
     @Override
     RepositoryListComponent plus(RepositoryListModule module);
 

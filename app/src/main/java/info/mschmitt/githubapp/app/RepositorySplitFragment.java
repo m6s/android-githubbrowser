@@ -16,73 +16,28 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.android.presentation.Presentable;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
-import info.mschmitt.githubapp.modules.RepositoriesSplitModule;
-import info.mschmitt.githubapp.presenters.RepositoryListPresenter;
-import info.mschmitt.githubapp.presenters.RepositoryPagerPresenter;
-import info.mschmitt.githubapp.presenters.RepositorySplitPresenter;
+import info.mschmitt.githubapp.modules.RepositorySplitModule;
+import info.mschmitt.githubapp.presenters.RepositorySplitViewModel;
 
 
-public class RepositoriesSplitFragment extends Fragment
-        implements Presentable<RepositorySplitPresenter>,
-        RepositorySplitPresenter.RepositoriesSplitView, RepositoryListFragment.FragmentHost,
+public class RepositorySplitFragment extends Fragment
+        implements RepositoryListFragment.FragmentHost,
         RepositoryPagerFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
-    private RepositorySplitPresenter mPresenter;
+    private RepositorySplitViewModel mPresenter;
     private RepositoryListFragment mMasterFragment;
     private RepositoryPagerFragment mDetailsFragment;
     private Component mComponent;
+    private NavigationManager mNavigationManager;
 
-    public static RepositoriesSplitFragment newInstance(String username) {
-        RepositoriesSplitFragment fragment = new RepositoriesSplitFragment();
+    public static RepositorySplitFragment newInstance(String username) {
+        RepositorySplitFragment fragment = new RepositorySplitFragment();
         Bundle args = new Bundle();
         args.putString(ARG_USERNAME, username);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public RepositoryListPresenter getMasterPresenter() {
-        return mMasterFragment.getPresenter();
-    }
-
-    @Override
-    public RepositoryPagerPresenter getDetailsPresenter() {
-        return mDetailsFragment.getPresenter();
-    }
-
-    @Override
-    public void showDetailsView() {
-        RepositoriesSplitViewBinding binding = getBinding();
-        if (!isInSplitMode()) {
-            binding.masterView.setVisibility(View.GONE);
-        }
-        binding.detailsView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public RepositorySplitPresenter.ParentPresenter getParentPresenter() {
-        return mHost.getPresenter();
-    }
-
-    @Override
-    public boolean isInSplitMode() {
-        return getResources().getBoolean(R.bool.split);
-    }
-
-    @Override
-    public void hideDetailsView() {
-        RepositoriesSplitViewBinding binding = getBinding();
-        binding.masterView.setVisibility(View.VISIBLE);
-        if (!isInSplitMode()) {
-            binding.detailsView.setVisibility(View.GONE);
-        }
-    }
-
-    private RepositoriesSplitViewBinding getBinding() {
-        return DataBindingUtil.findBinding(getView());
     }
 
     @Override
@@ -94,9 +49,10 @@ public class RepositoriesSplitFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new RepositoriesSplitModule());
+        mComponent = mHost.getSuperComponent(this).plus(new RepositorySplitModule());
         mComponent.inject(this);
-        mPresenter.onCreate(this, getArguments().getString(ARG_USERNAME), savedInstanceState);
+        mNavigationManager.onCreate(this);
+        mPresenter.onCreate(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -141,6 +97,10 @@ public class RepositoriesSplitFragment extends Fragment
         }
     }
 
+    private RepositoriesSplitViewBinding getBinding() {
+        return DataBindingUtil.findBinding(getView());
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mPresenter.onSave(outState);
@@ -149,6 +109,7 @@ public class RepositoriesSplitFragment extends Fragment
     @Override
     public void onDestroy() {
         mPresenter.onDestroy();
+        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -186,28 +147,26 @@ public class RepositoriesSplitFragment extends Fragment
         return mComponent;
     }
 
-    @Override
-    public RepositorySplitPresenter getPresenter() {
-        return mPresenter;
+    @Inject
+    public void setPresenter(RepositorySplitViewModel presenter) {
+        mPresenter = presenter;
     }
 
     @Inject
-    public void setPresenter(RepositorySplitPresenter presenter) {
-        mPresenter = presenter;
+    public void setNavigationManager(NavigationManager navigationManager) {
+        mNavigationManager = navigationManager;
     }
 
     public interface Component
             extends RepositoryListFragment.SuperComponent, RepositoryPagerFragment.SuperComponent {
-        void inject(RepositoriesSplitFragment fragment);
+        void inject(RepositorySplitFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(RepositoriesSplitModule module);
+        Component plus(RepositorySplitModule module);
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositoriesSplitFragment fragment);
-
-        RepositorySplitPresenter.ParentPresenter getPresenter();
+        SuperComponent getSuperComponent(RepositorySplitFragment fragment);
     }
 }

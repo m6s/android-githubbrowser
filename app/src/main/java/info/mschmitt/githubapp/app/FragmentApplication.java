@@ -9,7 +9,7 @@ import info.mschmitt.githubapp.modules.NetworkModule;
  * @author Matthias Schmitt
  */
 public class FragmentApplication extends android.app.Application
-        implements RootFragment.Application {
+        implements RootFragment.Application, FragmentActivity.Application {
     private ApplicationComponent mApplicationComponent;
 
     @Override
@@ -26,6 +26,11 @@ public class FragmentApplication extends android.app.Application
 
     @Override
     public RootFragment.SuperComponent getSuperComponent(RootFragment fragment) {
+        return mApplicationComponent;
+    }
+
+    @Override
+    public FragmentActivity.SuperComponent getSuperComponent(FragmentActivity activity) {
         return mApplicationComponent;
     }
 }
