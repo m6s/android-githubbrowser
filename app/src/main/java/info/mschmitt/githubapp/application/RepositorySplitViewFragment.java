@@ -26,7 +26,7 @@ public class RepositorySplitViewFragment extends Fragment
         RepositoryPagerViewFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
-    private RepositorySplitViewModel mPresenter;
+    private RepositorySplitViewModel mViewModel;
     private RepositoryListViewFragment mMasterFragment;
     private RepositoryPagerViewFragment mDetailsFragment;
     private Component mComponent;
@@ -52,7 +52,7 @@ public class RepositorySplitViewFragment extends Fragment
         mComponent = mHost.getSuperComponent(this).plus(new RepositorySplitViewModule());
         mComponent.inject(this);
         mNavigationManager.onCreate(this);
-        mPresenter.onCreate(getArguments().getString(ARG_USERNAME), savedInstanceState);
+        mViewModel.onCreate(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -61,7 +61,7 @@ public class RepositorySplitViewFragment extends Fragment
                              Bundle savedInstanceState) {
         RepositorySplitViewBinding binding =
                 RepositorySplitViewBinding.inflate(inflater, container, false);
-        binding.setPresenter(mPresenter);
+        binding.setViewModel(mViewModel);
         mMasterFragment = (RepositoryListViewFragment) getChildFragmentManager()
                 .findFragmentById(binding.masterView.getId());
         if (mMasterFragment == null) {
@@ -87,7 +87,7 @@ public class RepositorySplitViewFragment extends Fragment
             getBinding().masterView.setVisibility(View.VISIBLE);
             getBinding().detailsView.setVisibility(View.VISIBLE);
         } else {
-            if (mPresenter.isDetailsViewActive()) {
+            if (mViewModel.isDetailsViewActive()) {
                 getBinding().masterView.setVisibility(View.GONE);
                 getBinding().detailsView.setVisibility(View.VISIBLE);
             } else {
@@ -103,12 +103,12 @@ public class RepositorySplitViewFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mPresenter.onSave(outState);
+        mViewModel.onSave(outState);
     }
 
     @Override
     public void onDestroy() {
-        mPresenter.onDestroy();
+        mViewModel.onDestroy();
         mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
@@ -148,8 +148,8 @@ public class RepositorySplitViewFragment extends Fragment
     }
 
     @Inject
-    public void setPresenter(RepositorySplitViewModel presenter) {
-        mPresenter = presenter;
+    public void setViewModel(RepositorySplitViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     @Inject

@@ -6,7 +6,7 @@
         <import type="android.view.View"/>
 
         <variable
-            name="presenter"
+            name="viewModel"
             type="info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel"/>
     </data>
 
@@ -28,7 +28,7 @@
             android:layout_weight="1"
             android:baselineAligned="false"
             android:orientation="horizontal"
-            android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
+            android:visibility="@{viewModel.loading ? View.GONE : View.VISIBLE}">
 
             <FrameLayout
                 android:id="@+id/masterView"
