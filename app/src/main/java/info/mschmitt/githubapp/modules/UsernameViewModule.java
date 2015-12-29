@@ -9,7 +9,7 @@ import info.mschmitt.githubapp.app.NavigationManager;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.Validator;
 import info.mschmitt.githubapp.network.GitHubService;
-import info.mschmitt.githubapp.presenters.UsernameViewModel;
+import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 
 /**
  * @author Matthias Schmitt

@@ -6,8 +6,8 @@
         <import type="android.view.View"/>
 
         <variable
-            name="presenter"
-            type="info.mschmitt.githubapp.presenters.RootViewModel"/>
+            name="viewModel"
+            type="info.mschmitt.githubapp.viewmodels.RootViewModel"/>
     </data>
 
     <RelativeLayout
@@ -23,6 +23,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="@{presenter.loading ? View.VISIBLE : View.GONE}"/>
+            android:visibility="@{viewModel.loading ? View.VISIBLE : View.GONE}"/>
     </RelativeLayout>
 </layout>

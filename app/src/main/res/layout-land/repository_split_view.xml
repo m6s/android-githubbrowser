@@ -7,7 +7,7 @@
 
         <variable
             name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositorySplitViewModel"/>
+            type="info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel"/>
     </data>
 
     <LinearLayout
@@ -22,21 +22,25 @@
             android:background="@color/primary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
             android:visibility="@{presenter.loading ? View.GONE : View.VISIBLE}">
 
             <FrameLayout
                 android:id="@+id/masterView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"/>
 
             <FrameLayout
                 android:id="@+id/detailsView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </FrameLayout>
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"/>
+        </LinearLayout>
     </LinearLayout>
 </layout>

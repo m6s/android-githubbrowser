@@ -16,9 +16,9 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
+import info.mschmitt.githubapp.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubapp.modules.RepositorySplitViewModule;
-import info.mschmitt.githubapp.presenters.RepositorySplitViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 
 
 public class RepositorySplitViewFragment extends Fragment
@@ -59,8 +59,8 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RepositoriesSplitViewBinding binding =
-                RepositoriesSplitViewBinding.inflate(inflater, container, false);
+        RepositorySplitViewBinding binding =
+                RepositorySplitViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
         mMasterFragment = (RepositoryListViewFragment) getChildFragmentManager()
                 .findFragmentById(binding.masterView.getId());
@@ -97,7 +97,7 @@ public class RepositorySplitViewFragment extends Fragment
         }
     }
 
-    private RepositoriesSplitViewBinding getBinding() {
+    private RepositorySplitViewBinding getBinding() {
         return DataBindingUtil.findBinding(getView());
     }
 

@@ -1,18 +1,20 @@
-package info.mschmitt.githubapp.presenters;
+package info.mschmitt.githubapp.viewmodels;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
 import android.os.Bundle;
-import android.widget.AdapterView;
+import android.support.v4.view.ViewPager;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.android.presentation.OnBackPressedListener;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -20,25 +22,43 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
-public class RepositoryListViewModel extends BaseObservable implements OnBackPressedListener {
+public class RepositoryPagerViewModel extends BaseObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
-    private final Map<Long, Integer> mRowIndexes = new HashMap<>();
+    private final AnalyticsService mAnalyticsService;
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
+    private final Map<Long, Integer> mPageIndexes = new HashMap<>();
     private final NavigationHandler mNavigationHandler;
-    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
     private CompositeSubscription mSubscriptions;
+    private boolean mIgnoreOnPageSelected;
     private long mCurrentRepositoryId;
+    private final ViewPager.OnPageChangeListener mOnPageChangeListener =
+            new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset,
+                                           int positionOffsetPixels) {
+                }
 
-    public RepositoryListViewModel(NavigationHandler navigationHandler) {
+                @Override
+                public void onPageSelected(int position) {
+                    if (mIgnoreOnPageSelected) {
+                        mIgnoreOnPageSelected = false;
+                        return;
+                    }
+                    Repository repository = mRepositories.get(position);
+                    setCurrentRepositoryId(repository.getId());
+                    mNavigationHandler.showRepository(repository);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            };
+
+    @Inject
+    public RepositoryPagerViewModel(AnalyticsService analyticsService,
+                                    NavigationHandler navigationHandler) {
+        mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
-        mOnRepositoryItemClickListener = (ignore1, ignore2, position, ignore3) -> {
-            Repository repository = mRepositories.get(position);
-            mNavigationHandler.showRepository(repository);
-        };
-    }
-
-    public ObservableList<Repository> getRepositories() {
-        return mRepositories;
     }
 
     public void onCreate(Bundle savedState) {
@@ -46,10 +66,10 @@ public class RepositoryListViewModel extends BaseObservable implements OnBackPre
         long lastRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
         mSubscriptions.add(mNavigationHandler.getRepositoryMap().subscribe((repositoryMap) -> {
-            mRowIndexes.clear();
+            mPageIndexes.clear();
             int i = 0;
             for (long id : repositoryMap.keySet()) {
-                mRowIndexes.put(id, i++);
+                mPageIndexes.put(id, i++);
             }
             mRepositories.clear();
             mRepositories.addAll(repositoryMap.values());
@@ -58,19 +78,21 @@ public class RepositoryListViewModel extends BaseObservable implements OnBackPre
             }
         }));
         mSubscriptions.add(mNavigationHandler.getRepository().subscribe(this::selectRepository));
+        mAnalyticsService.logScreenView(getClass().getName());
     }
 
     private void setCurrentRepositoryId(long repositoryId) {
+        mIgnoreOnPageSelected = true;
         mCurrentRepositoryId = repositoryId;
-        notifyPropertyChanged(BR.selection);
+        notifyPropertyChanged(BR.currentItem);
     }
 
     public void onSave(Bundle outState) {
         outState.putLong(ARG_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
     }
 
-    public AdapterView.OnItemClickListener getOnRepositoryItemClickListener() {
-        return mOnRepositoryItemClickListener;
+    public ViewPager.OnPageChangeListener getOnPageChangeListener() {
+        return mOnPageChangeListener;
     }
 
     public void onDestroy() {
@@ -82,14 +104,13 @@ public class RepositoryListViewModel extends BaseObservable implements OnBackPre
     }
 
     @Bindable
-    public Integer getSelection() {
-        Integer integer = mRowIndexes.get(mCurrentRepositoryId);
+    public int getCurrentItem() {
+        Integer integer = mPageIndexes.get(mCurrentRepositoryId);
         return integer != null ? integer : -1;
     }
 
-    @Override
-    public boolean onBackPressed() {
-        return false;
+    public ObservableList<Repository> getRepositories() {
+        return mRepositories;
     }
 
     public interface NavigationHandler {

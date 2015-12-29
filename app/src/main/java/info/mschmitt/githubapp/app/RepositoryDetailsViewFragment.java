@@ -12,14 +12,14 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryDetailsViewModule;
-import info.mschmitt.githubapp.presenters.RepositoryDetailsViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryDetailsViewFragment extends Fragment {
     private static final String ARG_REPOSITORY_POSITION = "ARG_REPOSITORY_POSITION";
-    private RepositoryDetailsViewModel mPresenter;
+    private RepositoryDetailsViewModel mViewModel;
     private FragmentHost mHost;
     private NavigationManager mNavigationManager;
 
@@ -43,7 +43,7 @@ public class RepositoryDetailsViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).plus(new RepositoryDetailsViewModule()).inject(this);
         mNavigationManager.onCreate(this);
-        mPresenter.onCreateForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
+        mViewModel.onCreateForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
                 savedInstanceState);
     }
 
@@ -52,18 +52,18 @@ public class RepositoryDetailsViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         RepositoryDetailsViewBinding binding =
                 RepositoryDetailsViewBinding.inflate(inflater, container, false);
-        binding.setPresenter(mPresenter);
+        binding.setViewModel(mViewModel);
         return binding.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mPresenter.onSave(outState);
+        mViewModel.onSave(outState);
     }
 
     @Override
     public void onDestroy() {
-        mPresenter.onDestroy();
+        mViewModel.onDestroy();
         mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
@@ -80,8 +80,8 @@ public class RepositoryDetailsViewFragment extends Fragment {
     }
 
     @Inject
-    public void setPresenter(RepositoryDetailsViewModel presenter) {
-        mPresenter = presenter;
+    public void setViewModel(RepositoryDetailsViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     public interface Component {

@@ -13,13 +13,13 @@ import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryListViewModule;
-import info.mschmitt.githubapp.presenters.RepositoryListViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryListViewFragment extends Fragment {
-    private RepositoryListViewModel mPresenter;
+    private RepositoryListViewModel mViewModel;
     private FragmentHost mHost;
     private RepositoryListAdapter mAdapter;
     private NavigationManager mNavigationManager;
@@ -39,8 +39,8 @@ public class RepositoryListViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).plus(new RepositoryListViewModule()).inject(this);
         mNavigationManager.onCreate(this);
-        mPresenter.onCreate(savedInstanceState);
-        mAdapter = new RepositoryListAdapter(getActivity(), mPresenter.getRepositories());
+        mViewModel.onCreate(savedInstanceState);
+        mAdapter = new RepositoryListAdapter(getActivity(), mViewModel.getRepositories());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class RepositoryListViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         RepositoryListViewBinding binding =
                 RepositoryListViewBinding.inflate(inflater, container, false);
-        binding.setPresenter(mPresenter);
+        binding.setViewModel(mViewModel);
         mAdapter.onCreateView(savedInstanceState);
         binding.setAdapter(mAdapter);
         return binding.getRoot();
@@ -56,7 +56,7 @@ public class RepositoryListViewFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mPresenter.onSave(outState);
+        mViewModel.onSave(outState);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class RepositoryListViewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        mPresenter.onDestroy();
+        mViewModel.onDestroy();
         mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
@@ -84,8 +84,8 @@ public class RepositoryListViewFragment extends Fragment {
     }
 
     @Inject
-    public void setPresenter(RepositoryListViewModel presenter) {
-        mPresenter = presenter;
+    public void setViewModel(RepositoryListViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     public interface Component {

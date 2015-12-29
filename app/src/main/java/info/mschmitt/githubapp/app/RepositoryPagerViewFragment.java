@@ -13,14 +13,14 @@ import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.modules.RepositoryPagerViewModule;
-import info.mschmitt.githubapp.presenters.RepositoryPagerViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class RepositoryPagerViewFragment extends Fragment
         implements RepositoryDetailsViewFragment.FragmentHost {
-    private RepositoryPagerViewModel mPresenter;
+    private RepositoryPagerViewModel mViewModel;
     private FragmentHost mHost;
     private Component mComponent;
     private RepositoryPagerAdapter mAdapter;
@@ -42,9 +42,9 @@ public class RepositoryPagerViewFragment extends Fragment
         mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerViewModule());
         mComponent.inject(this);
         mNavigationManager.onCreate(this);
-        mPresenter.onCreate(savedInstanceState);
+        mViewModel.onCreate(savedInstanceState);
         mAdapter =
-                new RepositoryPagerAdapter(getChildFragmentManager(), mPresenter.getRepositories());
+                new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
     }
 
     @Override
@@ -52,7 +52,7 @@ public class RepositoryPagerViewFragment extends Fragment
                              Bundle savedInstanceState) {
         RepositoryPagerViewBinding binding =
                 RepositoryPagerViewBinding.inflate(inflater, container, false);
-        binding.setPresenter(mPresenter);
+        binding.setViewModel(mViewModel);
         mAdapter.onCreateView(savedInstanceState);
         binding.setAdapter(mAdapter);
         return binding.getRoot();
@@ -60,7 +60,7 @@ public class RepositoryPagerViewFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mPresenter.onSave(outState);
+        mViewModel.onSave(outState);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class RepositoryPagerViewFragment extends Fragment
 
     @Override
     public void onDestroy() {
-        mPresenter.onDestroy();
+        mViewModel.onDestroy();
         mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
@@ -88,8 +88,8 @@ public class RepositoryPagerViewFragment extends Fragment
     }
 
     @Inject
-    public void setPresenter(RepositoryPagerViewModel presenter) {
-        mPresenter = presenter;
+    public void setViewModel(RepositoryPagerViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     @Override

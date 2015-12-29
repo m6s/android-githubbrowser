@@ -9,8 +9,8 @@
             type="android.support.v4.view.PagerAdapter"/>
 
         <variable
-            name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoryPagerViewModel"/>
+            name="viewModel"
+            type="info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel"/>
     </data>
 
     <android.support.v4.view.ViewPager
@@ -18,6 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         bind:adapter="@{adapter}"
-        bind:currentItem="@{presenter.currentItem}"
-        bind:onPageChangeListener="@{presenter.onPageChangeListener}"/>
+        bind:currentItem="@{viewModel.currentItem}"
+        bind:onPageChangeListener="@{viewModel.onPageChangeListener}"/>
 </layout>

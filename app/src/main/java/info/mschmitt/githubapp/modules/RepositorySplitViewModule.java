@@ -8,7 +8,7 @@ import info.mschmitt.githubapp.app.LoadingProgressManager;
 import info.mschmitt.githubapp.app.NavigationManager;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.network.GitHubService;
-import info.mschmitt.githubapp.presenters.RepositorySplitViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 
 /**
  * @author Matthias Schmitt

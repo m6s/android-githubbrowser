@@ -7,8 +7,8 @@
         <import type="android.view.View"/>
 
         <variable
-            name="presenter"
-            type="info.mschmitt.githubapp.presenters.UsernameViewModel"/>
+            name="viewModel"
+            type="info.mschmitt.githubapp.viewmodels.UsernameViewModel"/>
     </data>
 
     <RelativeLayout
@@ -34,12 +34,12 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="@{!presenter.loading}"
+                android:enabled="@{!viewModel.loading}"
                 android:hint="Username"
                 android:inputType="text"
-                android:text="@{presenter.username}"
-                bind:addTextChangedListener="@{presenter.usernameTextWatcher}"
-                bind:error="@{presenter.usernameError}"
+                android:text="@{viewModel.username}"
+                bind:addTextChangedListener="@{viewModel.usernameTextWatcher}"
+                bind:error="@{viewModel.usernameError}"
                 />
         </android.support.design.widget.TextInputLayout>
 
@@ -53,8 +53,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:enabled="@{!presenter.loading}"
-            android:onClick="@{presenter.onShowRepositoriesClick}"
+            android:enabled="@{!viewModel.loading}"
+            android:onClick="@{viewModel.onShowRepositoriesClick}"
             android:text="Show repositories"
             />
     </RelativeLayout>

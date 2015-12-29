@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity implements RootViewFragment.
         ((Application) getApplication()).getSuperComponent(this).plus(new MainActivityModule())
                 .inject(this);
         mNavigationManager.onCreate(this);
-        setContentView(R.layout.activity);
+        setContentView(R.layout.main_activity);
     }
 
     @Override

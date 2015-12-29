@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.presenters;
+package info.mschmitt.githubapp.viewmodels;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;

@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="presenter"
-            type="info.mschmitt.githubapp.presenters.RepositoryDetailsViewModel"/>
+            name="viewModel"
+            type="info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel"/>
     </data>
 
     <ScrollView
@@ -22,13 +22,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{presenter.repositoryName}"
+                android:text="@{viewModel.repositoryName}"
                 android:textSize="24sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{presenter.repositoryUrl}"
+                android:text="@{viewModel.repositoryUrl}"
                 android:textSize="14sp"/>
         </LinearLayout>
     </ScrollView>

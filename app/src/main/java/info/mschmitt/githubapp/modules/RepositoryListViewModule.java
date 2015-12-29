@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.app.NavigationManager;
-import info.mschmitt.githubapp.presenters.RepositoryListViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 
 /**
  * @author Matthias Schmitt

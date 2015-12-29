@@ -17,12 +17,12 @@ import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.modules.UsernameViewModule;
-import info.mschmitt.githubapp.presenters.UsernameViewModel;
+import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 
 
 public class UsernameViewFragment extends Fragment {
     private FragmentHost mHost;
-    private UsernameViewModel mPresenter;
+    private UsernameViewModel mViewModel;
     private NavigationManager mNavigationManager;
 
     public static UsernameViewFragment newInstance() {
@@ -40,7 +40,7 @@ public class UsernameViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mHost.getSuperComponent(this).plus(new UsernameViewModule()).inject(this);
         mNavigationManager.onCreate(this);
-        mPresenter.onCreate(savedInstanceState);
+        mViewModel.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -48,19 +48,19 @@ public class UsernameViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         UsernameViewBinding binding = UsernameViewBinding.inflate(inflater, container, false);
-        binding.setPresenter(mPresenter);
+        binding.setViewModel(mViewModel);
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
         return binding.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mPresenter.onSave(outState);
+        mViewModel.onSave(outState);
     }
 
     @Override
     public void onDestroy() {
-        mPresenter.onDestroy();
+        mViewModel.onDestroy();
         mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
@@ -88,8 +88,8 @@ public class UsernameViewFragment extends Fragment {
     }
 
     @Inject
-    public void setPresenter(UsernameViewModel presenter) {
-        mPresenter = presenter;
+    public void setViewModel(UsernameViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     @Inject

@@ -6,7 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.app.LoadingProgressManager;
 import info.mschmitt.githubapp.app.NavigationManager;
-import info.mschmitt.githubapp.presenters.RootViewModel;
+import info.mschmitt.githubapp.viewmodels.RootViewModel;
 
 /**
  * @author Matthias Schmitt

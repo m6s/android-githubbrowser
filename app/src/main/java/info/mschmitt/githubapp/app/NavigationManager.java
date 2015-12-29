@@ -8,14 +8,14 @@ import java.util.LinkedHashMap;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
+import info.mschmitt.githubapp.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.presenters.RepositoryDetailsViewModel;
-import info.mschmitt.githubapp.presenters.RepositoryListViewModel;
-import info.mschmitt.githubapp.presenters.RepositoryPagerViewModel;
-import info.mschmitt.githubapp.presenters.RepositorySplitViewModel;
-import info.mschmitt.githubapp.presenters.RootViewModel;
-import info.mschmitt.githubapp.presenters.UsernameViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
+import info.mschmitt.githubapp.viewmodels.RootViewModel;
+import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 import rx.Observable;
 import rx.subjects.BehaviorSubject;
 
@@ -55,7 +55,7 @@ public class NavigationManager
         if (mDetailsViewActive) {
             return;
         }
-        RepositoriesSplitViewBinding binding =
+        RepositorySplitViewBinding binding =
                 DataBindingUtil.getBinding(mRepositorySplitViewFragment.getView());
         assert binding != null;
         if (!isInSplitMode()) {
@@ -91,7 +91,7 @@ public class NavigationManager
     }
 
     private void hideRepositoryDetailsView() {
-        RepositoriesSplitViewBinding binding =
+        RepositorySplitViewBinding binding =
                 DataBindingUtil.getBinding(mRepositorySplitViewFragment.getView());
         assert binding != null;
         binding.masterView.setVisibility(View.VISIBLE);

@@ -10,9 +10,9 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.databinding.MainViewBinding;
+import info.mschmitt.githubapp.databinding.RootViewBinding;
 import info.mschmitt.githubapp.modules.RootViewModule;
-import info.mschmitt.githubapp.presenters.RootViewModel;
+import info.mschmitt.githubapp.viewmodels.RootViewModel;
 
 /**
  * @author Matthias Schmitt
@@ -20,7 +20,7 @@ import info.mschmitt.githubapp.presenters.RootViewModel;
 public class RootViewFragment extends BugFixFragment
         implements UsernameViewFragment.FragmentHost, RepositorySplitViewFragment.FragmentHost {
     private FragmentHost mHost;
-    private RootViewModel mPresenter;
+    private RootViewModel mViewModel;
     private Component mComponent;
     private NavigationManager mNavigationManager;
 
@@ -42,29 +42,29 @@ public class RootViewFragment extends BugFixFragment
         mComponent = application.getSuperComponent(this).plus(new RootViewModule());
         mComponent.inject(this);
         mNavigationManager.onCreate(this);
-        mPresenter.onCreate(savedInstanceState);
+        mViewModel.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        MainViewBinding binding = MainViewBinding.inflate(inflater, container, false);
+        RootViewBinding binding = RootViewBinding.inflate(inflater, container, false);
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
                     .add(binding.contentView.getId(), UsernameViewFragment.newInstance()).commit();
         }
-        binding.setPresenter(mPresenter);
+        binding.setViewModel(mViewModel);
         return binding.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mPresenter.onSave(outState);
+        mViewModel.onSave(outState);
     }
 
     @Override
     public void onDestroy() {
-        mPresenter.onDestroy();
+        mViewModel.onDestroy();
         mNavigationManager.onDestroy(this);
         mComponent = null;
         super.onDestroy();
@@ -88,8 +88,8 @@ public class RootViewFragment extends BugFixFragment
     }
 
     @Inject
-    public void setPresenter(RootViewModel presenter) {
-        mPresenter = presenter;
+    public void setViewModel(RootViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     @Inject
