@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.ObjectsBackport;
 import info.mschmitt.githubapp.domain.AnalyticsService;
+import info.mschmitt.githubapp.domain.UserDownloader;
 import info.mschmitt.githubapp.domain.Validator;
-import info.mschmitt.githubapp.network.GitHubService;
 import info.mschmitt.githubapp.utils.LoadingProgressManager;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -25,7 +25,7 @@ import rx.subscriptions.CompositeSubscription;
 public class UsernameViewModel extends BaseObservable {
     public static final String STATE_USER_NAME = "STATE_USER_NAME";
     private final Validator mValidator;
-    private final GitHubService mGitHubService;
+    private final UserDownloader mUserDownloader;
     private final AnalyticsService mAnalyticsService;
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
@@ -52,12 +52,12 @@ public class UsernameViewModel extends BaseObservable {
     private boolean mLoading;
 
     @Inject
-    public UsernameViewModel(Validator validator, GitHubService gitHubService,
+    public UsernameViewModel(Validator validator, UserDownloader userDownloader,
                              AnalyticsService analyticsService,
                              LoadingProgressManager loadingProgressManager,
                              NavigationHandler navigationHandler) {
         mValidator = validator;
-        mGitHubService = gitHubService;
+        mUserDownloader = userDownloader;
         mAnalyticsService = analyticsService;
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;
@@ -78,7 +78,7 @@ public class UsernameViewModel extends BaseObservable {
             return;
         }
         Subscription subscription =
-                mGitHubService.getUser(mUsername).observeOn(AndroidSchedulers.mainThread())
+                mUserDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
                             mLoadingProgressManager.notifyLoading(this, true, null);

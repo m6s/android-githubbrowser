@@ -20,17 +20,18 @@ import info.mschmitt.githubapp.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubapp.di.RepositorySplitViewModule;
 import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 
-
 public class RepositorySplitViewFragment extends Fragment
         implements RepositoryListViewFragment.FragmentHost,
         RepositoryPagerViewFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
+    private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
     private FragmentHost mHost;
     private RepositorySplitViewModel mViewModel;
     private RepositoryListViewFragment mMasterFragment;
     private RepositoryPagerViewFragment mDetailsFragment;
     private Component mComponent;
     private NavigationManager mNavigationManager;
+    private boolean mDetailsViewActive;
 
     public static RepositorySplitViewFragment newInstance(String username) {
         RepositorySplitViewFragment fragment = new RepositorySplitViewFragment();
@@ -49,6 +50,9 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mDetailsViewActive = savedInstanceState.getBoolean(STATE_DETAILS_VIEW_ACTIVE);
+        }
         mComponent = mHost.getSuperComponent(this).plus(new RepositorySplitViewModule());
         mComponent.inject(this);
         mNavigationManager.onCreate(this);
@@ -87,7 +91,7 @@ public class RepositorySplitViewFragment extends Fragment
             getBinding().masterView.setVisibility(View.VISIBLE);
             getBinding().detailsView.setVisibility(View.VISIBLE);
         } else {
-            if (mViewModel.isDetailsViewActive()) {
+            if (mDetailsViewActive) {
                 getBinding().masterView.setVisibility(View.GONE);
                 getBinding().detailsView.setVisibility(View.VISIBLE);
             } else {
@@ -104,6 +108,7 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mViewModel.onSave(outState);
+        outState.putBoolean(STATE_DETAILS_VIEW_ACTIVE, mDetailsViewActive);
     }
 
     @Override
@@ -155,6 +160,37 @@ public class RepositorySplitViewFragment extends Fragment
     @Inject
     public void setNavigationManager(NavigationManager navigationManager) {
         mNavigationManager = navigationManager;
+    }
+
+    public void showDetailsView() {
+        if (mDetailsViewActive) {
+            return;
+        }
+        RepositorySplitViewBinding binding = DataBindingUtil.getBinding(getView());
+        assert binding != null;
+        if (!isInSplitMode()) {
+            binding.masterView.setVisibility(View.GONE);
+        }
+        binding.detailsView.setVisibility(View.VISIBLE);
+        mDetailsViewActive = true;
+    }
+
+    private boolean isInSplitMode() {
+        return getResources().getBoolean(R.bool.split);
+    }
+
+    public boolean hideDetailsView() {
+        if (!mDetailsViewActive || isInSplitMode()) {
+            return false;
+        }
+        RepositorySplitViewBinding binding = DataBindingUtil.getBinding(getView());
+        assert binding != null;
+        binding.masterView.setVisibility(View.VISIBLE);
+        if (!isInSplitMode()) {
+            binding.detailsView.setVisibility(View.GONE);
+        }
+        mDetailsViewActive = false;
+        return true;
     }
 
     public interface Component extends RepositoryListViewFragment.SuperComponent,

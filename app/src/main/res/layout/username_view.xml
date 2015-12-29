@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="@{!viewModel.loading}"
-                android:hint="Username"
+                android:hint="@string/username_view_username"
                 android:inputType="text"
                 android:text="@{viewModel.username}"
                 bind:addTextChangedListener="@{viewModel.usernameTextWatcher}"
@@ -55,7 +55,7 @@
             android:layout_marginTop="16dp"
             android:enabled="@{!viewModel.loading}"
             android:onClick="@{viewModel.onShowRepositoriesClick}"
-            android:text="Show repositories"
+            android:text="@string/username_view_show_repositories"
             />
     </RelativeLayout>
 </layout>

@@ -19,6 +19,7 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 public class RepositoryDetailsViewModel extends BaseObservable {
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMap;
     private final AnalyticsService mAnalyticsService;
     private final NavigationHandler mNavigationHandler;
     private Observable<Repository> mRepository;
@@ -26,14 +27,16 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     private String mRepositoryUrl;
     private String mRepositoryName;
 
-    public RepositoryDetailsViewModel(AnalyticsService analyticsService,
+    public RepositoryDetailsViewModel(Observable<LinkedHashMap<Long, Repository>> repositoryMap,
+                                      AnalyticsService analyticsService,
                                       NavigationHandler navigationHandler) {
+        mRepositoryMap = repositoryMap;
         mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
     }
 
     public void onCreateForPosition(int position, Bundle savedState) {
-        mRepository = mapByRepositoryPosition(mNavigationHandler.getRepositoryMap(), position);
+        mRepository = mapByRepositoryPosition(mRepositoryMap, position);
         onCreate(savedState);
     }
 
@@ -53,7 +56,7 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     }
 
     public void onCreateForId(long repositoryId, Bundle savedState) {
-        mRepository = mapByRepositoryId(mNavigationHandler.getRepositoryMap(), repositoryId);
+        mRepository = mapByRepositoryId(mRepositoryMap, repositoryId);
         onCreate(savedState);
     }
 
@@ -89,6 +92,5 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     }
 
     public interface NavigationHandler {
-        Observable<LinkedHashMap<Long, Repository>> getRepositoryMap();
     }
 }

@@ -11,12 +11,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
+import rx.subjects.Subject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -24,6 +23,8 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class RepositoryPagerViewModel extends BaseObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMap;
+    private final Subject<Repository, Repository> mSelectedRepository;
     private final AnalyticsService mAnalyticsService;
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
@@ -46,7 +47,7 @@ public class RepositoryPagerViewModel extends BaseObservable {
                     }
                     Repository repository = mRepositories.get(position);
                     setCurrentRepositoryId(repository.getId());
-                    mNavigationHandler.showRepository(repository);
+                    mSelectedRepository.onNext(repository);
                 }
 
                 @Override
@@ -54,9 +55,12 @@ public class RepositoryPagerViewModel extends BaseObservable {
                 }
             };
 
-    @Inject
-    public RepositoryPagerViewModel(AnalyticsService analyticsService,
+    public RepositoryPagerViewModel(Observable<LinkedHashMap<Long, Repository>> repositoryMap,
+                                    Subject<Repository, Repository> selectedRepository,
+                                    AnalyticsService analyticsService,
                                     NavigationHandler navigationHandler) {
+        mRepositoryMap = repositoryMap;
+        mSelectedRepository = selectedRepository;
         mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
     }
@@ -65,7 +69,7 @@ public class RepositoryPagerViewModel extends BaseObservable {
         mSubscriptions = new CompositeSubscription();
         long lastRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
-        mSubscriptions.add(mNavigationHandler.getRepositoryMap().subscribe((repositoryMap) -> {
+        mSubscriptions.add(mRepositoryMap.subscribe((repositoryMap) -> {
             mPageIndexes.clear();
             int i = 0;
             for (long id : repositoryMap.keySet()) {
@@ -77,7 +81,7 @@ public class RepositoryPagerViewModel extends BaseObservable {
                 setCurrentRepositoryId(lastRepositoryId);
             }
         }));
-        mSubscriptions.add(mNavigationHandler.getRepository().subscribe(this::selectRepository));
+        mSubscriptions.add(mSelectedRepository.subscribe(this::selectRepository));
         mAnalyticsService.logScreenView(getClass().getName());
     }
 
@@ -114,10 +118,5 @@ public class RepositoryPagerViewModel extends BaseObservable {
     }
 
     public interface NavigationHandler {
-        void showRepository(Repository repository);
-
-        Observable<LinkedHashMap<Long, Repository>> getRepositoryMap();
-
-        Observable<Repository> getRepository();
     }
 }

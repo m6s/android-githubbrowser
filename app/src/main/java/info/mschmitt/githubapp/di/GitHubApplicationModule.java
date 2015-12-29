@@ -8,6 +8,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.application.NavigationManager;
+import info.mschmitt.githubapp.utils.LoadingProgressManager;
 
 /**
  * @author Matthias Schmitt
@@ -20,18 +22,18 @@ public class GitHubApplicationModule {
         mApplication = application;
     }
 
-//    @Provides
-//    @Singleton
-//    public LoadingProgressManager provideLoadingProgressManager() {
-//        return new LoadingProgressManager();
-//    }
+    @Provides
+    @Singleton
+    public LoadingProgressManager provideLoadingProgressManager() {
+        return new LoadingProgressManager();
+    }
 
-//    @Provides
-//    @Singleton
-//    public NavigationManager provideNavigationManager(
-//            LoadingProgressManager loadingProgressManager) {
-//        return new NavigationManager(loadingProgressManager);
-//    }
+    @Provides
+    @Singleton
+    public NavigationManager provideNavigationManager(
+            LoadingProgressManager loadingProgressManager) {
+        return new NavigationManager(loadingProgressManager);
+    }
 
     @Provides
     @Singleton

@@ -6,26 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import rx.Observable;
 import rx.subjects.BehaviorSubject;
 
 /**
  * @author Matthias Schmitt
  */
-@Singleton
 public class LoadingProgressManager {
     private final List<Object> mLoadingQueue = new ArrayList<>();
     private final Map<Object, Runnable> mCancellationHandlers = new HashMap<>();
     private final BehaviorSubject<Boolean> mLoadingSubject = BehaviorSubject.create();
     private boolean mLoading;
-
-    @Inject
-    public LoadingProgressManager() {
-
-    }
 
     public boolean cancelAllTasks(boolean runCancelHandlers) {
         if (mLoading) {

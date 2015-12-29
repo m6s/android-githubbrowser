@@ -14,6 +14,7 @@ import java.util.Map;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
+import rx.subjects.Subject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -23,16 +24,22 @@ public class RepositoryListViewModel extends BaseObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMap;
+    private final Subject<Repository, Repository> mSelectedRepository;
     private final NavigationHandler mNavigationHandler;
     private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
     private CompositeSubscription mSubscriptions;
     private long mCurrentRepositoryId;
 
-    public RepositoryListViewModel(NavigationHandler navigationHandler) {
+    public RepositoryListViewModel(Observable<LinkedHashMap<Long, Repository>> repositoryMap,
+                                   Subject<Repository, Repository> selectedRepository,
+                                   NavigationHandler navigationHandler) {
+        mRepositoryMap = repositoryMap;
+        mSelectedRepository = selectedRepository;
         mNavigationHandler = navigationHandler;
         mOnRepositoryItemClickListener = (ignore1, ignore2, position, ignore3) -> {
             Repository repository = mRepositories.get(position);
-            mNavigationHandler.showRepository(repository);
+            mSelectedRepository.onNext(repository);
         };
     }
 
@@ -44,7 +51,7 @@ public class RepositoryListViewModel extends BaseObservable {
         mSubscriptions = new CompositeSubscription();
         long lastRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
-        mSubscriptions.add(mNavigationHandler.getRepositoryMap().subscribe((repositoryMap) -> {
+        mSubscriptions.add(mRepositoryMap.subscribe((repositoryMap) -> {
             mRowIndexes.clear();
             int i = 0;
             for (long id : repositoryMap.keySet()) {
@@ -56,7 +63,7 @@ public class RepositoryListViewModel extends BaseObservable {
                 setCurrentRepositoryId(lastRepositoryId);
             }
         }));
-        mSubscriptions.add(mNavigationHandler.getRepository().subscribe(this::selectRepository));
+        mSubscriptions.add(mSelectedRepository.subscribe(this::selectRepository));
     }
 
     private void setCurrentRepositoryId(long repositoryId) {
@@ -87,10 +94,5 @@ public class RepositoryListViewModel extends BaseObservable {
     }
 
     public interface NavigationHandler {
-        void showRepository(Repository repository);
-
-        Observable<LinkedHashMap<Long, Repository>> getRepositoryMap();
-
-        Observable<Repository> getRepository();
     }
 }
