@@ -3,7 +3,7 @@ package info.mschmitt.githubapp.components;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import info.mschmitt.githubapp.app.GitHubApplication;
+import info.mschmitt.githubapp.application.GitHubApplication;
 import info.mschmitt.githubapp.modules.GitHubApplicationModule;
 import info.mschmitt.githubapp.modules.MainActivityModule;
 import info.mschmitt.githubapp.modules.NetworkModule;

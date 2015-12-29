@@ -10,10 +10,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.app.LoadingProgressManager;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.network.GitHubService;
+import info.mschmitt.githubapp.utils.LoadingProgressManager;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;

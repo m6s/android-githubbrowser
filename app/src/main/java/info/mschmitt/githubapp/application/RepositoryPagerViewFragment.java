@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.app;
+package info.mschmitt.githubapp.application;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,23 +9,25 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
+import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
-import info.mschmitt.githubapp.modules.RepositoryListViewModule;
-import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
+import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
+import info.mschmitt.githubapp.modules.RepositoryPagerViewModule;
+import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RepositoryListViewFragment extends Fragment {
-    private RepositoryListViewModel mViewModel;
+public class RepositoryPagerViewFragment extends Fragment
+        implements RepositoryDetailsViewFragment.FragmentHost {
+    private RepositoryPagerViewModel mViewModel;
     private FragmentHost mHost;
-    private RepositoryListAdapter mAdapter;
+    private Component mComponent;
+    private RepositoryPagerAdapter mAdapter;
     private NavigationManager mNavigationManager;
 
-    public static RepositoryListViewFragment newInstance() {
-        return new RepositoryListViewFragment();
+    public static RepositoryPagerViewFragment newInstance() {
+        return new RepositoryPagerViewFragment();
     }
 
     @Override
@@ -37,17 +39,19 @@ public class RepositoryListViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new RepositoryListViewModule()).inject(this);
+        mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerViewModule());
+        mComponent.inject(this);
         mNavigationManager.onCreate(this);
         mViewModel.onCreate(savedInstanceState);
-        mAdapter = new RepositoryListAdapter(getActivity(), mViewModel.getRepositories());
+        mAdapter =
+                new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RepositoryListViewBinding binding =
-                RepositoryListViewBinding.inflate(inflater, container, false);
+        RepositoryPagerViewBinding binding =
+                RepositoryPagerViewBinding.inflate(inflater, container, false);
         binding.setViewModel(mViewModel);
         mAdapter.onCreateView(savedInstanceState);
         binding.setAdapter(mAdapter);
@@ -84,19 +88,26 @@ public class RepositoryListViewFragment extends Fragment {
     }
 
     @Inject
-    public void setViewModel(RepositoryListViewModel viewModel) {
+    public void setViewModel(RepositoryPagerViewModel viewModel) {
         mViewModel = viewModel;
     }
 
-    public interface Component {
-        void inject(RepositoryListViewFragment fragment);
+    @Override
+    public RepositoryDetailsViewFragment.SuperComponent getSuperComponent(
+            RepositoryDetailsViewFragment fragment) {
+        return mComponent;
+    }
+
+
+    public interface Component extends RepositoryDetailsViewFragment.SuperComponent {
+        void inject(RepositoryPagerViewFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(RepositoryListViewModule module);
+        Component plus(RepositoryPagerViewModule module);
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositoryListViewFragment fragment);
+        SuperComponent getSuperComponent(RepositoryPagerViewFragment fragment);
     }
 }

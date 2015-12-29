@@ -1,4 +1,6 @@
-package info.mschmitt.githubapp.app;
+package info.mschmitt.githubapp.application;
+
+import android.app.Application;
 
 import info.mschmitt.githubapp.components.DaggerGitHubApplicationComponent;
 import info.mschmitt.githubapp.modules.GitHubApplicationModule;
@@ -7,7 +9,7 @@ import info.mschmitt.githubapp.modules.NetworkModule;
 /**
  * @author Matthias Schmitt
  */
-public class GitHubApplication extends android.app.Application
+public class GitHubApplication extends Application
         implements RootViewFragment.Application, MainActivity.Application {
     private Component mApplicationComponent;
 

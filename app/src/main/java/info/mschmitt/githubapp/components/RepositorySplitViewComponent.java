@@ -3,7 +3,7 @@ package info.mschmitt.githubapp.components;
 import javax.inject.Singleton;
 
 import dagger.Subcomponent;
-import info.mschmitt.githubapp.app.RepositorySplitViewFragment;
+import info.mschmitt.githubapp.application.RepositorySplitViewFragment;
 import info.mschmitt.githubapp.modules.RepositoryListViewModule;
 import info.mschmitt.githubapp.modules.RepositoryPagerViewModule;
 import info.mschmitt.githubapp.modules.RepositorySplitViewModule;

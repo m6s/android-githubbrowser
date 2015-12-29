@@ -1,10 +1,13 @@
-package info.mschmitt.githubapp.app;
+package info.mschmitt.githubapp.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import rx.Observable;
 import rx.subjects.BehaviorSubject;
@@ -17,6 +20,12 @@ public class LoadingProgressManager {
     private final Map<Object, Runnable> mCancellationHandlers = new HashMap<>();
     private final BehaviorSubject<Boolean> mLoadingSubject = BehaviorSubject.create();
     private boolean mLoading;
+
+    @Inject
+    @Singleton
+    public LoadingProgressManager() {
+
+    }
 
     public boolean cancelAllTasks(boolean runCancelHandlers) {
         if (mLoading) {

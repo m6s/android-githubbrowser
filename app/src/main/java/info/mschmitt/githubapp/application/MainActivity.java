@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.app;
+package info.mschmitt.githubapp.application;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

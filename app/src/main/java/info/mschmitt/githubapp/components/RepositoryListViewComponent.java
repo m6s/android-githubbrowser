@@ -3,7 +3,7 @@ package info.mschmitt.githubapp.components;
 import javax.inject.Singleton;
 
 import dagger.Subcomponent;
-import info.mschmitt.githubapp.app.RepositoryListViewFragment;
+import info.mschmitt.githubapp.application.RepositoryListViewFragment;
 import info.mschmitt.githubapp.modules.RepositoryListViewModule;
 
 /**

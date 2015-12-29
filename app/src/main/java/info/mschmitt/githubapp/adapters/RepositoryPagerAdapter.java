@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import info.mschmitt.githubapp.android.presentation.PagerAdapterOnListChangedCallback;
-import info.mschmitt.githubapp.app.RepositoryDetailsViewFragment;
+import info.mschmitt.githubapp.application.RepositoryDetailsViewFragment;
 import info.mschmitt.githubapp.entities.Repository;
 
 /**

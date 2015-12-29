@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.app;
+package info.mschmitt.githubapp.application;
 
 import android.databinding.DataBindingUtil;
 import android.view.View;
@@ -6,10 +6,13 @@ import android.view.View;
 import java.util.LinkedHashMap;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.utils.AlertDialogs;
+import info.mschmitt.githubapp.utils.LoadingProgressManager;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
@@ -40,6 +43,7 @@ public class NavigationManager
     private boolean mDetailsViewActive;
 
     @Inject
+    @Singleton
     public NavigationManager(LoadingProgressManager loadingProgressManager) {
         mLoadingProgressManager = loadingProgressManager;
     }

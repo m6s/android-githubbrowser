@@ -4,10 +4,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import info.mschmitt.githubapp.app.LoadingProgressManager;
-import info.mschmitt.githubapp.app.NavigationManager;
+import info.mschmitt.githubapp.application.NavigationManager;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.network.GitHubService;
+import info.mschmitt.githubapp.utils.LoadingProgressManager;
 import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 
 /**
