@@ -11,7 +11,7 @@ import info.mschmitt.githubapp.presenters.RepositoryListViewModel;
  * @author Matthias Schmitt
  */
 @Module
-public class RepositoryListModule {
+public class RepositoryListViewModule {
     @Provides
     @Singleton
     public RepositoryListViewModel providePresenter(NavigationManager navigationManager) {

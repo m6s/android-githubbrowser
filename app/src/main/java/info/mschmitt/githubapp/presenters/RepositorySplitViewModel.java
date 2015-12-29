@@ -10,8 +10,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.domain.AnalyticsManager;
-import info.mschmitt.githubapp.domain.LoadingProgressManager;
+import info.mschmitt.githubapp.app.LoadingProgressManager;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.network.GitHubService;
 import rx.Subscription;
@@ -23,7 +23,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class RepositorySplitViewModel extends BaseObservable {
     private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
-    private final AnalyticsManager mAnalyticsManager;
+    private final AnalyticsService mAnalyticsService;
     private final GitHubService mGitHubService;
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
@@ -33,10 +33,10 @@ public class RepositorySplitViewModel extends BaseObservable {
     private boolean mLoading;
 
     @Inject
-    public RepositorySplitViewModel(GitHubService gitHubService, AnalyticsManager analyticsManager,
+    public RepositorySplitViewModel(GitHubService gitHubService, AnalyticsService analyticsService,
                                     LoadingProgressManager loadingProgressManager,
                                     NavigationHandler navigationHandler) {
-        mAnalyticsManager = analyticsManager;
+        mAnalyticsService = analyticsService;
         mGitHubService = gitHubService;
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;
@@ -48,7 +48,7 @@ public class RepositorySplitViewModel extends BaseObservable {
         if (savedState != null) {
             mDetailsViewActive = savedState.getBoolean(STATE_DETAILS_VIEW_ACTIVE); //TODO presenter
         }
-        mAnalyticsManager.logScreenView(getClass().getName());
+        mAnalyticsService.logScreenView(getClass().getName());
         observe();
     }
 

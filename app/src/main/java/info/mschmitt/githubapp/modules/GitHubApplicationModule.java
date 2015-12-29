@@ -8,17 +8,17 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.app.LoadingProgressManager;
 import info.mschmitt.githubapp.app.NavigationManager;
-import info.mschmitt.githubapp.domain.LoadingProgressManager;
 
 /**
  * @author Matthias Schmitt
  */
 @Module
-public class ApplicationModule {
+public class GitHubApplicationModule {
     private Application mApplication;
 
-    public ApplicationModule(Application application) {
+    public GitHubApplicationModule(Application application) {
         mApplication = application;
     }
 

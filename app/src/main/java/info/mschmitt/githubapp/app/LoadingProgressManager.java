@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.domain;
+package info.mschmitt.githubapp.app;
 
 import java.util.ArrayList;
 import java.util.Collections;

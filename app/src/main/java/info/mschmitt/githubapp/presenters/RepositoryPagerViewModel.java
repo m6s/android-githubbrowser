@@ -14,7 +14,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.domain.AnalyticsManager;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -24,7 +24,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class RepositoryPagerViewModel extends BaseObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
-    private final AnalyticsManager mAnalyticsManager;
+    private final AnalyticsService mAnalyticsService;
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
     private final NavigationHandler mNavigationHandler;
@@ -55,9 +55,9 @@ public class RepositoryPagerViewModel extends BaseObservable {
             };
 
     @Inject
-    public RepositoryPagerViewModel(AnalyticsManager analyticsManager,
+    public RepositoryPagerViewModel(AnalyticsService analyticsService,
                                     NavigationHandler navigationHandler) {
-        mAnalyticsManager = analyticsManager;
+        mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
     }
 
@@ -78,7 +78,7 @@ public class RepositoryPagerViewModel extends BaseObservable {
             }
         }));
         mSubscriptions.add(mNavigationHandler.getRepository().subscribe(this::selectRepository));
-        mAnalyticsManager.logScreenView(getClass().getName());
+        mAnalyticsService.logScreenView(getClass().getName());
     }
 
     private void setCurrentRepositoryId(long repositoryId) {

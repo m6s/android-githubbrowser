@@ -17,23 +17,23 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositoriesSplitViewBinding;
-import info.mschmitt.githubapp.modules.RepositorySplitModule;
+import info.mschmitt.githubapp.modules.RepositorySplitViewModule;
 import info.mschmitt.githubapp.presenters.RepositorySplitViewModel;
 
 
-public class RepositorySplitFragment extends Fragment
-        implements RepositoryListFragment.FragmentHost,
-        RepositoryPagerFragment.FragmentHost {
+public class RepositorySplitViewFragment extends Fragment
+        implements RepositoryListViewFragment.FragmentHost,
+        RepositoryPagerViewFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     private FragmentHost mHost;
     private RepositorySplitViewModel mPresenter;
-    private RepositoryListFragment mMasterFragment;
-    private RepositoryPagerFragment mDetailsFragment;
+    private RepositoryListViewFragment mMasterFragment;
+    private RepositoryPagerViewFragment mDetailsFragment;
     private Component mComponent;
     private NavigationManager mNavigationManager;
 
-    public static RepositorySplitFragment newInstance(String username) {
-        RepositorySplitFragment fragment = new RepositorySplitFragment();
+    public static RepositorySplitViewFragment newInstance(String username) {
+        RepositorySplitViewFragment fragment = new RepositorySplitViewFragment();
         Bundle args = new Bundle();
         args.putString(ARG_USERNAME, username);
         fragment.setArguments(args);
@@ -49,7 +49,7 @@ public class RepositorySplitFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new RepositorySplitModule());
+        mComponent = mHost.getSuperComponent(this).plus(new RepositorySplitViewModule());
         mComponent.inject(this);
         mNavigationManager.onCreate(this);
         mPresenter.onCreate(getArguments().getString(ARG_USERNAME), savedInstanceState);
@@ -62,17 +62,17 @@ public class RepositorySplitFragment extends Fragment
         RepositoriesSplitViewBinding binding =
                 RepositoriesSplitViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
-        mMasterFragment = (RepositoryListFragment) getChildFragmentManager()
+        mMasterFragment = (RepositoryListViewFragment) getChildFragmentManager()
                 .findFragmentById(binding.masterView.getId());
         if (mMasterFragment == null) {
-            mMasterFragment = RepositoryListFragment.newInstance();
+            mMasterFragment = RepositoryListViewFragment.newInstance();
             getChildFragmentManager().beginTransaction()
                     .add(binding.masterView.getId(), mMasterFragment).commit();
         }
-        mDetailsFragment = (RepositoryPagerFragment) getChildFragmentManager()
+        mDetailsFragment = (RepositoryPagerViewFragment) getChildFragmentManager()
                 .findFragmentById(binding.detailsView.getId());
         if (mDetailsFragment == null) {
-            mDetailsFragment = RepositoryPagerFragment.newInstance();
+            mDetailsFragment = RepositoryPagerViewFragment.newInstance();
             getChildFragmentManager().beginTransaction()
                     .add(binding.detailsView.getId(), mDetailsFragment).commit();
         }
@@ -136,14 +136,14 @@ public class RepositorySplitFragment extends Fragment
     }
 
     @Override
-    public RepositoryListFragment.SuperComponent getSuperComponent(
-            RepositoryListFragment fragment) {
+    public RepositoryListViewFragment.SuperComponent getSuperComponent(
+            RepositoryListViewFragment fragment) {
         return mComponent;
     }
 
     @Override
-    public RepositoryPagerFragment.SuperComponent getSuperComponent(
-            RepositoryPagerFragment fragment) {
+    public RepositoryPagerViewFragment.SuperComponent getSuperComponent(
+            RepositoryPagerViewFragment fragment) {
         return mComponent;
     }
 
@@ -157,16 +157,16 @@ public class RepositorySplitFragment extends Fragment
         mNavigationManager = navigationManager;
     }
 
-    public interface Component
-            extends RepositoryListFragment.SuperComponent, RepositoryPagerFragment.SuperComponent {
-        void inject(RepositorySplitFragment fragment);
+    public interface Component extends RepositoryListViewFragment.SuperComponent,
+            RepositoryPagerViewFragment.SuperComponent {
+        void inject(RepositorySplitViewFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(RepositorySplitModule module);
+        Component plus(RepositorySplitViewModule module);
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositorySplitFragment fragment);
+        SuperComponent getSuperComponent(RepositorySplitViewFragment fragment);
     }
 }

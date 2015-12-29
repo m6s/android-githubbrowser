@@ -4,9 +4,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.app.LoadingProgressManager;
 import info.mschmitt.githubapp.app.NavigationManager;
-import info.mschmitt.githubapp.domain.AnalyticsManager;
-import info.mschmitt.githubapp.domain.LoadingProgressManager;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.network.GitHubService;
 import info.mschmitt.githubapp.presenters.RepositorySplitViewModel;
 
@@ -14,14 +14,14 @@ import info.mschmitt.githubapp.presenters.RepositorySplitViewModel;
  * @author Matthias Schmitt
  */
 @Module
-public class RepositorySplitModule {
+public class RepositorySplitViewModule {
     @Provides
     @Singleton
     public RepositorySplitViewModel providePresenter(GitHubService gitHubService,
-                                                     AnalyticsManager analyticsManager,
+                                                     AnalyticsService analyticsService,
                                                      LoadingProgressManager loadingProgressManager,
                                                      NavigationManager navigationManager) {
-        return new RepositorySplitViewModel(gitHubService, analyticsManager, loadingProgressManager,
+        return new RepositorySplitViewModel(gitHubService, analyticsService, loadingProgressManager,
                 navigationManager);
     }
 }

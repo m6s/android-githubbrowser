@@ -7,7 +7,7 @@ import android.os.Bundle;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.domain.LoadingProgressManager;
+import info.mschmitt.githubapp.app.LoadingProgressManager;
 import rx.subscriptions.CompositeSubscription;
 
 /**

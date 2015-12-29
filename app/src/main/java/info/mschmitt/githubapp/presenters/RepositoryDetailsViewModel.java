@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.domain.AnalyticsManager;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -19,16 +19,16 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 public class RepositoryDetailsViewModel extends BaseObservable {
-    private final AnalyticsManager mAnalyticsManager;
+    private final AnalyticsService mAnalyticsService;
     private final NavigationHandler mNavigationHandler;
     private Observable<Repository> mRepository;
     private CompositeSubscription mSubscriptions;
     private String mRepositoryUrl;
     private String mRepositoryName;
 
-    public RepositoryDetailsViewModel(AnalyticsManager analyticsManager,
+    public RepositoryDetailsViewModel(AnalyticsService analyticsService,
                                       NavigationHandler navigationHandler) {
-        mAnalyticsManager = analyticsManager;
+        mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
     }
 
@@ -49,7 +49,7 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     private void onCreate(Bundle savedState) {
         mSubscriptions = new CompositeSubscription();
         mSubscriptions.add(mRepository.subscribe(this::setRepository));
-        mAnalyticsManager.logScreenView(getClass().getName());
+        mAnalyticsService.logScreenView(getClass().getName());
     }
 
     public void onCreateForId(long repositoryId, Bundle savedState) {

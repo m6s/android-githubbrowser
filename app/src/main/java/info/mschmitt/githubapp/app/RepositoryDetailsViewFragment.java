@@ -9,23 +9,27 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
-import info.mschmitt.githubapp.modules.RepositoryListModule;
-import info.mschmitt.githubapp.presenters.RepositoryListViewModel;
+import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
+import info.mschmitt.githubapp.modules.RepositoryDetailsViewModule;
+import info.mschmitt.githubapp.presenters.RepositoryDetailsViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RepositoryListFragment extends Fragment {
-    private RepositoryListViewModel mPresenter;
+public class RepositoryDetailsViewFragment extends Fragment {
+    private static final String ARG_REPOSITORY_POSITION = "ARG_REPOSITORY_POSITION";
+    private RepositoryDetailsViewModel mPresenter;
     private FragmentHost mHost;
-    private RepositoryListAdapter mAdapter;
     private NavigationManager mNavigationManager;
 
-    public static RepositoryListFragment newInstance() {
-        return new RepositoryListFragment();
+    public static RepositoryDetailsViewFragment newInstanceForRepositoryPosition(
+            int repositoryPosition) {
+        RepositoryDetailsViewFragment fragment = new RepositoryDetailsViewFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_REPOSITORY_POSITION, repositoryPosition);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -37,32 +41,24 @@ public class RepositoryListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new RepositoryListModule()).inject(this);
+        mHost.getSuperComponent(this).plus(new RepositoryDetailsViewModule()).inject(this);
         mNavigationManager.onCreate(this);
-        mPresenter.onCreate(savedInstanceState);
-        mAdapter = new RepositoryListAdapter(getActivity(), mPresenter.getRepositories());
+        mPresenter.onCreateForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
+                savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RepositoryListViewBinding binding =
-                RepositoryListViewBinding.inflate(inflater, container, false);
+        RepositoryDetailsViewBinding binding =
+                RepositoryDetailsViewBinding.inflate(inflater, container, false);
         binding.setPresenter(mPresenter);
-        mAdapter.onCreateView(savedInstanceState);
-        binding.setAdapter(mAdapter);
         return binding.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mPresenter.onSave(outState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        mAdapter.onDestroyView();
-        super.onDestroyView();
     }
 
     @Override
@@ -84,19 +80,19 @@ public class RepositoryListFragment extends Fragment {
     }
 
     @Inject
-    public void setPresenter(RepositoryListViewModel presenter) {
+    public void setPresenter(RepositoryDetailsViewModel presenter) {
         mPresenter = presenter;
     }
 
     public interface Component {
-        void inject(RepositoryListFragment fragment);
+        void inject(RepositoryDetailsViewFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(RepositoryListModule module);
+        Component plus(RepositoryDetailsViewModule module);
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositoryListFragment fragment);
+        SuperComponent getSuperComponent(RepositoryDetailsViewFragment fragment);
     }
 }

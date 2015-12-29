@@ -16,17 +16,17 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
-import info.mschmitt.githubapp.modules.UsernameModule;
+import info.mschmitt.githubapp.modules.UsernameViewModule;
 import info.mschmitt.githubapp.presenters.UsernameViewModel;
 
 
-public class UsernameFragment extends Fragment {
+public class UsernameViewFragment extends Fragment {
     private FragmentHost mHost;
     private UsernameViewModel mPresenter;
     private NavigationManager mNavigationManager;
 
-    public static UsernameFragment newInstance() {
-        return new UsernameFragment();
+    public static UsernameViewFragment newInstance() {
+        return new UsernameViewFragment();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class UsernameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new UsernameModule()).inject(this);
+        mHost.getSuperComponent(this).plus(new UsernameViewModule()).inject(this);
         mNavigationManager.onCreate(this);
         mPresenter.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -98,14 +98,14 @@ public class UsernameFragment extends Fragment {
     }
 
     public interface Component {
-        void inject(UsernameFragment fragment);
+        void inject(UsernameViewFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(UsernameModule module);
+        Component plus(UsernameViewModule module);
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(UsernameFragment fragment);
+        SuperComponent getSuperComponent(UsernameViewFragment fragment);
     }
 }

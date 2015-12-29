@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import info.mschmitt.githubapp.android.presentation.PagerAdapterOnListChangedCallback;
-import info.mschmitt.githubapp.app.RepositoryDetailsFragment;
+import info.mschmitt.githubapp.app.RepositoryDetailsViewFragment;
 import info.mschmitt.githubapp.entities.Repository;
 
 /**
@@ -25,7 +25,7 @@ public class RepositoryPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return RepositoryDetailsFragment.newInstanceForRepositoryPosition(position);
+        return RepositoryDetailsViewFragment.newInstanceForRepositoryPosition(position);
     }
 
     @Override

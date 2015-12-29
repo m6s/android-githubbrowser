@@ -6,15 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.modules.ActivityModule;
+import info.mschmitt.githubapp.modules.MainActivityModule;
 
-public class FragmentActivity extends AppCompatActivity implements RootFragment.FragmentHost {
+public class MainActivity extends AppCompatActivity implements RootViewFragment.FragmentHost {
     private NavigationManager mNavigationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((Application) getApplication()).getSuperComponent(this).plus(new ActivityModule())
+        ((Application) getApplication()).getSuperComponent(this).plus(new MainActivityModule())
                 .inject(this);
         mNavigationManager.onCreate(this);
         setContentView(R.layout.activity);
@@ -39,14 +39,14 @@ public class FragmentActivity extends AppCompatActivity implements RootFragment.
     }
 
     public interface Component {
-        void inject(FragmentActivity activity);
+        void inject(MainActivity activity);
     }
 
     public interface SuperComponent {
-        Component plus(ActivityModule module);
+        Component plus(MainActivityModule module);
     }
 
     public interface Application {
-        SuperComponent getSuperComponent(FragmentActivity activity);
+        SuperComponent getSuperComponent(MainActivity activity);
     }
 }

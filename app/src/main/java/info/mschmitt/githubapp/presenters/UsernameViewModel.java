@@ -11,8 +11,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.ObjectsBackport;
-import info.mschmitt.githubapp.domain.AnalyticsManager;
-import info.mschmitt.githubapp.domain.LoadingProgressManager;
+import info.mschmitt.githubapp.app.LoadingProgressManager;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.Validator;
 import info.mschmitt.githubapp.network.GitHubService;
 import rx.Subscription;
@@ -26,7 +26,7 @@ public class UsernameViewModel extends BaseObservable {
     public static final String STATE_USER_NAME = "STATE_USER_NAME";
     private final Validator mValidator;
     private final GitHubService mGitHubService;
-    private final AnalyticsManager mAnalyticsManager;
+    private final AnalyticsService mAnalyticsService;
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
     private CompositeSubscription mSubscriptions;
@@ -53,12 +53,12 @@ public class UsernameViewModel extends BaseObservable {
 
     @Inject
     public UsernameViewModel(Validator validator, GitHubService gitHubService,
-                             AnalyticsManager analyticsManager,
+                             AnalyticsService analyticsService,
                              LoadingProgressManager loadingProgressManager,
                              NavigationHandler navigationHandler) {
         mValidator = validator;
         mGitHubService = gitHubService;
-        mAnalyticsManager = analyticsManager;
+        mAnalyticsService = analyticsService;
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;
     }

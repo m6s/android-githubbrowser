@@ -5,18 +5,18 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.app.NavigationManager;
-import info.mschmitt.githubapp.domain.AnalyticsManager;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewModel;
 
 /**
  * @author Matthias Schmitt
  */
 @Module
-public class RepositoryPagerModule {
+public class RepositoryPagerViewModule {
     @Provides
     @Singleton
-    public RepositoryPagerViewModel providePresenter(AnalyticsManager analyticsManager,
+    public RepositoryPagerViewModel providePresenter(AnalyticsService analyticsService,
                                                      NavigationManager navigationManager) {
-        return new RepositoryPagerViewModel(analyticsManager, navigationManager);
+        return new RepositoryPagerViewModel(analyticsService, navigationManager);
     }
 }

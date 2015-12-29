@@ -11,21 +11,21 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.MainViewBinding;
-import info.mschmitt.githubapp.modules.RootModule;
+import info.mschmitt.githubapp.modules.RootViewModule;
 import info.mschmitt.githubapp.presenters.RootViewModel;
 
 /**
  * @author Matthias Schmitt
  */
-public class RootFragment extends BugFixFragment
-        implements UsernameFragment.FragmentHost, RepositorySplitFragment.FragmentHost {
+public class RootViewFragment extends BugFixFragment
+        implements UsernameViewFragment.FragmentHost, RepositorySplitViewFragment.FragmentHost {
     private FragmentHost mHost;
     private RootViewModel mPresenter;
     private Component mComponent;
     private NavigationManager mNavigationManager;
 
-    public static RootFragment newInstance() {
-        return new RootFragment();
+    public static RootViewFragment newInstance() {
+        return new RootViewFragment();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class RootFragment extends BugFixFragment
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Application application = (Application) getActivity().getApplication();
-        mComponent = application.getSuperComponent(this).plus(new RootModule());
+        mComponent = application.getSuperComponent(this).plus(new RootViewModule());
         mComponent.inject(this);
         mNavigationManager.onCreate(this);
         mPresenter.onCreate(savedInstanceState);
@@ -51,7 +51,7 @@ public class RootFragment extends BugFixFragment
         MainViewBinding binding = MainViewBinding.inflate(inflater, container, false);
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
-                    .add(binding.contentView.getId(), UsernameFragment.newInstance()).commit();
+                    .add(binding.contentView.getId(), UsernameViewFragment.newInstance()).commit();
         }
         binding.setPresenter(mPresenter);
         return binding.getRoot();
@@ -77,13 +77,13 @@ public class RootFragment extends BugFixFragment
     }
 
     @Override
-    public UsernameFragment.SuperComponent getSuperComponent(UsernameFragment fragment) {
+    public UsernameViewFragment.SuperComponent getSuperComponent(UsernameViewFragment fragment) {
         return mComponent;
     }
 
     @Override
-    public RepositorySplitFragment.SuperComponent getSuperComponent(
-            RepositorySplitFragment fragment) {
+    public RepositorySplitViewFragment.SuperComponent getSuperComponent(
+            RepositorySplitViewFragment fragment) {
         return mComponent;
     }
 
@@ -97,17 +97,17 @@ public class RootFragment extends BugFixFragment
         mNavigationManager = navigationManager;
     }
 
-    public interface Component
-            extends RepositorySplitFragment.SuperComponent, UsernameFragment.SuperComponent {
-        void inject(RootFragment fragment);
+    public interface Component extends RepositorySplitViewFragment.SuperComponent,
+            UsernameViewFragment.SuperComponent {
+        void inject(RootViewFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(RootModule module);
+        Component plus(RootViewModule module);
     }
 
     public interface Application {
-        SuperComponent getSuperComponent(RootFragment fragment);
+        SuperComponent getSuperComponent(RootViewFragment fragment);
     }
 
     public interface FragmentHost {

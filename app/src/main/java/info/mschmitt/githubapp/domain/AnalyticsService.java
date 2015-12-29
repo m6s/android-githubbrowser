@@ -10,11 +10,11 @@ import javax.inject.Singleton;
  * @author Matthias Schmitt
  */
 @Singleton
-public class AnalyticsManager {
+public class AnalyticsService {
     private Application mApplication;
 
     @Inject
-    public AnalyticsManager(Application application) {
+    public AnalyticsService(Application application) {
         mApplication = application;
     }
 

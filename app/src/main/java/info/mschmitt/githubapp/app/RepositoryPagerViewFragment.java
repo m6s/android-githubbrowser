@@ -12,22 +12,22 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
-import info.mschmitt.githubapp.modules.RepositoryPagerModule;
+import info.mschmitt.githubapp.modules.RepositoryPagerViewModule;
 import info.mschmitt.githubapp.presenters.RepositoryPagerViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RepositoryPagerFragment extends Fragment
-        implements RepositoryDetailsFragment.FragmentHost {
+public class RepositoryPagerViewFragment extends Fragment
+        implements RepositoryDetailsViewFragment.FragmentHost {
     private RepositoryPagerViewModel mPresenter;
     private FragmentHost mHost;
     private Component mComponent;
     private RepositoryPagerAdapter mAdapter;
     private NavigationManager mNavigationManager;
 
-    public static RepositoryPagerFragment newInstance() {
-        return new RepositoryPagerFragment();
+    public static RepositoryPagerViewFragment newInstance() {
+        return new RepositoryPagerViewFragment();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class RepositoryPagerFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerModule());
+        mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerViewModule());
         mComponent.inject(this);
         mNavigationManager.onCreate(this);
         mPresenter.onCreate(savedInstanceState);
@@ -93,21 +93,21 @@ public class RepositoryPagerFragment extends Fragment
     }
 
     @Override
-    public RepositoryDetailsFragment.SuperComponent getSuperComponent(
-            RepositoryDetailsFragment fragment) {
+    public RepositoryDetailsViewFragment.SuperComponent getSuperComponent(
+            RepositoryDetailsViewFragment fragment) {
         return mComponent;
     }
 
 
-    public interface Component extends RepositoryDetailsFragment.SuperComponent {
-        void inject(RepositoryPagerFragment fragment);
+    public interface Component extends RepositoryDetailsViewFragment.SuperComponent {
+        void inject(RepositoryPagerViewFragment fragment);
     }
 
     public interface SuperComponent {
-        Component plus(RepositoryPagerModule module);
+        Component plus(RepositoryPagerViewModule module);
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositoryPagerFragment fragment);
+        SuperComponent getSuperComponent(RepositoryPagerViewFragment fragment);
     }
 }
