@@ -22,7 +22,6 @@ public class RootViewFragment extends BugFixFragment
     private FragmentHost mHost;
     private RootViewModel mViewModel;
     private Component mComponent;
-    private NavigationManager mNavigationManager;
 
     public static RootViewFragment newInstance() {
         return new RootViewFragment();
@@ -39,9 +38,8 @@ public class RootViewFragment extends BugFixFragment
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Application application = (Application) getActivity().getApplication();
-        mComponent = application.getSuperComponent(this).plus(new RootViewModule());
+        mComponent = application.getComponent().plus(new RootViewModule());
         mComponent.inject(this);
-        mNavigationManager.onCreate(this);
         mViewModel.onCreate(savedInstanceState);
     }
 
@@ -65,7 +63,6 @@ public class RootViewFragment extends BugFixFragment
     @Override
     public void onDestroy() {
         mViewModel.onDestroy();
-        mNavigationManager.onDestroy(this);
         mComponent = null;
         super.onDestroy();
     }
@@ -77,24 +74,13 @@ public class RootViewFragment extends BugFixFragment
     }
 
     @Override
-    public UsernameViewFragment.SuperComponent getSuperComponent(UsernameViewFragment fragment) {
-        return mComponent;
-    }
-
-    @Override
-    public RepositorySplitViewFragment.SuperComponent getSuperComponent(
-            RepositorySplitViewFragment fragment) {
+    public Component getComponent() {
         return mComponent;
     }
 
     @Inject
     public void setViewModel(RootViewModel viewModel) {
         mViewModel = viewModel;
-    }
-
-    @Inject
-    public void setNavigationManager(NavigationManager navigationManager) {
-        mNavigationManager = navigationManager;
     }
 
     public interface Component extends RepositorySplitViewFragment.SuperComponent,
@@ -107,7 +93,7 @@ public class RootViewFragment extends BugFixFragment
     }
 
     public interface Application {
-        SuperComponent getSuperComponent(RootViewFragment fragment);
+        SuperComponent getComponent();
     }
 
     public interface FragmentHost {

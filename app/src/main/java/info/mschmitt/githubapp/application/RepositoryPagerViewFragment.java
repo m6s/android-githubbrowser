@@ -24,7 +24,6 @@ public class RepositoryPagerViewFragment extends Fragment
     private FragmentHost mHost;
     private Component mComponent;
     private RepositoryPagerAdapter mAdapter;
-    private NavigationManager mNavigationManager;
 
     public static RepositoryPagerViewFragment newInstance() {
         return new RepositoryPagerViewFragment();
@@ -39,9 +38,8 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getSuperComponent(this).plus(new RepositoryPagerViewModule());
+        mComponent = mHost.getComponent().plus(new RepositoryPagerViewModule());
         mComponent.inject(this);
-        mNavigationManager.onCreate(this);
         mViewModel.onCreate(savedInstanceState);
         mAdapter =
                 new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
@@ -72,7 +70,6 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public void onDestroy() {
         mViewModel.onDestroy();
-        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -83,21 +80,14 @@ public class RepositoryPagerViewFragment extends Fragment
     }
 
     @Inject
-    public void setNavigationManager(NavigationManager navigationManager) {
-        mNavigationManager = navigationManager;
-    }
-
-    @Inject
     public void setViewModel(RepositoryPagerViewModel viewModel) {
         mViewModel = viewModel;
     }
 
     @Override
-    public RepositoryDetailsViewFragment.SuperComponent getSuperComponent(
-            RepositoryDetailsViewFragment fragment) {
+    public Component getComponent() {
         return mComponent;
     }
-
 
     public interface Component extends RepositoryDetailsViewFragment.SuperComponent {
         void inject(RepositoryPagerViewFragment fragment);
@@ -108,6 +98,6 @@ public class RepositoryPagerViewFragment extends Fragment
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositoryPagerViewFragment fragment);
+        SuperComponent getComponent();
     }
 }

@@ -1,9 +1,11 @@
 package info.mschmitt.githubapp.application;
 
+import android.support.v4.app.Fragment;
+
 import info.mschmitt.githubapp.R;
+import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.utils.AlertDialogs;
-import info.mschmitt.githubapp.utils.LoadingProgressManager;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
@@ -18,42 +20,53 @@ public class NavigationManager
         implements UsernameViewModel.NavigationHandler, RepositorySplitViewModel.NavigationHandler,
         RepositoryListViewModel.NavigationHandler, RepositoryPagerViewModel.NavigationHandler,
         RepositoryDetailsViewModel.NavigationHandler, RootViewModel.NavigationHandler {
-    private final LoadingProgressManager mLoadingProgressManager;
-    private RepositorySplitViewFragment mRepositorySplitViewFragment;
-    private RootViewFragment mRootViewFragment;
-    private UsernameViewFragment mUsernameViewFragment;
-    private RepositoryPagerViewFragment mRepositoryPagerViewFragment;
-    private RepositoryListViewFragment mRepositoryListViewFragment;
-    private RepositoryDetailsViewFragment mRepositoryDetailsViewFragment;
+    private final AnalyticsService mAnalyticsService;
     private MainActivity mMainActivity;
 
-    public NavigationManager(LoadingProgressManager loadingProgressManager) {
-        mLoadingProgressManager = loadingProgressManager;
+    public NavigationManager(AnalyticsService analyticsService) {
+        mAnalyticsService = analyticsService;
     }
 
     @Override
     public void showRepository(Repository repository) {
-        mRepositorySplitViewFragment.showDetailsView();
+        findRepositorySplitViewFragment().showDetailsView();
     }
 
-    public boolean onBackPressed() {
-        if (mLoadingProgressManager.cancelAllTasks(true)) {
-            return true;
-        }
-        if (mRepositorySplitViewFragment != null &&
-                mRepositorySplitViewFragment.hideDetailsView()) {
-            return true;
-        }
-        return mRootViewFragment.getChildFragmentManager().popBackStackImmediate();
+    private RepositorySplitViewFragment findRepositorySplitViewFragment() {
+        Fragment fragment =
+                getRootViewFragment().getChildFragmentManager().findFragmentById(R.id.contentView);
+        return fragment instanceof RepositorySplitViewFragment ?
+                (RepositorySplitViewFragment) fragment : null;
     }
 
-    public void onHomeOrUpPressed() {
-        mRepositorySplitViewFragment.hideDetailsView();
+    private RootViewFragment getRootViewFragment() {
+        return (RootViewFragment) mMainActivity.getSupportFragmentManager()
+                .findFragmentById(R.id.fragment);
+    }
+
+    public boolean goBack() {
+        boolean handled = false;
+        RepositorySplitViewFragment repositorySplitViewFragment = findRepositorySplitViewFragment();
+        if (repositorySplitViewFragment != null) {
+            handled = repositorySplitViewFragment.hideDetailsView();
+        }
+        if (!handled) {
+            handled = getRootViewFragment().getChildFragmentManager().popBackStackImmediate();
+        }
+        return handled;
+    }
+
+    public void goUp() {
+        RepositorySplitViewFragment repositorySplitViewFragment = findRepositorySplitViewFragment();
+        if (repositorySplitViewFragment == null || !repositorySplitViewFragment.hideDetailsView()) {
+            getRootViewFragment().getChildFragmentManager().popBackStackImmediate();
+        }
     }
 
     @Override
     public void showRepositorySplitView(String username) {
-        mRootViewFragment.getChildFragmentManager().beginTransaction()
+        mAnalyticsService.logScreenView(RepositorySplitViewFragment.class.getName());
+        getRootViewFragment().getChildFragmentManager().beginTransaction()
                 .replace(R.id.contentView, RepositorySplitViewFragment.newInstance(username))
                 .addToBackStack(null).commit();
     }
@@ -63,59 +76,15 @@ public class NavigationManager
         AlertDialogs.showErrorDialog(mMainActivity, throwable, retryHandler);
     }
 
-    public void onCreate(RepositorySplitViewFragment repositorySplitViewFragment) {
-        mRepositorySplitViewFragment = repositorySplitViewFragment;
+    @Override
+    public void showAboutView() {
     }
 
-    public void onDestroy(RepositorySplitViewFragment repositorySplitViewFragment) {
-        mRepositorySplitViewFragment = null;
-    }
-
-    public void onCreate(RootViewFragment rootViewFragment) {
-        mRootViewFragment = rootViewFragment;
-    }
-
-    public void onDestroy(RootViewFragment rootViewFragment) {
-        mRootViewFragment = null;
-    }
-
-    public void onCreate(UsernameViewFragment usernameViewFragment) {
-        mUsernameViewFragment = usernameViewFragment;
-    }
-
-    public void onDestroy(UsernameViewFragment usernameViewFragment) {
-        mUsernameViewFragment = null;
-    }
-
-    public void onCreate(RepositoryPagerViewFragment repositoryPagerViewFragment) {
-        mRepositoryPagerViewFragment = repositoryPagerViewFragment;
-    }
-
-    public void onDestroy(RepositoryPagerViewFragment repositoryPagerViewFragment) {
-        mRepositoryPagerViewFragment = null;
-    }
-
-    public void onCreate(RepositoryListViewFragment repositoryListViewFragment) {
-        mRepositoryListViewFragment = repositoryListViewFragment;
-    }
-
-    public void onDestroy(RepositoryListViewFragment repositoryListViewFragment) {
-        mRepositoryListViewFragment = null;
-    }
-
-    public void onCreate(RepositoryDetailsViewFragment repositoryDetailsViewFragment) {
-        mRepositoryDetailsViewFragment = repositoryDetailsViewFragment;
-    }
-
-    public void onDestroy(RepositoryDetailsViewFragment repositoryDetailsViewFragment) {
-        mRepositoryDetailsViewFragment = null;
-    }
-
-    public void onDestroy(MainActivity mainActivity) {
+    public void onMainActivityDestroyed() {
         mMainActivity = null;
     }
 
-    public void onCreate(MainActivity mainActivity) {
+    public void onMainActivityCreated(MainActivity mainActivity) {
         mMainActivity = mainActivity;
     }
 }

@@ -3,19 +3,13 @@ package info.mschmitt.githubapp.domain;
 import android.content.Context;
 import android.util.Log;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 /**
  * @author Matthias Schmitt
  */
-@Singleton
 public class AnalyticsService {
     private Context mContext;
 
-    @Inject
-    public AnalyticsService(@Named("ApplicationContext") Context context) {
+    public AnalyticsService(Context context) {
         mContext = context;
     }
 

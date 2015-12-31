@@ -23,7 +23,6 @@ import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 public class UsernameViewFragment extends Fragment {
     private FragmentHost mHost;
     private UsernameViewModel mViewModel;
-    private NavigationManager mNavigationManager;
 
     public static UsernameViewFragment newInstance() {
         return new UsernameViewFragment();
@@ -38,8 +37,7 @@ public class UsernameViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new UsernameViewModule()).inject(this);
-        mNavigationManager.onCreate(this);
+        mHost.getComponent().plus(new UsernameViewModule()).inject(this);
         mViewModel.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -61,7 +59,6 @@ public class UsernameViewFragment extends Fragment {
     @Override
     public void onDestroy() {
         mViewModel.onDestroy();
-        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -81,7 +78,7 @@ public class UsernameViewFragment extends Fragment {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_about:
-                return true;
+                return mViewModel.onAboutOptionsItemSelected();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -90,11 +87,6 @@ public class UsernameViewFragment extends Fragment {
     @Inject
     public void setViewModel(UsernameViewModel viewModel) {
         mViewModel = viewModel;
-    }
-
-    @Inject
-    public void setNavigationManager(NavigationManager navigationManager) {
-        mNavigationManager = navigationManager;
     }
 
     public interface Component {
@@ -106,6 +98,6 @@ public class UsernameViewFragment extends Fragment {
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(UsernameViewFragment fragment);
+        SuperComponent getComponent();
     }
 }

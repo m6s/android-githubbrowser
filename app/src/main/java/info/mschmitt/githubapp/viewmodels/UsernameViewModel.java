@@ -14,9 +14,10 @@ import info.mschmitt.githubapp.android.presentation.ObjectsBackport;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.UserDownloader;
 import info.mschmitt.githubapp.domain.Validator;
+import info.mschmitt.githubapp.entities.User;
 import info.mschmitt.githubapp.utils.LoadingProgressManager;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -35,12 +36,10 @@ public class UsernameViewModel extends BaseObservable {
     private final TextWatcher mUsernameTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
         }
 
         @Override
@@ -77,17 +76,22 @@ public class UsernameViewModel extends BaseObservable {
             setUsernameError("Validation error");
             return;
         }
-        Subscription subscription =
+        ConnectableObservable<User> user =
                 mUserDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
-                            mLoadingProgressManager.notifyLoading(this, true, null);
-                        }).subscribe(user -> mNavigationHandler.showRepositorySplitView(mUsername),
-                        throwable -> mNavigationHandler
-                                .showError(throwable, this::showRepositories));
-        mSubscriptions.add(subscription);
-        setLoading(true);
-        mLoadingProgressManager.notifyLoading(this, false, subscription::unsubscribe);
+                            mLoadingProgressManager.notifyLoadingEnd(this);
+                        }).publish();
+        user.subscribe(nextUser -> mNavigationHandler.showRepositorySplitView(mUsername),
+                throwable -> {
+                    mAnalyticsService.logError(throwable);
+                    mNavigationHandler.showError(throwable, this::showRepositories);
+                });
+        user.connect(subscription -> {
+            mSubscriptions.add(subscription);
+            setLoading(true);
+            mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
+        });
     }
 
     public TextWatcher getUsernameTextWatcher() {
@@ -135,9 +139,16 @@ public class UsernameViewModel extends BaseObservable {
         mSubscriptions.unsubscribe();
     }
 
+    public boolean onAboutOptionsItemSelected() {
+        mNavigationHandler.showAboutView();
+        return true;
+    }
+
     public interface NavigationHandler {
         void showRepositorySplitView(String username);
 
         void showError(Throwable throwable, Runnable retryHandler);
+
+        void showAboutView();
     }
 }

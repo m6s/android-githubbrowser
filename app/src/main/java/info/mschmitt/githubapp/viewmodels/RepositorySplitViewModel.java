@@ -14,8 +14,8 @@ import info.mschmitt.githubapp.domain.RepositoryDownloader;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.utils.LoadingProgressManager;
 import rx.Observable;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.observables.ConnectableObservable;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.Subject;
 import rx.subscriptions.CompositeSubscription;
@@ -53,23 +53,27 @@ public class RepositorySplitViewModel extends BaseObservable {
     public void onCreate(String username, Bundle savedState) {
         mSubscriptions = new CompositeSubscription();
         mUsername = username;
-        mAnalyticsService.logScreenView(getClass().getName());
         mSubscriptions.add(mSelectedRepository.subscribe(mNavigationHandler::showRepository));
         load();
     }
 
     private void load() {
         setLoading(true);
-        Subscription subscription =
+        ConnectableObservable<LinkedHashMap<Long, Repository>> map =
                 mRepositoryDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
-                            mLoadingProgressManager.notifyLoading(this, true, null);
-                        }).subscribe(mRepositoryMap::onNext,
-                        throwable -> mNavigationHandler.showError(throwable, this::load));
-        mSubscriptions.add(subscription);
-        setLoading(true);
-        mLoadingProgressManager.notifyLoading(this, false, subscription::unsubscribe);
+                            mLoadingProgressManager.notifyLoadingEnd(this);
+                        }).publish();
+        map.subscribe(mRepositoryMap::onNext, throwable -> {
+            mAnalyticsService.logError(throwable);
+            mNavigationHandler.showError(throwable, this::load);
+        });
+        map.connect(subscription -> {
+            mSubscriptions.add(subscription);
+            setLoading(true);
+            mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
+        });
     }
 
     public Observable<LinkedHashMap<Long, Repository>> getRepositoryMap() {
@@ -93,9 +97,16 @@ public class RepositorySplitViewModel extends BaseObservable {
         notifyPropertyChanged(BR.loading);
     }
 
+    public boolean onAboutOptionsItemSelected() {
+        mNavigationHandler.showAboutView();
+        return true;
+    }
+
     public interface NavigationHandler {
         void showRepository(Repository repository);
 
         void showError(Throwable throwable, Runnable retryHandler);
+
+        void showAboutView();
     }
 }

@@ -30,7 +30,6 @@ public class RepositorySplitViewFragment extends Fragment
     private RepositoryListViewFragment mMasterFragment;
     private RepositoryPagerViewFragment mDetailsFragment;
     private Component mComponent;
-    private NavigationManager mNavigationManager;
     private boolean mDetailsViewActive;
 
     public static RepositorySplitViewFragment newInstance(String username) {
@@ -53,9 +52,8 @@ public class RepositorySplitViewFragment extends Fragment
         if (savedInstanceState != null) {
             mDetailsViewActive = savedInstanceState.getBoolean(STATE_DETAILS_VIEW_ACTIVE);
         }
-        mComponent = mHost.getSuperComponent(this).plus(new RepositorySplitViewModule());
+        mComponent = mHost.getComponent().plus(new RepositorySplitViewModule());
         mComponent.inject(this);
-        mNavigationManager.onCreate(this);
         mViewModel.onCreate(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -114,7 +112,6 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onDestroy() {
         mViewModel.onDestroy();
-        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -134,32 +131,20 @@ public class RepositorySplitViewFragment extends Fragment
         int id = item.getItemId();
         switch (id) {
             case R.id.action_about:
-                return true;
+                return mViewModel.onAboutOptionsItemSelected();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
-    public RepositoryListViewFragment.SuperComponent getSuperComponent(
-            RepositoryListViewFragment fragment) {
-        return mComponent;
-    }
-
-    @Override
-    public RepositoryPagerViewFragment.SuperComponent getSuperComponent(
-            RepositoryPagerViewFragment fragment) {
+    public Component getComponent() {
         return mComponent;
     }
 
     @Inject
     public void setViewModel(RepositorySplitViewModel viewModel) {
         mViewModel = viewModel;
-    }
-
-    @Inject
-    public void setNavigationManager(NavigationManager navigationManager) {
-        mNavigationManager = navigationManager;
     }
 
     public void showDetailsView() {
@@ -203,6 +188,6 @@ public class RepositorySplitViewFragment extends Fragment
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositorySplitViewFragment fragment);
+        SuperComponent getComponent();
     }
 }

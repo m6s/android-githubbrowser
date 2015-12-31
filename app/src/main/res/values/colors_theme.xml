@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="primary">@color/gh_orange</color>
-    <color name="primary_dark">@color/gh_dark_orange</color>
-    <color name="primary_accent">@color/gh_orange</color>
-</resources>

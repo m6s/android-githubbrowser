@@ -23,12 +23,7 @@ public class GitHubApplication extends Application
     }
 
     @Override
-    public RootViewFragment.SuperComponent getSuperComponent(RootViewFragment fragment) {
-        return mApplicationComponent;
-    }
-
-    @Override
-    public MainActivity.SuperComponent getSuperComponent(MainActivity activity) {
+    public Component getComponent() {
         return mApplicationComponent;
     }
 

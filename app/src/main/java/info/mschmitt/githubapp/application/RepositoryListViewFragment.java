@@ -22,7 +22,6 @@ public class RepositoryListViewFragment extends Fragment {
     private RepositoryListViewModel mViewModel;
     private FragmentHost mHost;
     private RepositoryListAdapter mAdapter;
-    private NavigationManager mNavigationManager;
 
     public static RepositoryListViewFragment newInstance() {
         return new RepositoryListViewFragment();
@@ -37,8 +36,7 @@ public class RepositoryListViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new RepositoryListViewModule()).inject(this);
-        mNavigationManager.onCreate(this);
+        mHost.getComponent().plus(new RepositoryListViewModule()).inject(this);
         mViewModel.onCreate(savedInstanceState);
         mAdapter = new RepositoryListAdapter(getActivity(), mViewModel.getRepositories());
     }
@@ -68,7 +66,6 @@ public class RepositoryListViewFragment extends Fragment {
     @Override
     public void onDestroy() {
         mViewModel.onDestroy();
-        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -76,11 +73,6 @@ public class RepositoryListViewFragment extends Fragment {
     public void onDetach() {
         mHost = null;
         super.onDetach();
-    }
-
-    @Inject
-    public void setNavigationManager(NavigationManager navigationManager) {
-        mNavigationManager = navigationManager;
     }
 
     @Inject
@@ -97,6 +89,6 @@ public class RepositoryListViewFragment extends Fragment {
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositoryListViewFragment fragment);
+        SuperComponent getComponent();
     }
 }

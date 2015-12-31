@@ -7,22 +7,24 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.di.MainActivityModule;
+import info.mschmitt.githubapp.utils.LoadingProgressManager;
 
 public class MainActivity extends AppCompatActivity implements RootViewFragment.FragmentHost {
     private NavigationManager mNavigationManager;
+    private LoadingProgressManager mLoadingProgressManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((Application) getApplication()).getSuperComponent(this).plus(new MainActivityModule())
+        ((Application) getApplication()).getComponent().plus(new MainActivityModule())
                 .inject(this);
-        mNavigationManager.onCreate(this);
+        mNavigationManager.onMainActivityCreated(this);
         setContentView(R.layout.main_activity);
     }
 
     @Override
     protected void onDestroy() {
-        mNavigationManager.onDestroy(this);
+        mNavigationManager.onMainActivityDestroyed();
         super.onDestroy();
     }
 
@@ -31,9 +33,17 @@ public class MainActivity extends AppCompatActivity implements RootViewFragment.
         mNavigationManager = navigationManager;
     }
 
+    @Inject
+    public void setLoadingProgressManager(LoadingProgressManager loadingProgressManager) {
+        mLoadingProgressManager = loadingProgressManager;
+    }
+
     @Override
     public void onBackPressed() {
-        if (!mNavigationManager.onBackPressed()) {
+        if (mLoadingProgressManager.cancelAllTasks(true)) {
+            return;
+        }
+        if (!mNavigationManager.goBack()) {
             super.onBackPressed();
         }
     }
@@ -47,6 +57,6 @@ public class MainActivity extends AppCompatActivity implements RootViewFragment.
     }
 
     public interface Application {
-        SuperComponent getSuperComponent(MainActivity activity);
+        SuperComponent getComponent();
     }
 }

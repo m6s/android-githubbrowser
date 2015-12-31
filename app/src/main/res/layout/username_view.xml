@@ -15,23 +15,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"/>
+        </android.support.design.widget.AppBarLayout>
+
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/usernameInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/appBarLayout"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp">
 
             <EditText
+                android:id="@+id/usernameView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="@{!viewModel.loading}"
@@ -42,7 +49,6 @@
                 bind:error="@{viewModel.usernameError}"
                 />
         </android.support.design.widget.TextInputLayout>
-
 
         <Button
             android:layout_width="match_parent"

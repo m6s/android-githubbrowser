@@ -43,15 +43,15 @@ public class LoadingProgressManager {
         return mLoadingSubject.asObservable();
     }
 
-    public void notifyLoading(Object sender, boolean complete, Runnable cancelHandler) {
-        if (complete) {
-            mLoadingQueue.remove(sender);
-            mCancellationHandlers.remove(sender);
-            setLoading(!mLoadingQueue.isEmpty());
-        } else {
-            mLoadingQueue.add(sender);
-            mCancellationHandlers.put(sender, cancelHandler);
-            setLoading(true);
-        }
+    public void notifyLoadingBegin(Object sender, Runnable cancelHandler) {
+        mLoadingQueue.add(sender);
+        mCancellationHandlers.put(sender, cancelHandler);
+        setLoading(true);
+    }
+
+    public void notifyLoadingEnd(Object sender) {
+        mLoadingQueue.remove(sender);
+        mCancellationHandlers.remove(sender);
+        setLoading(!mLoadingQueue.isEmpty());
     }
 }

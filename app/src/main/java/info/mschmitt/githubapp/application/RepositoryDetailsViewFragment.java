@@ -21,7 +21,6 @@ public class RepositoryDetailsViewFragment extends Fragment {
     private static final String ARG_REPOSITORY_POSITION = "ARG_REPOSITORY_POSITION";
     private RepositoryDetailsViewModel mViewModel;
     private FragmentHost mHost;
-    private NavigationManager mNavigationManager;
 
     public static RepositoryDetailsViewFragment newInstanceForRepositoryPosition(
             int repositoryPosition) {
@@ -41,8 +40,7 @@ public class RepositoryDetailsViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getSuperComponent(this).plus(new RepositoryDetailsViewModule()).inject(this);
-        mNavigationManager.onCreate(this);
+        mHost.getComponent().plus(new RepositoryDetailsViewModule()).inject(this);
         mViewModel.onCreateForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
                 savedInstanceState);
     }
@@ -64,7 +62,6 @@ public class RepositoryDetailsViewFragment extends Fragment {
     @Override
     public void onDestroy() {
         mViewModel.onDestroy();
-        mNavigationManager.onDestroy(this);
         super.onDestroy();
     }
 
@@ -72,11 +69,6 @@ public class RepositoryDetailsViewFragment extends Fragment {
     public void onDetach() {
         mHost = null;
         super.onDetach();
-    }
-
-    @Inject
-    public void setNavigationManager(NavigationManager navigationManager) {
-        mNavigationManager = navigationManager;
     }
 
     @Inject
@@ -93,6 +85,6 @@ public class RepositoryDetailsViewFragment extends Fragment {
     }
 
     public interface FragmentHost {
-        SuperComponent getSuperComponent(RepositoryDetailsViewFragment fragment);
+        SuperComponent getComponent();
     }
 }
