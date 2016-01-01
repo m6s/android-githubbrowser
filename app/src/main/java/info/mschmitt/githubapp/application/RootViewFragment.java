@@ -38,7 +38,7 @@ public class RootViewFragment extends BugFixFragment
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         Application application = (Application) getActivity().getApplication();
-        mComponent = application.getComponent().plus(new RootViewModule());
+        mComponent = application.getComponent().plus(new RootViewModule(this));
         mComponent.inject(this);
         mViewModel.onCreate(savedInstanceState);
     }
@@ -81,6 +81,10 @@ public class RootViewFragment extends BugFixFragment
     @Inject
     public void setViewModel(RootViewModel viewModel) {
         mViewModel = viewModel;
+    }
+
+    public boolean onBackPressed() {
+        return mViewModel.onBackPressed();
     }
 
     public interface Component extends RepositorySplitViewFragment.SuperComponent,

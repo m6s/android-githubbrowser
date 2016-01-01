@@ -27,8 +27,7 @@ public class GitHubApplication extends Application
         return mApplicationComponent;
     }
 
-    public interface Component
-            extends RootViewFragment.SuperComponent, MainActivity.SuperComponent {
+    public interface Component extends RootViewFragment.SuperComponent {
         void inject(GitHubApplication gitHubApplication);
     }
 }

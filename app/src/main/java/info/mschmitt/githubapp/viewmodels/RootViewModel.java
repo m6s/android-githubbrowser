@@ -52,6 +52,11 @@ public class RootViewModel extends BaseObservable {
         notifyPropertyChanged(BR.loading);
     }
 
+    public boolean onBackPressed() {
+        return mLoadingProgressManager.cancelAllTasks(true) || mNavigationHandler.goBack();
+    }
+
     public interface NavigationHandler {
+        boolean goBack();
     }
 }

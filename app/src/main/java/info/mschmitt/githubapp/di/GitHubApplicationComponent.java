@@ -13,7 +13,4 @@ import info.mschmitt.githubapp.application.GitHubApplication;
 public interface GitHubApplicationComponent extends GitHubApplication.Component {
     @Override
     RootViewComponent plus(RootViewModule module);
-
-    @Override
-    MainActivityComponent plus(MainActivityModule module);
 }

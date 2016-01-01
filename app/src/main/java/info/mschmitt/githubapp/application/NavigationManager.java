@@ -21,9 +21,10 @@ public class NavigationManager
         RepositoryListViewModel.NavigationHandler, RepositoryPagerViewModel.NavigationHandler,
         RepositoryDetailsViewModel.NavigationHandler, RootViewModel.NavigationHandler {
     private final AnalyticsService mAnalyticsService;
-    private MainActivity mMainActivity;
+    private final Fragment mRootViewFragment;
 
-    public NavigationManager(AnalyticsService analyticsService) {
+    public NavigationManager(Fragment rootViewFragment, AnalyticsService analyticsService) {
+        mRootViewFragment = rootViewFragment;
         mAnalyticsService = analyticsService;
     }
 
@@ -34,14 +35,9 @@ public class NavigationManager
 
     private RepositorySplitViewFragment findRepositorySplitViewFragment() {
         Fragment fragment =
-                getRootViewFragment().getChildFragmentManager().findFragmentById(R.id.contentView);
+                mRootViewFragment.getChildFragmentManager().findFragmentById(R.id.contentView);
         return fragment instanceof RepositorySplitViewFragment ?
                 (RepositorySplitViewFragment) fragment : null;
-    }
-
-    private RootViewFragment getRootViewFragment() {
-        return (RootViewFragment) mMainActivity.getSupportFragmentManager()
-                .findFragmentById(R.id.fragment);
     }
 
     public boolean goBack() {
@@ -51,7 +47,7 @@ public class NavigationManager
             handled = repositorySplitViewFragment.hideDetailsView();
         }
         if (!handled) {
-            handled = getRootViewFragment().getChildFragmentManager().popBackStackImmediate();
+            handled = mRootViewFragment.getChildFragmentManager().popBackStackImmediate();
         }
         return handled;
     }
@@ -59,32 +55,24 @@ public class NavigationManager
     public void goUp() {
         RepositorySplitViewFragment repositorySplitViewFragment = findRepositorySplitViewFragment();
         if (repositorySplitViewFragment == null || !repositorySplitViewFragment.hideDetailsView()) {
-            getRootViewFragment().getChildFragmentManager().popBackStackImmediate();
+            mRootViewFragment.getChildFragmentManager().popBackStackImmediate();
         }
     }
 
     @Override
     public void showRepositorySplitView(String username) {
         mAnalyticsService.logScreenView(RepositorySplitViewFragment.class.getName());
-        getRootViewFragment().getChildFragmentManager().beginTransaction()
+        mRootViewFragment.getChildFragmentManager().beginTransaction()
                 .replace(R.id.contentView, RepositorySplitViewFragment.newInstance(username))
                 .addToBackStack(null).commit();
     }
 
     @Override
     public void showError(Throwable throwable, Runnable retryHandler) {
-        AlertDialogs.showErrorDialog(mMainActivity, throwable, retryHandler);
+        AlertDialogs.showErrorDialog(mRootViewFragment.getContext(), throwable, retryHandler);
     }
 
     @Override
     public void showAboutView() {
-    }
-
-    public void onMainActivityDestroyed() {
-        mMainActivity = null;
-    }
-
-    public void onMainActivityCreated(MainActivity mainActivity) {
-        mMainActivity = mainActivity;
     }
 }
