@@ -21,7 +21,8 @@ public class RepositoryDownloader {
         return mGitHubService.getUserRepositories(username).map(response -> {
             LinkedHashMap<Long, Repository> map = new LinkedHashMap<>();
             for (GetRepositoriesResponseItem item : response) {
-                Repository repository = new Repository(item.id, item.name, item.url);
+                Repository repository =
+                        Repository.builder().id(item.id).name(item.name).url(item.url).build();
                 map.put(repository.getId(), repository);
             }
             return map;

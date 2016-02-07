@@ -10,11 +10,11 @@ import android.view.View;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.android.presentation.ObjectsBackport;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.UserDownloader;
 import info.mschmitt.githubapp.domain.Validator;
 import info.mschmitt.githubapp.entities.User;
+import info.mschmitt.githubapp.java.ObjectsBackport;
 import info.mschmitt.githubapp.utils.LoadingProgressManager;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.observables.ConnectableObservable;

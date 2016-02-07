@@ -69,6 +69,7 @@ dependencies {
     compile project(':libraries:ghnetwork')
     compile project(':libraries:ghentities')
     compile project(':libraries:ghandroid')
+    compile project(':libraries:ghjava')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:support-annotations:23.1.1'
