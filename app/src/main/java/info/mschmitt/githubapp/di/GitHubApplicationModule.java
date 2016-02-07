@@ -2,6 +2,7 @@ package info.mschmitt.githubapp.di;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -54,5 +55,12 @@ public class GitHubApplicationModule {
     @Named("ApplicationContext")
     public Context provideApplicationContext() {
         return mApplication;
+    }
+
+    @Provides
+    @Singleton
+    @Named("Resources")
+    public Resources provideResources() {
+        return mApplication.getApplicationContext().getResources();
     }
 }

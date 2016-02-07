@@ -124,18 +124,21 @@ public class UsernameViewModel extends BaseObservable {
         notifyPropertyChanged(BR.loading);
     }
 
-    public void onCreate(Bundle savedState) {
-        mSubscriptions = new CompositeSubscription();
+    public void onLoad(Bundle savedState) {
         if (savedState != null) {
             mUsername = savedState.getString(STATE_USER_NAME);
         }
+    }
+
+    public void onResume() {
+        mSubscriptions = new CompositeSubscription();
     }
 
     public void onSave(Bundle outState) {
         outState.putString(STATE_USER_NAME, mUsername);
     }
 
-    public void onDestroy() {
+    public void onPause() {
         mSubscriptions.unsubscribe();
     }
 

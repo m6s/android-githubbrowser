@@ -40,7 +40,7 @@ public class RepositoryPagerViewFragment extends Fragment
         super.onCreate(savedInstanceState);
         mComponent = mHost.getComponent().plus(new RepositoryPagerViewModule());
         mComponent.inject(this);
-        mViewModel.onCreate(savedInstanceState);
+        mViewModel.onLoad(savedInstanceState);
         mAdapter =
                 new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
     }
@@ -57,8 +57,20 @@ public class RepositoryPagerViewFragment extends Fragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.onResume();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         mViewModel.onSave(outState);
+    }
+
+    @Override
+    public void onPause() {
+        mViewModel.onPause();
+        super.onPause();
     }
 
     @Override
@@ -69,7 +81,7 @@ public class RepositoryPagerViewFragment extends Fragment
 
     @Override
     public void onDestroy() {
-        mViewModel.onDestroy();
+        mComponent = null;
         super.onDestroy();
     }
 

@@ -21,11 +21,15 @@ import rx.subjects.Subject;
 public class RepositoryPagerViewModule {
     @Provides
     @Singleton
-    public RepositoryPagerViewModel provideViewModel(
-            @Named("RepositoryMap") Observable<LinkedHashMap<Long, Repository>> repositoryMap,
-            @Named("SelectedRepository") Subject<Repository, Repository> selectedRepository,
-            AnalyticsService analyticsService, NavigationManager navigationManager) {
-        return new RepositoryPagerViewModel(repositoryMap, selectedRepository, analyticsService,
-                navigationManager);
+    public RepositoryPagerViewModel provideViewModel(@Named("RepositoryMapObservable")
+                                                     Observable<LinkedHashMap<Long, Repository>>
+                                                                 repositoryMapObservable,
+                                                     @Named("SelectedRepositorySubject")
+                                                     Subject<Repository, Repository>
+                                                             selectedRepositorySubject,
+                                                     AnalyticsService analyticsService,
+                                                     NavigationManager navigationManager) {
+        return new RepositoryPagerViewModel(repositoryMapObservable, selectedRepositorySubject,
+                analyticsService, navigationManager);
     }
 }

@@ -19,7 +19,7 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 public class RepositoryDetailsViewModel extends BaseObservable {
-    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMap;
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final AnalyticsService mAnalyticsService;
     private final NavigationHandler mNavigationHandler;
     private Observable<Repository> mRepository;
@@ -27,17 +27,17 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     private String mRepositoryUrl;
     private String mRepositoryName;
 
-    public RepositoryDetailsViewModel(Observable<LinkedHashMap<Long, Repository>> repositoryMap,
-                                      AnalyticsService analyticsService,
-                                      NavigationHandler navigationHandler) {
-        mRepositoryMap = repositoryMap;
+    public RepositoryDetailsViewModel(
+            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable,
+            AnalyticsService analyticsService, NavigationHandler navigationHandler) {
+        mRepositoryMapObservable = repositoryMapObservable;
         mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
     }
 
-    public void onCreateForPosition(int position, Bundle savedState) {
-        mRepository = mapByRepositoryPosition(mRepositoryMap, position);
-        onCreate(savedState);
+    public void onLoadForPosition(int position, Bundle savedState) {
+        mRepository = mapByRepositoryPosition(mRepositoryMapObservable, position);
+        onLoad(savedState);
     }
 
     @NonNull
@@ -49,15 +49,18 @@ public class RepositoryDetailsViewModel extends BaseObservable {
         }).filter(nextRepository -> nextRepository != null);
     }
 
-    private void onCreate(Bundle savedState) {
+    private void onLoad(Bundle savedState) {
+    }
+
+    public void onResume() {
         mSubscriptions = new CompositeSubscription();
         mSubscriptions.add(mRepository.subscribe(this::setRepository));
         mAnalyticsService.logScreenView(getClass().getName());
     }
 
-    public void onCreateForId(long repositoryId, Bundle savedState) {
-        mRepository = mapByRepositoryId(mRepositoryMap, repositoryId);
-        onCreate(savedState);
+    public void onLoadForId(long repositoryId, Bundle savedState) {
+        mRepository = mapByRepositoryId(mRepositoryMapObservable, repositoryId);
+        onLoad(savedState);
     }
 
     @NonNull
@@ -87,7 +90,7 @@ public class RepositoryDetailsViewModel extends BaseObservable {
         return mRepositoryUrl;
     }
 
-    public void onDestroy() {
+    public void onPause() {
         mSubscriptions.unsubscribe();
     }
 

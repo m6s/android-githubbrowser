@@ -41,7 +41,7 @@ public class RepositoryDetailsViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getComponent().plus(new RepositoryDetailsViewModule()).inject(this);
-        mViewModel.onCreateForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
+        mViewModel.onLoadForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
                 savedInstanceState);
     }
 
@@ -55,14 +55,20 @@ public class RepositoryDetailsViewFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.onResume();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         mViewModel.onSave(outState);
     }
 
     @Override
-    public void onDestroy() {
-        mViewModel.onDestroy();
-        super.onDestroy();
+    public void onPause() {
+        mViewModel.onPause();
+        super.onPause();
     }
 
     @Override

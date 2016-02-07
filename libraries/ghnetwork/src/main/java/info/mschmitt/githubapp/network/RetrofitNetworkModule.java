@@ -20,10 +20,12 @@ import retrofit.converter.GsonConverter;
  */
 @Module
 class RetrofitNetworkModule {
+    private final boolean mDebug;
     private String mEndpoint;
 
-    public RetrofitNetworkModule(String endpoint) {
+    public RetrofitNetworkModule(String endpoint, boolean debug) {
         mEndpoint = endpoint;
+        mDebug = debug;
     }
 
     @Provides
@@ -48,7 +50,7 @@ class RetrofitNetworkModule {
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(new OkClient(okHttpClient)).setEndpoint(mEndpoint)
                 .setConverter(new GsonConverter(gson));
-        if (BuildConfig.DEBUG) {
+        if (mDebug) {
             builder.setLogLevel(RestAdapter.LogLevel.FULL);
         }
         return builder.build();

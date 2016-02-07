@@ -1,5 +1,6 @@
 package info.mschmitt.githubapp.viewmodels;
 
+import android.content.res.Resources;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 import java.util.LinkedHashMap;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import info.mschmitt.githubapp.BR;
+import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.RepositoryDownloader;
 import info.mschmitt.githubapp.entities.Repository;
@@ -24,40 +27,54 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 public class RepositorySplitViewModel extends BaseObservable {
-    private final BehaviorSubject<Repository> mSelectedRepository = BehaviorSubject.create();
+    private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
+    private final BehaviorSubject<Repository> mSelectedRepositorySubject = BehaviorSubject.create();
+    private final Resources mResources;
     private final RepositoryDownloader mRepositoryDownloader;
     private final AnalyticsService mAnalyticsService;
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
-    private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoryMap =
+    private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoryMapSubject =
             BehaviorSubject.create();
     private String mUsername;
     private CompositeSubscription mSubscriptions;
     private boolean mLoading;
+    private boolean mDetailsViewActive;
 
     @Inject
-    public RepositorySplitViewModel(RepositoryDownloader repositoryDownloader,
+    public RepositorySplitViewModel(@Named("Resources") Resources resources,
+                                    RepositoryDownloader repositoryDownloader,
                                     AnalyticsService analyticsService,
                                     LoadingProgressManager loadingProgressManager,
                                     NavigationHandler navigationHandler) {
+        mResources = resources;
         mRepositoryDownloader = repositoryDownloader;
         mAnalyticsService = analyticsService;
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;
     }
 
-    public Subject<Repository, Repository> getSelectedRepository() {
-        return mSelectedRepository;
+    public Subject<Repository, Repository> getSelectedRepositorySubject() {
+        return mSelectedRepositorySubject;
     }
 
-    public void onCreate(String username, Bundle savedState) {
-        mSubscriptions = new CompositeSubscription();
+    public void onLoad(String username, Bundle savedState) {
+        if (savedState != null) {
+            mDetailsViewActive = savedState.getBoolean(STATE_DETAILS_VIEW_ACTIVE);
+        }
         mUsername = username;
-        mSubscriptions.add(mSelectedRepository.subscribe(mNavigationHandler::showRepository));
-        load();
     }
 
-    private void load() {
+    public void onResume() {
+        mSubscriptions = new CompositeSubscription();
+        ConnectableObservable<Repository> selected =
+                mSelectedRepositorySubject.observeOn(AndroidSchedulers.mainThread()).publish();
+        selected.subscribe(this::onNextSelectedRepository);
+        selected.connect(mSubscriptions::add);
+        connectModel();
+    }
+
+    private void connectModel() {
         setLoading(true);
         ConnectableObservable<LinkedHashMap<Long, Repository>> map =
                 mRepositoryDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
@@ -65,9 +82,9 @@ public class RepositorySplitViewModel extends BaseObservable {
                             setLoading(false);
                             mLoadingProgressManager.notifyLoadingEnd(this);
                         }).publish();
-        map.subscribe(mRepositoryMap::onNext, throwable -> {
+        map.subscribe(mRepositoryMapSubject::onNext, throwable -> {
             mAnalyticsService.logError(throwable);
-            mNavigationHandler.showError(throwable, this::load);
+            mNavigationHandler.showError(throwable, this::connectModel);
         });
         map.connect(subscription -> {
             mSubscriptions.add(subscription);
@@ -76,14 +93,19 @@ public class RepositorySplitViewModel extends BaseObservable {
         });
     }
 
-    public Observable<LinkedHashMap<Long, Repository>> getRepositoryMap() {
-        return mRepositoryMap.asObservable();
+    private void onNextSelectedRepository(Repository repository) {
+        mNavigationHandler.showRepository(repository);
+    }
+
+    public Observable<LinkedHashMap<Long, Repository>> getRepositoryMapObservable() {
+        return mRepositoryMapSubject.asObservable();
     }
 
     public void onSave(Bundle outState) {
+        outState.putBoolean(STATE_DETAILS_VIEW_ACTIVE, mDetailsViewActive);
     }
 
-    public void onDestroy() {
+    public void onPause() {
         mSubscriptions.unsubscribe();
     }
 
@@ -100,6 +122,31 @@ public class RepositorySplitViewModel extends BaseObservable {
     public boolean onAboutOptionsItemSelected() {
         mNavigationHandler.showAboutView();
         return true;
+    }
+
+    @Bindable
+    public boolean getDetailsViewActive() {
+        return mDetailsViewActive;
+    }
+
+    private void setDetailsViewActive(boolean active) {
+        if (mDetailsViewActive == active) {
+            return;
+        }
+        mDetailsViewActive = active;
+        notifyPropertyChanged(BR.detailsViewActive);
+    }
+
+    public boolean onHideDetailsView() {
+        if (!mDetailsViewActive || mResources.getBoolean(R.bool.split)) {
+            return false;
+        }
+        setDetailsViewActive(false);
+        return true;
+    }
+
+    public void onShowDetailsView() {
+        setDetailsViewActive(true);
     }
 
     public interface NavigationHandler {

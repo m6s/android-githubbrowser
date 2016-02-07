@@ -39,13 +39,17 @@
                 android:id="@+id/masterView"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.4"/>
+                android:layout_weight="0.4"
+                android:visibility="@{ View.VISIBLE }"
+                />
 
             <FrameLayout
                 android:id="@+id/detailsView"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.6"/>
+                android:layout_weight="0.6"
+                android:visibility="@{ View.VISIBLE }"
+                />
         </LinearLayout>
     </LinearLayout>
 </layout>

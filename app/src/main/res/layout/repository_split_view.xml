@@ -36,12 +36,16 @@
             <FrameLayout
                 android:id="@+id/masterView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.detailsViewActive ? View.GONE : View.VISIBLE}"
+                />
 
             <FrameLayout
                 android:id="@+id/detailsView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.detailsViewActive ? View.VISIBLE : View.GONE}"
+                />
         </FrameLayout>
     </LinearLayout>
 </layout>

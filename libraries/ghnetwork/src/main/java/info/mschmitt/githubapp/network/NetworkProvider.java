@@ -8,9 +8,9 @@ import com.squareup.okhttp.OkHttpClient;
 public class NetworkProvider {
     private final RetrofitNetworkComponent mRetrofitNetworkComponent;
 
-    public NetworkProvider(String endpoint) {
+    public NetworkProvider(String endpoint, boolean debug) {
         this(DaggerRetrofitNetworkComponent.builder()
-                .retrofitNetworkModule(new RetrofitNetworkModule(endpoint)).build());
+                .retrofitNetworkModule(new RetrofitNetworkModule(endpoint, debug)).build());
     }
 
     public NetworkProvider(RetrofitNetworkComponent retrofitNetworkComponent) {

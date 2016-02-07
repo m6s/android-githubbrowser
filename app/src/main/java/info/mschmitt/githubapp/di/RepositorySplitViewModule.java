@@ -1,5 +1,7 @@
 package info.mschmitt.githubapp.di;
 
+import android.content.res.Resources;
+
 import java.util.LinkedHashMap;
 
 import javax.inject.Named;
@@ -23,27 +25,28 @@ import rx.subjects.Subject;
 public class RepositorySplitViewModule {
     @Provides
     @Singleton
-    public RepositorySplitViewModel provideViewModel(RepositoryDownloader repositoryDownloader,
+    public RepositorySplitViewModel provideViewModel(@Named("Resources") Resources resources,
+                                                     RepositoryDownloader repositoryDownloader,
                                                      AnalyticsService analyticsService,
                                                      LoadingProgressManager loadingProgressManager,
                                                      NavigationManager navigationManager) {
-        return new RepositorySplitViewModel(repositoryDownloader, analyticsService,
+        return new RepositorySplitViewModel(resources, repositoryDownloader, analyticsService,
                 loadingProgressManager, navigationManager);
     }
 
     @Provides
     @Singleton
-    @Named("RepositoryMap")
-    public Observable<LinkedHashMap<Long, Repository>> provideRepositoryMap(
+    @Named("RepositoryMapObservable")
+    public Observable<LinkedHashMap<Long, Repository>> provideRepositoryMapObservable(
             RepositorySplitViewModel viewModel) {
-        return viewModel.getRepositoryMap();
+        return viewModel.getRepositoryMapObservable();
     }
 
     @Provides
     @Singleton
-    @Named("SelectedRepository")
-    public Subject<Repository, Repository> provideSelectedRepository(
+    @Named("SelectedRepositorySubject")
+    public Subject<Repository, Repository> provideSelectedRepositorySubject(
             RepositorySplitViewModel viewModel) {
-        return viewModel.getSelectedRepository();
+        return viewModel.getSelectedRepositorySubject();
     }
 }

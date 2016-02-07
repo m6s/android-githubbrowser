@@ -24,22 +24,23 @@ public class RepositoryListViewModel extends BaseObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
-    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMap;
-    private final Subject<Repository, Repository> mSelectedRepository;
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
+    private final Subject<Repository, Repository> mSelectedRepositorySubject;
     private final NavigationHandler mNavigationHandler;
     private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
     private CompositeSubscription mSubscriptions;
     private long mCurrentRepositoryId;
 
-    public RepositoryListViewModel(Observable<LinkedHashMap<Long, Repository>> repositoryMap,
-                                   Subject<Repository, Repository> selectedRepository,
+    public RepositoryListViewModel(
+            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable,
+            Subject<Repository, Repository> selectedRepositorySubject,
                                    NavigationHandler navigationHandler) {
-        mRepositoryMap = repositoryMap;
-        mSelectedRepository = selectedRepository;
+        mRepositoryMapObservable = repositoryMapObservable;
+        mSelectedRepositorySubject = selectedRepositorySubject;
         mNavigationHandler = navigationHandler;
         mOnRepositoryItemClickListener = (ignore1, ignore2, position, ignore3) -> {
             Repository repository = mRepositories.get(position);
-            mSelectedRepository.onNext(repository);
+            mSelectedRepositorySubject.onNext(repository);
         };
     }
 
@@ -47,11 +48,14 @@ public class RepositoryListViewModel extends BaseObservable {
         return mRepositories;
     }
 
-    public void onCreate(Bundle savedState) {
-        mSubscriptions = new CompositeSubscription();
-        long lastRepositoryId =
+    public void onLoad(Bundle savedState) {
+        mCurrentRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
-        mSubscriptions.add(mRepositoryMap.subscribe((repositoryMap) -> {
+    }
+
+    public void onResume() {
+        mSubscriptions = new CompositeSubscription();
+        mSubscriptions.add(mRepositoryMapObservable.subscribe((repositoryMap) -> {
             mRowIndexes.clear();
             int i = 0;
             for (long id : repositoryMap.keySet()) {
@@ -59,11 +63,11 @@ public class RepositoryListViewModel extends BaseObservable {
             }
             mRepositories.clear();
             mRepositories.addAll(repositoryMap.values());
-            if (lastRepositoryId != -1) {
-                setCurrentRepositoryId(lastRepositoryId);
+            if (mCurrentRepositoryId != -1) {
+                setCurrentRepositoryId(mCurrentRepositoryId);
             }
         }));
-        mSubscriptions.add(mSelectedRepository.subscribe(this::selectRepository));
+        mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::selectRepository));
     }
 
     private void setCurrentRepositoryId(long repositoryId) {
@@ -79,7 +83,7 @@ public class RepositoryListViewModel extends BaseObservable {
         return mOnRepositoryItemClickListener;
     }
 
-    public void onDestroy() {
+    public void onPause() {
         mSubscriptions.unsubscribe();
     }
 

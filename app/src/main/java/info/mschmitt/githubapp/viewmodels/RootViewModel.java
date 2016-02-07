@@ -26,7 +26,10 @@ public class RootViewModel extends BaseObservable {
         mNavigationHandler = navigationHandler;
     }
 
-    public void onCreate(Bundle savedState) {
+    public void onLoad(Bundle savedState) {
+    }
+
+    public void onResume() {
         mSubscriptions = new CompositeSubscription();
         mSubscriptions.add(mLoadingProgressManager.isLoading().subscribe(this::setLoading));
     }
@@ -34,7 +37,7 @@ public class RootViewModel extends BaseObservable {
     public void onSave(Bundle outState) {
     }
 
-    public void onDestroy() {
+    public void onPause() {
         mLoadingProgressManager.cancelAllTasks(false);
         mSubscriptions.unsubscribe();
     }

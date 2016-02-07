@@ -1,7 +1,6 @@
 package info.mschmitt.githubapp.application;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -24,13 +23,9 @@ public class RepositorySplitViewFragment extends Fragment
         implements RepositoryListViewFragment.FragmentHost,
         RepositoryPagerViewFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
-    private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
     private FragmentHost mHost;
     private RepositorySplitViewModel mViewModel;
-    private RepositoryListViewFragment mMasterFragment;
-    private RepositoryPagerViewFragment mDetailsFragment;
     private Component mComponent;
-    private boolean mDetailsViewActive;
 
     public static RepositorySplitViewFragment newInstance(String username) {
         RepositorySplitViewFragment fragment = new RepositorySplitViewFragment();
@@ -49,12 +44,9 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            mDetailsViewActive = savedInstanceState.getBoolean(STATE_DETAILS_VIEW_ACTIVE);
-        }
         mComponent = mHost.getComponent().plus(new RepositorySplitViewModule());
         mComponent.inject(this);
-        mViewModel.onCreate(getArguments().getString(ARG_USERNAME), savedInstanceState);
+        mViewModel.onLoad(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -64,54 +56,40 @@ public class RepositorySplitViewFragment extends Fragment
         RepositorySplitViewBinding binding =
                 RepositorySplitViewBinding.inflate(inflater, container, false);
         binding.setViewModel(mViewModel);
-        mMasterFragment = (RepositoryListViewFragment) getChildFragmentManager()
-                .findFragmentById(binding.masterView.getId());
-        if (mMasterFragment == null) {
-            mMasterFragment = RepositoryListViewFragment.newInstance();
+        if (getChildFragmentManager().findFragmentById(binding.masterView.getId()) == null) {
             getChildFragmentManager().beginTransaction()
-                    .add(binding.masterView.getId(), mMasterFragment).commit();
+                    .add(binding.masterView.getId(), RepositoryListViewFragment.newInstance())
+                    .commit();
         }
-        mDetailsFragment = (RepositoryPagerViewFragment) getChildFragmentManager()
-                .findFragmentById(binding.detailsView.getId());
-        if (mDetailsFragment == null) {
-            mDetailsFragment = RepositoryPagerViewFragment.newInstance();
+        if (getChildFragmentManager().findFragmentById(binding.detailsView.getId()) == null) {
             getChildFragmentManager().beginTransaction()
-                    .add(binding.detailsView.getId(), mDetailsFragment).commit();
+                    .add(binding.detailsView.getId(), RepositoryPagerViewFragment.newInstance())
+                    .commit();
         }
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
         return binding.getRoot();
     }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (getResources().getBoolean(R.bool.split)) {
-            getBinding().masterView.setVisibility(View.VISIBLE);
-            getBinding().detailsView.setVisibility(View.VISIBLE);
-        } else {
-            if (mDetailsViewActive) {
-                getBinding().masterView.setVisibility(View.GONE);
-                getBinding().detailsView.setVisibility(View.VISIBLE);
-            } else {
-                getBinding().masterView.setVisibility(View.VISIBLE);
-                getBinding().detailsView.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private RepositorySplitViewBinding getBinding() {
-        return DataBindingUtil.findBinding(getView());
+    public void onResume() {
+        super.onResume();
+        mViewModel.onResume();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         mViewModel.onSave(outState);
-        outState.putBoolean(STATE_DETAILS_VIEW_ACTIVE, mDetailsViewActive);
+    }
+
+    @Override
+    public void onPause() {
+        mViewModel.onPause();
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        mViewModel.onDestroy();
+        mComponent = null;
         super.onDestroy();
     }
 
@@ -148,34 +126,11 @@ public class RepositorySplitViewFragment extends Fragment
     }
 
     public void showDetailsView() {
-        if (mDetailsViewActive) {
-            return;
-        }
-        RepositorySplitViewBinding binding = DataBindingUtil.getBinding(getView());
-        assert binding != null;
-        if (!isInSplitMode()) {
-            binding.masterView.setVisibility(View.GONE);
-        }
-        binding.detailsView.setVisibility(View.VISIBLE);
-        mDetailsViewActive = true;
-    }
-
-    private boolean isInSplitMode() {
-        return getResources().getBoolean(R.bool.split);
+        mViewModel.onShowDetailsView();
     }
 
     public boolean hideDetailsView() {
-        if (!mDetailsViewActive || isInSplitMode()) {
-            return false;
-        }
-        RepositorySplitViewBinding binding = DataBindingUtil.getBinding(getView());
-        assert binding != null;
-        binding.masterView.setVisibility(View.VISIBLE);
-        if (!isInSplitMode()) {
-            binding.detailsView.setVisibility(View.GONE);
-        }
-        mDetailsViewActive = false;
-        return true;
+        return mViewModel.onHideDetailsView();
     }
 
     public interface Component extends RepositoryListViewFragment.SuperComponent,

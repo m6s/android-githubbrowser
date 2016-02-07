@@ -40,7 +40,7 @@ public class RootViewFragment extends BugFixFragment
         Application application = (Application) getActivity().getApplication();
         mComponent = application.getComponent().plus(new RootViewModule(this));
         mComponent.inject(this);
-        mViewModel.onCreate(savedInstanceState);
+        mViewModel.onLoad(savedInstanceState);
     }
 
     @Override
@@ -56,13 +56,24 @@ public class RootViewFragment extends BugFixFragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.onResume();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         mViewModel.onSave(outState);
     }
 
     @Override
+    public void onPause() {
+        mViewModel.onPause();
+        super.onPause();
+    }
+
+    @Override
     public void onDestroy() {
-        mViewModel.onDestroy();
         mComponent = null;
         super.onDestroy();
     }

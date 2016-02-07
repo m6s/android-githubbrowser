@@ -20,9 +20,12 @@ import rx.Observable;
 public class RepositoryDetailsViewModule {
     @Provides
     @Singleton
-    public RepositoryDetailsViewModel provideViewModel(
-            @Named("RepositoryMap") Observable<LinkedHashMap<Long, Repository>> repositoryMap,
-            AnalyticsService analyticsService, NavigationManager navigationManager) {
-        return new RepositoryDetailsViewModel(repositoryMap, analyticsService, navigationManager);
+    public RepositoryDetailsViewModel provideViewModel(@Named("RepositoryMapObservable")
+                                                       Observable<LinkedHashMap<Long,
+                                                               Repository>> repositoryMapObservable,
+                                                       AnalyticsService analyticsService,
+                                                       NavigationManager navigationManager) {
+        return new RepositoryDetailsViewModel(repositoryMapObservable, analyticsService,
+                navigationManager);
     }
 }

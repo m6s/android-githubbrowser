@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.BuildConfig;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.network.GitHubService;
 import info.mschmitt.githubapp.network.NetworkProvider;
@@ -18,7 +19,8 @@ public class NetworkModule {
     private final NetworkProvider mNetworkProvider;
 
     public NetworkModule(Context context) {
-        mNetworkProvider = new NetworkProvider(context.getString(R.string.endpoint));
+        mNetworkProvider =
+                new NetworkProvider(context.getString(R.string.endpoint), BuildConfig.DEBUG);
     }
 
     @Provides

@@ -20,10 +20,14 @@ import rx.subjects.Subject;
 public class RepositoryListViewModule {
     @Provides
     @Singleton
-    public RepositoryListViewModel provideViewModel(
-            @Named("RepositoryMap") Observable<LinkedHashMap<Long, Repository>> repositoryMap,
-            @Named("SelectedRepository") Subject<Repository, Repository> selectedRepository,
-            NavigationManager navigationManager) {
-        return new RepositoryListViewModel(repositoryMap, selectedRepository, navigationManager);
+    public RepositoryListViewModel provideViewModel(@Named("RepositoryMapObservable")
+                                                    Observable<LinkedHashMap<Long, Repository>>
+                                                                repositoryMapObservable,
+                                                    @Named("SelectedRepositorySubject")
+                                                    Subject<Repository, Repository>
+                                                            selectedRepositorySubject,
+                                                    NavigationManager navigationManager) {
+        return new RepositoryListViewModel(repositoryMapObservable, selectedRepositorySubject,
+                navigationManager);
     }
 }

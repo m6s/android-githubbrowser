@@ -37,7 +37,7 @@ public class RepositoryListViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHost.getComponent().plus(new RepositoryListViewModule()).inject(this);
-        mViewModel.onCreate(savedInstanceState);
+        mViewModel.onLoad(savedInstanceState);
         mAdapter = new RepositoryListAdapter(getActivity(), mViewModel.getRepositories());
     }
 
@@ -53,20 +53,26 @@ public class RepositoryListViewFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mViewModel.onResume();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         mViewModel.onSave(outState);
+    }
+
+    @Override
+    public void onPause() {
+        mViewModel.onPause();
+        super.onPause();
     }
 
     @Override
     public void onDestroyView() {
         mAdapter.onDestroyView();
         super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        mViewModel.onDestroy();
-        super.onDestroy();
     }
 
     @Override
