@@ -46,19 +46,19 @@ class RetrofitNetworkModule {
 
     @Provides
     @Singleton
-    Gson provideGson() {
-        return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
+    Retrofit provideRetrofit(OkHttpClient client, Gson gson) {
+        Retrofit.Builder builder =
+                new Retrofit.Builder().addCallAdapterFactory(AsyncRxJavaCallAdapterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create(gson)).client(client)
+                        .baseUrl(mBaseUrl);
+        return builder.build();
     }
 
     @Provides
     @Singleton
-    Retrofit provideRestAdapter(OkHttpClient okHttpClient, Gson gson) {
-        Retrofit.Builder builder =
-                new Retrofit.Builder().addCallAdapterFactory(AsyncRxJavaCallAdapterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create(gson)).client(okHttpClient)
-                        .baseUrl(mBaseUrl);
-        return builder.build();
+    Gson provideGson() {
+        return new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
     }
 
     @Provides

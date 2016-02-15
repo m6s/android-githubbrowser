@@ -15,6 +15,8 @@
  */
 package info.mschmitt.githubapp.network.utils;
 
+import com.google.gson.reflect.TypeToken;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -30,8 +32,6 @@ import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.Subscriber;
-import rx.functions.Action0;
-import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -41,64 +41,110 @@ import rx.subscriptions.Subscriptions;
  * Single.fromCallable().
  * <p>
  * 2. Adds Completable support, which didn't exist when async calling was removed
+ * <p>
+ * 3. Adds the possibility to set an error handler
  */
 public final class AsyncRxJavaCallAdapterFactory extends CallAdapter.Factory {
-    private AsyncRxJavaCallAdapterFactory() {
+    public static final Type TYPE_VOID = new TypeToken<Void>() {
+    }.getType();
+    private final ErrorHandler mErrorHandler;
+
+    private AsyncRxJavaCallAdapterFactory(ErrorHandler errorHandler) {
+        mErrorHandler = errorHandler;
+    }
+
+    public static AsyncRxJavaCallAdapterFactory create(ErrorHandler errorHandler) {
+        return new AsyncRxJavaCallAdapterFactory(errorHandler);
     }
 
     public static AsyncRxJavaCallAdapterFactory create() {
-        return new AsyncRxJavaCallAdapterFactory();
+        return new AsyncRxJavaCallAdapterFactory(HttpException::new);
     }
 
     @Override
     public CallAdapter<?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
         Class<?> rawType = getRawType(returnType);
-        final String canonicalName = rawType.getCanonicalName();
-        boolean isSingle = "rx.Single".equals(canonicalName);
-        boolean isCompletable = "rx.Completable".equals(canonicalName);
-        if (rawType != Observable.class && !isSingle && !isCompletable) {
+        boolean isSingle = rawType == Single.class;
+        boolean isCompletable = rawType == Completable.class;
+        boolean isObservable = rawType == Observable.class;
+        if (!isObservable && !isSingle && !isCompletable) {
             return null;
         }
-        if (!isCompletable && !(returnType instanceof ParameterizedType)) {
-            String name = isSingle ? "Single" : "Observable";
-            throw new IllegalStateException(
-                    name + " return type must be parameterized" + " as " + name + "<Foo> or " +
-                            name + "<? extends Foo>");
-        }
-        CallAdapter<Observable<?>> callAdapter = getCallAdapter(returnType);
         if (isCompletable) {
-            return CompletableHelper.makeCompletable(callAdapter);
+            CallAdapter<Observable<?>> callAdapter =
+                    new SimpleCallAdapter(TYPE_VOID, mErrorHandler);
+            return makeCompletable(callAdapter);
         }
+        checkParameterizedType(returnType);
         if (isSingle) {
-            // Add Single-converter wrapper from a separate class. This defers classloading such
-            // that
-            // regular Observable operation can be leveraged without relying on this unstable
-            // RxJava API.
-            return SingleHelper.makeSingle(callAdapter);
+            CallAdapter<Observable<?>> callAdapter = newCallAdapter(returnType, mErrorHandler);
+            return makeSingle(callAdapter);
         }
-        return callAdapter;
+        return newCallAdapter(returnType, mErrorHandler);
     }
 
-    private CallAdapter<Observable<?>> getCallAdapter(Type returnType) {
+    private static CallAdapter<Completable> makeCompletable(
+            CallAdapter<Observable<?>> callAdapter) {
+        return new CallAdapter<Completable>() {
+            @Override
+            public Type responseType() {
+                return callAdapter.responseType();
+            }
+
+            @Override
+            public <R> Completable adapt(Call<R> call) {
+                Observable<?> observable = callAdapter.adapt(call);
+                return observable.toCompletable();
+            }
+        };
+    }
+
+    private static void checkParameterizedType(Type returnType) {
+        Class<?> rawType = getRawType(returnType);
+        String name = rawType.getSimpleName();
+        if (!(returnType instanceof ParameterizedType)) {
+            throw new IllegalStateException(
+                    name + " return type must be parameterized as " + name + "<Foo> or " +
+                            name + "<? extends Foo>");
+        }
+    }
+
+    private CallAdapter<Observable<?>> newCallAdapter(Type returnType, ErrorHandler errorHandler) {
         Type observableType = getParameterUpperBound(0, (ParameterizedType) returnType);
         Class<?> rawObservableType = getRawType(observableType);
         if (rawObservableType == Response.class) {
-            if (!(observableType instanceof ParameterizedType)) {
-                throw new IllegalStateException("Response must be parameterized" +
-                        " as Response<Foo> or Response<? extends Foo>");
-            }
+            checkParameterizedType(observableType);
             Type responseType = getParameterUpperBound(0, (ParameterizedType) observableType);
             return new ResponseCallAdapter(responseType);
         }
         if (rawObservableType == Result.class) {
-            if (!(observableType instanceof ParameterizedType)) {
-                throw new IllegalStateException("Result must be parameterized" +
-                        " as Result<Foo> or Result<? extends Foo>");
-            }
+            checkParameterizedType(observableType);
             Type responseType = getParameterUpperBound(0, (ParameterizedType) observableType);
             return new ResultCallAdapter(responseType);
         }
-        return new SimpleCallAdapter(observableType);
+        return new SimpleCallAdapter(observableType, errorHandler);
+    }
+
+    private static CallAdapter<Single<?>> makeSingle(CallAdapter<Observable<?>> callAdapter) {
+        return new CallAdapter<Single<?>>() {
+            @Override
+            public Type responseType() {
+                return callAdapter.responseType();
+            }
+
+            @Override
+            public <R> Single<?> adapt(Call<R> call) {
+                Observable<?> observable = callAdapter.adapt(call);
+                return observable.toSingle();
+            }
+        };
+    }
+
+    /**
+     * @author Matthias Schmitt
+     */
+    public interface ErrorHandler {
+        Throwable handleError(Response<?> response);
     }
 
     static final class CallOnSubscribe<T> implements Observable.OnSubscribe<Response<T>> {
@@ -110,15 +156,8 @@ public final class AsyncRxJavaCallAdapterFactory extends CallAdapter.Factory {
 
         @Override
         public void call(final Subscriber<? super Response<T>> subscriber) {
-            // Since Call is a one-shot type, clone it for each new subscriber.
             final Call<T> call = originalCall.clone();
-            // Attempt to cancel the call if it is still in-flight on unsubscription.
-            subscriber.add(Subscriptions.create(new Action0() {
-                @Override
-                public void call() {
-                    call.cancel();
-                }
-            }));
+            subscriber.add(Subscriptions.create(call::cancel));
             if (subscriber.isUnsubscribed()) {
                 return;
             }
@@ -159,11 +198,13 @@ public final class AsyncRxJavaCallAdapterFactory extends CallAdapter.Factory {
         }
     }
 
-    static final class SimpleCallAdapter implements CallAdapter<Observable<?>> {
+    private static final class SimpleCallAdapter implements CallAdapter<Observable<?>> {
         private final Type responseType;
+        private final ErrorHandler mErrorHandler;
 
-        SimpleCallAdapter(Type responseType) {
+        SimpleCallAdapter(Type responseType, ErrorHandler errorHandler) {
             this.responseType = responseType;
+            mErrorHandler = errorHandler;
         }
 
         @Override
@@ -173,20 +214,16 @@ public final class AsyncRxJavaCallAdapterFactory extends CallAdapter.Factory {
 
         @Override
         public <R> Observable<R> adapt(Call<R> call) {
-            return Observable.create(new CallOnSubscribe<>(call)) //
-                    .flatMap(new Func1<Response<R>, Observable<R>>() {
-                        @Override
-                        public Observable<R> call(Response<R> response) {
-                            if (response.isSuccess()) {
-                                return Observable.just(response.body());
-                            }
-                            return Observable.error(new HttpException(response));
-                        }
-                    });
+            return Observable.create(new CallOnSubscribe<>(call)).flatMap(response -> {
+                if (response.isSuccess()) {
+                    return Observable.just(response.body());
+                }
+                return Observable.error(mErrorHandler.handleError(response));
+            });
         }
     }
 
-    static final class ResultCallAdapter implements CallAdapter<Observable<?>> {
+    private static final class ResultCallAdapter implements CallAdapter<Observable<?>> {
         private final Type responseType;
 
         ResultCallAdapter(Type responseType) {
@@ -201,108 +238,7 @@ public final class AsyncRxJavaCallAdapterFactory extends CallAdapter.Factory {
         @Override
         public <R> Observable<Result<R>> adapt(Call<R> call) {
             return Observable.create(new CallOnSubscribe<>(call)) //
-                    .map(new Func1<Response<R>, Result<R>>() {
-                        @Override
-                        public Result<R> call(Response<R> response) {
-                            return Result.response(response);
-                        }
-                    }).onErrorReturn(new Func1<Throwable, Result<R>>() {
-                        @Override
-                        public Result<R> call(Throwable throwable) {
-                            return Result.error(throwable);
-                        }
-                    });
+                    .map(Result::response).onErrorReturn(Result::error);
         }
     }
-
-    private static final class SingleHelper {
-        static CallAdapter<Single<?>> makeSingle(final CallAdapter<Observable<?>> callAdapter) {
-            return new CallAdapter<Single<?>>() {
-                @Override
-                public Type responseType() {
-                    return callAdapter.responseType();
-                }
-
-                @Override
-                public <R> Single<?> adapt(Call<R> call) {
-                    Observable<?> observable = callAdapter.adapt(call);
-                    return observable.toSingle();
-                }
-            };
-        }
-    }
-
-    private static final class CompletableHelper {
-        static CallAdapter<Completable> makeCompletable(
-                final CallAdapter<Observable<?>> callAdapter) {
-            return new CallAdapter<Completable>() {
-                @Override
-                public Type responseType() {
-                    return callAdapter.responseType();
-                }
-
-                @Override
-                public <R> Completable adapt(Call<R> call) {
-                    Observable<?> observable = callAdapter.adapt(call);
-                    return observable.toCompletable();
-                }
-            };
-        }
-    }
-//    private static final class CompletableHelper {
-//
-//        private static final CallAdapter<Completable> COMPLETABLE_CALL_ADAPTER
-//                = new CallAdapter<Completable>() {
-//            @Override public Type responseType() {
-//                return Void.class;
-//            }
-//
-//            @Override public Completable adapt(Call call) {
-//                return Completable.create(new CompletableCallOnSubscribe(call));
-//            }
-//        };
-//
-//        static CallAdapter<Completable> makeCompletable() {
-//            return COMPLETABLE_CALL_ADAPTER;
-//        }
-//
-//        private static final class CompletableCallOnSubscribe
-//                implements Completable.CompletableOnSubscribe {
-//            private final Call originalCall;
-//
-//            CompletableCallOnSubscribe(Call originalCall) {
-//                this.originalCall = originalCall;
-//            }
-//
-//            @Override
-//            public void call(final Completable.CompletableSubscriber subscriber) {
-//                // Since Call is a one-shot type, clone it for each new subscriber.
-//                final Call call = originalCall.clone();
-//
-//                // Attempt to cancel the call if it is still in-flight on unsubscription.
-//                Subscription subscription = Subscriptions.create(new Action0() {
-//                    @Override public void call() {
-//                        call.cancel();
-//                    }
-//                });
-//                subscriber.onSubscribe(subscription);
-//
-//                try {
-//                    Response response = call.execute();
-//                    if (!subscription.isUnsubscribed()) {
-//                        if (response.isSuccess()) {
-//                            subscriber.onCompleted();
-//                        } else {
-//                            subscriber.onError(new HttpException(response));
-//                        }
-//                    }
-//                } catch (Throwable t) {
-//                    Exceptions.throwIfFatal(t);
-//                    if (!subscription.isUnsubscribed()) {
-//                        subscriber.onError(t);
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
