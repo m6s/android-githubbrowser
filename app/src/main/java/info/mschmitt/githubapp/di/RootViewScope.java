@@ -1,10 +1,10 @@
 package info.mschmitt.githubapp.di;
 
-import dagger.Module;
+import javax.inject.Scope;
 
 /**
  * @author Matthias Schmitt
  */
-@Module
-public class UsernameViewModule {
+@Scope
+public @interface RootViewScope {
 }

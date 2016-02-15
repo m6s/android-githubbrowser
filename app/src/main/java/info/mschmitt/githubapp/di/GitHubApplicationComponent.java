@@ -1,14 +1,12 @@
 package info.mschmitt.githubapp.di;
 
-import javax.inject.Singleton;
-
 import dagger.Component;
 import info.mschmitt.githubapp.application.GitHubApplication;
 
 /**
  * @author Matthias Schmitt
  */
-@Singleton
+@GitHubApplicationScope
 @Component(modules = {GitHubApplicationModule.class, NetworkModule.class})
 public interface GitHubApplicationComponent extends GitHubApplication.Component {
     @Override

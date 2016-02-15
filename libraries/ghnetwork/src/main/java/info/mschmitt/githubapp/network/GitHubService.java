@@ -4,18 +4,18 @@ import java.util.List;
 
 import info.mschmitt.githubapp.network.responses.GetRepositoriesResponseItem;
 import info.mschmitt.githubapp.network.responses.GetUserResponse;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import rx.Observable;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import rx.Single;
 
 /**
  * @author Matthias Schmitt
  */
 public interface GitHubService {
-    @GET("/users/{username}")
-    Observable<GetUserResponse> getUser(@Path("username") String username);
+    @GET("users/{username}")
+    Single<GetUserResponse> getUser(@Path("username") String username);
 
-    @GET("/users/{username}/repos")
-    Observable<List<GetRepositoriesResponseItem>> getUserRepositories(
+    @GET("users/{username}/repos")
+    Single<List<GetRepositoriesResponseItem>> getUserRepositories(
             @Path("username") String username);
 }

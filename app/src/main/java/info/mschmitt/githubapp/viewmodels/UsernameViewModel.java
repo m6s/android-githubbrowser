@@ -10,19 +10,22 @@ import android.view.View;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
+import info.mschmitt.githubapp.di.UsernameViewScope;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.UserDownloader;
 import info.mschmitt.githubapp.domain.Validator;
 import info.mschmitt.githubapp.entities.User;
+import info.mschmitt.githubapp.java.LoadingProgressManager;
 import info.mschmitt.githubapp.java.ObjectsBackport;
-import info.mschmitt.githubapp.utils.LoadingProgressManager;
+import info.mschmitt.githubapp.java.RxSingleUtils;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
 
 /**
  * @author Matthias Schmitt
  */
+@UsernameViewScope
 public class UsernameViewModel extends BaseObservable {
     public static final String STATE_USER_NAME = "STATE_USER_NAME";
     private final Validator mValidator;
@@ -76,22 +79,21 @@ public class UsernameViewModel extends BaseObservable {
             setUsernameError("Validation error");
             return;
         }
-        ConnectableObservable<User> user =
+        Single<User> download =
                 mUserDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
                             mLoadingProgressManager.notifyLoadingEnd(this);
-                        }).publish();
-        user.subscribe(nextUser -> mNavigationHandler.showRepositorySplitView(mUsername),
-                throwable -> {
+                        });
+        RxSingleUtils.subscribe(download,
+                user -> mNavigationHandler.showRepositorySplitView(mUsername), throwable -> {
                     mAnalyticsService.logError(throwable);
                     mNavigationHandler.showError(throwable, this::showRepositories);
+                }, subscription -> {
+                    mSubscriptions.add(subscription);
+                    setLoading(true);
+                    mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
                 });
-        user.connect(subscription -> {
-            mSubscriptions.add(subscription);
-            setLoading(true);
-            mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
-        });
     }
 
     public TextWatcher getUsernameTextWatcher() {

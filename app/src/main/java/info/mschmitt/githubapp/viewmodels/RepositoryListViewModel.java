@@ -11,7 +11,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubapp.BR;
+import info.mschmitt.githubapp.di.RepositoryListViewScope;
+import info.mschmitt.githubapp.di.RepositoryMapObservableQualifier;
+import info.mschmitt.githubapp.di.SelectedRepositorySubjectQualifier;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
 import rx.subjects.Subject;
@@ -20,6 +25,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
+@RepositoryListViewScope
 public class RepositoryListViewModel extends BaseObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
@@ -31,9 +37,12 @@ public class RepositoryListViewModel extends BaseObservable {
     private CompositeSubscription mSubscriptions;
     private long mCurrentRepositoryId;
 
-    public RepositoryListViewModel(
-            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable,
-            Subject<Repository, Repository> selectedRepositorySubject,
+    @Inject
+    public RepositoryListViewModel(@RepositoryMapObservableQualifier
+                                   Observable<LinkedHashMap<Long, Repository>>
+                                               repositoryMapObservable,
+                                   @SelectedRepositorySubjectQualifier
+                                   Subject<Repository, Repository> selectedRepositorySubject,
                                    NavigationHandler navigationHandler) {
         mRepositoryMapObservable = repositoryMapObservable;
         mSelectedRepositorySubject = selectedRepositorySubject;

@@ -1,6 +1,6 @@
 package info.mschmitt.githubapp.network;
 
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.OkHttpClient;
 
 /**
  * @author Matthias Schmitt
@@ -8,9 +8,9 @@ import com.squareup.okhttp.OkHttpClient;
 public class NetworkProvider {
     private final RetrofitNetworkComponent mRetrofitNetworkComponent;
 
-    public NetworkProvider(String endpoint, boolean debug) {
+    public NetworkProvider(String baseUrl, boolean debug) {
         this(DaggerRetrofitNetworkComponent.builder()
-                .retrofitNetworkModule(new RetrofitNetworkModule(endpoint, debug)).build());
+                .retrofitNetworkModule(new RetrofitNetworkModule(baseUrl, debug)).build());
     }
 
     public NetworkProvider(RetrofitNetworkComponent retrofitNetworkComponent) {

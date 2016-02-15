@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.utils;
+package info.mschmitt.githubapp.java;
 
 import java.util.ArrayList;
 import java.util.Collections;

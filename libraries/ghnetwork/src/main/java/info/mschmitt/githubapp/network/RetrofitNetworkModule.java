@@ -3,7 +3,6 @@ package info.mschmitt.githubapp.network;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
 
@@ -11,9 +10,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
-import retrofit.converter.GsonConverter;
+import info.mschmitt.githubapp.network.utils.AsyncRxJavaCallAdapterFactory;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @author Matthias Schmitt
@@ -21,20 +22,26 @@ import retrofit.converter.GsonConverter;
 @Module
 class RetrofitNetworkModule {
     private final boolean mDebug;
-    private String mEndpoint;
+    private String mBaseUrl;
 
-    public RetrofitNetworkModule(String endpoint, boolean debug) {
-        mEndpoint = endpoint;
+    public RetrofitNetworkModule(String baseUrl, boolean debug) {
+        mBaseUrl = baseUrl;
         mDebug = debug;
     }
 
     @Provides
     @Singleton
     OkHttpClient provideOkHttpClient() {
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
-        okHttpClient.setReadTimeout(10, TimeUnit.SECONDS);
-        return okHttpClient;
+        OkHttpClient.Builder builder =
+                new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
+                        .readTimeout(10, TimeUnit.SECONDS)
+                        .addInterceptor(new GitHubServiceInterceptor());
+        if (mDebug) {
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(loggingInterceptor);
+        }
+        return builder.build();
     }
 
     @Provides
@@ -46,19 +53,17 @@ class RetrofitNetworkModule {
 
     @Provides
     @Singleton
-    RestAdapter provideRestAdapter(OkHttpClient okHttpClient, Gson gson) {
-        RestAdapter.Builder builder = new RestAdapter.Builder();
-        builder.setClient(new OkClient(okHttpClient)).setEndpoint(mEndpoint)
-                .setConverter(new GsonConverter(gson));
-        if (mDebug) {
-            builder.setLogLevel(RestAdapter.LogLevel.FULL);
-        }
+    Retrofit provideRestAdapter(OkHttpClient okHttpClient, Gson gson) {
+        Retrofit.Builder builder =
+                new Retrofit.Builder().addCallAdapterFactory(AsyncRxJavaCallAdapterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create(gson)).client(okHttpClient)
+                        .baseUrl(mBaseUrl);
         return builder.build();
     }
 
     @Provides
     @Singleton
-    GitHubService provideGitHubService(RestAdapter restAdapter) {
-        return restAdapter.create(GitHubService.class);
+    GitHubService provideGitHubService(Retrofit retrofit) {
+        return retrofit.create(GitHubService.class);
     }
 }

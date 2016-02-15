@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'me.tatarka.retrolambda'
 
 dependencies {
+    compile group: 'io.reactivex', name: 'rxjava', version: project.DEPENDENCIES_RX_VERSION
 }

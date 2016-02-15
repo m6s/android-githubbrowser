@@ -2,7 +2,7 @@ package info.mschmitt.githubapp.domain;
 
 import info.mschmitt.githubapp.entities.User;
 import info.mschmitt.githubapp.network.GitHubService;
-import rx.Observable;
+import rx.Single;
 
 /**
  * @author Matthias Schmitt
@@ -14,7 +14,7 @@ public class UserDownloader {
         mGitHubService = gitHubService;
     }
 
-    public Observable<User> download(String username) {
+    public Single<User> download(String username) {
         return mGitHubService.getUser(username)
                 .map(response -> User.builder().id(response.id).login(response.login)
                         .url(response.url).email(response.email).build());

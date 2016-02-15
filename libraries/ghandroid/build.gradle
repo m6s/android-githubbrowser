@@ -27,10 +27,10 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile group: 'com.android.support', name: 'appcompat-v7', version: project.DEPENDENCIES_ANDROID_SUPPORT_VERSION
     provided 'javax.inject:javax.inject:1@jar'
-    compile 'com.google.dagger:dagger:2.0.2'
-    apt 'com.google.dagger:dagger-compiler:2.0.2'
-    compile 'io.reactivex:rxandroid:1.0.1'
-    compile 'io.reactivex:rxjava:1.1.0'
+    compile group: 'com.google.dagger', name: 'dagger', version: project.DEPENDENCIES_DAGGER_VERSION
+    apt group: 'com.google.dagger', name: 'dagger-compiler', version: project.DEPENDENCIES_DAGGER_VERSION
+    compile group: 'io.reactivex', name: 'rxandroid', version: project.DEPENDENCIES_RX_ANDROID_VERSION
+    compile group: 'io.reactivex', name: 'rxjava', version: project.DEPENDENCIES_RX_VERSION
 }

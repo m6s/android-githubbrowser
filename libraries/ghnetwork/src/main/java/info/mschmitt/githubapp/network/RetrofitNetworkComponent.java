@@ -1,10 +1,9 @@
 package info.mschmitt.githubapp.network;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import javax.inject.Singleton;
 
 import dagger.Component;
+import okhttp3.OkHttpClient;
 
 /**
  * @author Matthias Schmitt

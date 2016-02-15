@@ -2,10 +2,12 @@ package info.mschmitt.githubapp.application;
 
 import android.support.v4.app.Fragment;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubapp.R;
+import info.mschmitt.githubapp.di.RootViewScope;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.utils.AlertDialogs;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
@@ -16,6 +18,7 @@ import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 /**
  * @author Matthias Schmitt
  */
+@RootViewScope
 public class NavigationManager
         implements UsernameViewModel.NavigationHandler, RepositorySplitViewModel.NavigationHandler,
         RepositoryListViewModel.NavigationHandler, RepositoryPagerViewModel.NavigationHandler,
@@ -23,7 +26,8 @@ public class NavigationManager
     private final AnalyticsService mAnalyticsService;
     private final Fragment mRootViewFragment;
 
-    public NavigationManager(Fragment rootViewFragment, AnalyticsService analyticsService) {
+    @Inject
+    public NavigationManager(RootViewFragment rootViewFragment, AnalyticsService analyticsService) {
         mRootViewFragment = rootViewFragment;
         mAnalyticsService = analyticsService;
     }

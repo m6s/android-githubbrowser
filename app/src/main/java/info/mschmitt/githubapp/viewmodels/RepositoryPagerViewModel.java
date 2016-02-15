@@ -11,7 +11,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubapp.BR;
+import info.mschmitt.githubapp.di.RepositoryMapObservableQualifier;
+import info.mschmitt.githubapp.di.RepositoryPagerViewScope;
+import info.mschmitt.githubapp.di.SelectedRepositorySubjectQualifier;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
@@ -21,6 +26,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
+@RepositoryPagerViewScope
 public class RepositoryPagerViewModel extends BaseObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
@@ -54,10 +60,14 @@ public class RepositoryPagerViewModel extends BaseObservable {
             };
     private long mCurrentRepositoryId;
 
-    public RepositoryPagerViewModel(
-            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable,
-            Subject<Repository, Repository> selectedRepositorySubject,
-            AnalyticsService analyticsService, NavigationHandler navigationHandler) {
+    @Inject
+    public RepositoryPagerViewModel(@RepositoryMapObservableQualifier
+                                    Observable<LinkedHashMap<Long, Repository>>
+                                                repositoryMapObservable,
+                                    @SelectedRepositorySubjectQualifier
+                                    Subject<Repository, Repository> selectedRepositorySubject,
+                                    AnalyticsService analyticsService,
+                                    NavigationHandler navigationHandler) {
         mRepositoryMapObservable = repositoryMapObservable;
         mSelectedRepositorySubject = selectedRepositorySubject;
         mAnalyticsService = analyticsService;

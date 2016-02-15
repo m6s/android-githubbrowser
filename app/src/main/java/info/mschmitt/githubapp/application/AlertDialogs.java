@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.utils;
+package info.mschmitt.githubapp.application;
 
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
@@ -11,7 +11,9 @@ public class AlertDialogs {
                                        Runnable retryRunnable) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle("Error");
-        alertDialog.setMessage(throwable.getLocalizedMessage());
+        String message = throwable.getLocalizedMessage();
+        message = message == null ? throwable.toString() : message;
+        alertDialog.setMessage(message);
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", (dialog, which) -> {
             dialog.dismiss();
         });

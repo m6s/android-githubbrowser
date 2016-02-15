@@ -1,14 +1,16 @@
 package info.mschmitt.githubapp.di;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.application.NavigationManager;
 import info.mschmitt.githubapp.application.RootViewFragment;
-import info.mschmitt.githubapp.domain.AnalyticsService;
-import info.mschmitt.githubapp.utils.LoadingProgressManager;
+import info.mschmitt.githubapp.java.LoadingProgressManager;
+import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
+import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 import info.mschmitt.githubapp.viewmodels.RootViewModel;
+import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 
 /**
  * @author Matthias Schmitt
@@ -22,22 +24,53 @@ public class RootViewModule {
     }
 
     @Provides
-    @Singleton
-    public RootViewModel provideViewModel(LoadingProgressManager loadingProgressManager,
-                                          NavigationManager navigationManager) {
-        return new RootViewModel(loadingProgressManager, navigationManager);
+    public RootViewFragment provideRootViewFragment() {
+        return mRootViewFragment;
     }
 
     @Provides
-    @Singleton
-    public NavigationManager provideNavigationManager(AnalyticsService analyticsService) {
-        return new NavigationManager(mRootViewFragment, analyticsService);
+    public RootViewModel.NavigationHandler provideRootViewModelNavigationHandler(
+            NavigationManager navigationManager) {
+        return navigationManager;
     }
 
     @Provides
-    @Singleton
+    public RepositoryDetailsViewModel.NavigationHandler
+    provideRepositoryDetailsViewModelNavigationHandler(
+            NavigationManager navigationManager) {
+        return navigationManager;
+    }
+
+    @Provides
+    public RepositoryListViewModel.NavigationHandler
+    provideRepositoryListViewModelNavigationHandler(
+            NavigationManager navigationManager) {
+        return navigationManager;
+    }
+
+    @Provides
+    public RepositoryPagerViewModel.NavigationHandler
+    provideRepositoryPagerViewModelNavigationHandler(
+            NavigationManager navigationManager) {
+        return navigationManager;
+    }
+
+    @Provides
+    public RepositorySplitViewModel.NavigationHandler
+    provideRepositorySplitViewModelNavigationHandler(
+            NavigationManager navigationManager) {
+        return navigationManager;
+    }
+
+    @Provides
+    public UsernameViewModel.NavigationHandler provideUsernameViewModelNavigationHandler(
+            NavigationManager navigationManager) {
+        return navigationManager;
+    }
+
+    @Provides
+    @RootViewScope
     public LoadingProgressManager provideLoadingProgressManager() {
         return new LoadingProgressManager();
     }
-
 }

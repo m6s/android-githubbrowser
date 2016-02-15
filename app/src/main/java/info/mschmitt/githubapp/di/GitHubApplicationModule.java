@@ -4,9 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.domain.AnalyticsService;
@@ -27,40 +24,40 @@ public class GitHubApplicationModule {
     }
 
     @Provides
-    @Singleton
+    @GitHubApplicationScope
     public Validator provideValidator() {
         return new Validator();
     }
 
     @Provides
-    @Singleton
-    public AnalyticsService provideAnalyticsService(@Named("ApplicationContext") Context context) {
+    @GitHubApplicationScope
+    public AnalyticsService provideAnalyticsService(@ApplicationContextQualifier Context context) {
         return new AnalyticsService(context);
     }
 
     @Provides
-    @Singleton
+    @GitHubApplicationScope
     public UserDownloader provideUserDownloader(GitHubService gitHubService) {
         return new UserDownloader(gitHubService);
     }
 
     @Provides
-    @Singleton
+    @GitHubApplicationScope
     public RepositoryDownloader provideRepositoryDownloader(GitHubService gitHubService) {
         return new RepositoryDownloader(gitHubService);
     }
 
     @Provides
-    @Singleton
-    @Named("ApplicationContext")
+    @GitHubApplicationScope
+    @ApplicationContextQualifier
     public Context provideApplicationContext() {
         return mApplication;
     }
 
     @Provides
-    @Singleton
-    @Named("Resources")
-    public Resources provideResources() {
-        return mApplication.getApplicationContext().getResources();
+    @GitHubApplicationScope
+    @ResourcesQualifier
+    public Resources provideResources(@ApplicationContextQualifier Context context) {
+        return context.getResources();
     }
 }

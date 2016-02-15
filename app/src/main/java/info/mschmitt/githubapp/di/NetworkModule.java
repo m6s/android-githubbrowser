@@ -2,8 +2,6 @@ package info.mschmitt.githubapp.di;
 
 import android.content.Context;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.BuildConfig;
@@ -20,11 +18,11 @@ public class NetworkModule {
 
     public NetworkModule(Context context) {
         mNetworkProvider =
-                new NetworkProvider(context.getString(R.string.endpoint), BuildConfig.DEBUG);
+                new NetworkProvider(context.getString(R.string.base_url), BuildConfig.DEBUG);
     }
 
     @Provides
-    @Singleton
+    @GitHubApplicationScope
     GitHubService provideGitHubService() {
         return mNetworkProvider.getGitHubService();
     }

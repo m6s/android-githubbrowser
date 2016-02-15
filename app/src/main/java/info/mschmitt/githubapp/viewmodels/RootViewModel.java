@@ -7,12 +7,14 @@ import android.os.Bundle;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.utils.LoadingProgressManager;
+import info.mschmitt.githubapp.di.RootViewScope;
+import info.mschmitt.githubapp.java.LoadingProgressManager;
 import rx.subscriptions.CompositeSubscription;
 
 /**
  * @author Matthias Schmitt
  */
+@RootViewScope
 public class RootViewModel extends BaseObservable {
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;

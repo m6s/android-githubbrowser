@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubapp.BR;
+import info.mschmitt.githubapp.di.RepositoryDetailsViewScope;
+import info.mschmitt.githubapp.di.RepositoryMapObservableQualifier;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
@@ -18,6 +22,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
+@RepositoryDetailsViewScope
 public class RepositoryDetailsViewModel extends BaseObservable {
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final AnalyticsService mAnalyticsService;
@@ -27,9 +32,12 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     private String mRepositoryUrl;
     private String mRepositoryName;
 
-    public RepositoryDetailsViewModel(
-            Observable<LinkedHashMap<Long, Repository>> repositoryMapObservable,
-            AnalyticsService analyticsService, NavigationHandler navigationHandler) {
+    @Inject
+    public RepositoryDetailsViewModel(@RepositoryMapObservableQualifier
+                                      Observable<LinkedHashMap<Long, Repository>>
+                                                  repositoryMapObservable,
+                                      AnalyticsService analyticsService,
+                                      NavigationHandler navigationHandler) {
         mRepositoryMapObservable = repositoryMapObservable;
         mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;

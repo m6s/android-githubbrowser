@@ -8,15 +8,18 @@ import android.os.Bundle;
 import java.util.LinkedHashMap;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.R;
+import info.mschmitt.githubapp.di.RepositorySplitViewScope;
+import info.mschmitt.githubapp.di.ResourcesQualifier;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.RepositoryDownloader;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.utils.LoadingProgressManager;
+import info.mschmitt.githubapp.java.LoadingProgressManager;
+import info.mschmitt.githubapp.java.RxSingleUtils;
 import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.observables.ConnectableObservable;
 import rx.subjects.BehaviorSubject;
@@ -26,6 +29,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author Matthias Schmitt
  */
+@RepositorySplitViewScope
 public class RepositorySplitViewModel extends BaseObservable {
     private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
     private final BehaviorSubject<Repository> mSelectedRepositorySubject = BehaviorSubject.create();
@@ -42,7 +46,7 @@ public class RepositorySplitViewModel extends BaseObservable {
     private boolean mDetailsViewActive;
 
     @Inject
-    public RepositorySplitViewModel(@Named("Resources") Resources resources,
+    public RepositorySplitViewModel(@ResourcesQualifier Resources resources,
                                     RepositoryDownloader repositoryDownloader,
                                     AnalyticsService analyticsService,
                                     LoadingProgressManager loadingProgressManager,
@@ -76,17 +80,16 @@ public class RepositorySplitViewModel extends BaseObservable {
 
     private void connectModel() {
         setLoading(true);
-        ConnectableObservable<LinkedHashMap<Long, Repository>> map =
+        Single<LinkedHashMap<Long, Repository>> download =
                 mRepositoryDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
                         .doOnUnsubscribe(() -> {
                             setLoading(false);
                             mLoadingProgressManager.notifyLoadingEnd(this);
-                        }).publish();
-        map.subscribe(mRepositoryMapSubject::onNext, throwable -> {
+                        });
+        RxSingleUtils.subscribe(download, mRepositoryMapSubject::onNext, throwable -> {
             mAnalyticsService.logError(throwable);
             mNavigationHandler.showError(throwable, this::connectModel);
-        });
-        map.connect(subscription -> {
+        }, subscription -> {
             mSubscriptions.add(subscription);
             setLoading(true);
             mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
