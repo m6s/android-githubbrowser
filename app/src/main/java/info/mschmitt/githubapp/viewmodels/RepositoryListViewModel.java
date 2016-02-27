@@ -15,8 +15,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.di.RepositoryListViewScope;
-import info.mschmitt.githubapp.di.RepositoryMapObservableQualifier;
-import info.mschmitt.githubapp.di.SelectedRepositorySubjectQualifier;
+import info.mschmitt.githubapp.di.qualifiers.RepositoryMapObservable;
+import info.mschmitt.githubapp.di.qualifiers.SelectedRepositorySubject;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
 import rx.subjects.Subject;
@@ -38,10 +38,10 @@ public class RepositoryListViewModel extends BaseObservable {
     private long mCurrentRepositoryId;
 
     @Inject
-    public RepositoryListViewModel(@RepositoryMapObservableQualifier
+    public RepositoryListViewModel(@RepositoryMapObservable
                                    Observable<LinkedHashMap<Long, Repository>>
                                                repositoryMapObservable,
-                                   @SelectedRepositorySubjectQualifier
+                                   @SelectedRepositorySubject
                                    Subject<Repository, Repository> selectedRepositorySubject,
                                    NavigationHandler navigationHandler) {
         mRepositoryMapObservable = repositoryMapObservable;
@@ -97,7 +97,7 @@ public class RepositoryListViewModel extends BaseObservable {
     }
 
     public void selectRepository(Repository repository) {
-        setCurrentRepositoryId(repository.getId());
+        setCurrentRepositoryId(repository.id());
     }
 
     @Bindable

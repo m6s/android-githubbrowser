@@ -27,7 +27,6 @@ import rx.subscriptions.CompositeSubscription;
  */
 @UsernameViewScope
 public class UsernameViewModel extends BaseObservable {
-    public static final String STATE_USER_NAME = "STATE_USER_NAME";
     private final Validator mValidator;
     private final UserDownloader mUserDownloader;
     private final AnalyticsService mAnalyticsService;
@@ -85,15 +84,17 @@ public class UsernameViewModel extends BaseObservable {
                             setLoading(false);
                             mLoadingProgressManager.notifyLoadingEnd(this);
                         });
-        RxSingleUtils.subscribe(download,
-                user -> mNavigationHandler.showRepositorySplitView(mUsername), throwable -> {
-                    mAnalyticsService.logError(throwable);
-                    mNavigationHandler.showError(throwable, this::showRepositories);
-                }, subscription -> {
-                    mSubscriptions.add(subscription);
-                    setLoading(true);
-                    mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
-                });
+        RxSingleUtils
+                .subscribe(download, user -> mNavigationHandler.showRepositorySplitView(mUsername),
+                        throwable -> {
+                            mAnalyticsService.logError(throwable);
+                            mNavigationHandler.showError(throwable, this::showRepositories);
+                        }, subscription -> {
+                            mSubscriptions.add(subscription);
+                            setLoading(true);
+                            mLoadingProgressManager
+                                    .notifyLoadingBegin(this, subscription::unsubscribe);
+                        });
     }
 
     public TextWatcher getUsernameTextWatcher() {
@@ -127,9 +128,7 @@ public class UsernameViewModel extends BaseObservable {
     }
 
     public void onLoad(Bundle savedState) {
-        if (savedState != null) {
-            mUsername = savedState.getString(STATE_USER_NAME);
-        }
+        State.restoreInstanceState(this, savedState);
     }
 
     public void onResume() {
@@ -137,7 +136,7 @@ public class UsernameViewModel extends BaseObservable {
     }
 
     public void onSave(Bundle outState) {
-        outState.putString(STATE_USER_NAME, mUsername);
+        State.saveInstanceState(this, outState);
     }
 
     public void onPause() {
@@ -155,5 +154,20 @@ public class UsernameViewModel extends BaseObservable {
         void showError(Throwable throwable, Runnable retryHandler);
 
         void showAboutView();
+    }
+
+    private static class State {
+        private static final String USERNAME = "USERNAME";
+
+        private static void saveInstanceState(UsernameViewModel viewModel, Bundle outState) {
+            outState.putString(USERNAME, viewModel.mUsername);
+        }
+
+        private static void restoreInstanceState(UsernameViewModel viewModel, Bundle savedState) {
+            if (savedState == null) {
+                return;
+            }
+            viewModel.mUsername = savedState.getString(USERNAME);
+        }
     }
 }

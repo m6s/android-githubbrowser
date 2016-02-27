@@ -37,7 +37,7 @@ public class RepositoryListAdapter extends ArrayAdapter<Repository> {
             holder = (RepositoryHolder) convertView.getTag();
         }
         Repository repository = getItem(position);
-        holder.text1.setText(repository.getName());
+        holder.text1.setText(repository.name());
         return convertView;
     }
 

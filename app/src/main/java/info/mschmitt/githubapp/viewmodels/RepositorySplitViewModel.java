@@ -1,6 +1,5 @@
 package info.mschmitt.githubapp.viewmodels;
 
-import android.content.res.Resources;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
@@ -12,7 +11,7 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.di.RepositorySplitViewScope;
-import info.mschmitt.githubapp.di.ResourcesQualifier;
+import info.mschmitt.githubapp.di.qualifiers.Resources;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.RepositoryDownloader;
 import info.mschmitt.githubapp.entities.Repository;
@@ -31,9 +30,8 @@ import rx.subscriptions.CompositeSubscription;
  */
 @RepositorySplitViewScope
 public class RepositorySplitViewModel extends BaseObservable {
-    private static final String STATE_DETAILS_VIEW_ACTIVE = "STATE_DETAILS_VIEW_ACTIVE";
     private final BehaviorSubject<Repository> mSelectedRepositorySubject = BehaviorSubject.create();
-    private final Resources mResources;
+    private final android.content.res.Resources mResources;
     private final RepositoryDownloader mRepositoryDownloader;
     private final AnalyticsService mAnalyticsService;
     private final LoadingProgressManager mLoadingProgressManager;
@@ -46,7 +44,7 @@ public class RepositorySplitViewModel extends BaseObservable {
     private boolean mDetailsViewActive;
 
     @Inject
-    public RepositorySplitViewModel(@ResourcesQualifier Resources resources,
+    public RepositorySplitViewModel(@Resources android.content.res.Resources resources,
                                     RepositoryDownloader repositoryDownloader,
                                     AnalyticsService analyticsService,
                                     LoadingProgressManager loadingProgressManager,
@@ -63,9 +61,7 @@ public class RepositorySplitViewModel extends BaseObservable {
     }
 
     public void onLoad(String username, Bundle savedState) {
-        if (savedState != null) {
-            mDetailsViewActive = savedState.getBoolean(STATE_DETAILS_VIEW_ACTIVE);
-        }
+        State.restoreInstanceState(this, savedState);
         mUsername = username;
     }
 
@@ -105,7 +101,7 @@ public class RepositorySplitViewModel extends BaseObservable {
     }
 
     public void onSave(Bundle outState) {
-        outState.putBoolean(STATE_DETAILS_VIEW_ACTIVE, mDetailsViewActive);
+        State.saveInstanceState(this, outState);
     }
 
     public void onPause() {
@@ -158,5 +154,21 @@ public class RepositorySplitViewModel extends BaseObservable {
         void showError(Throwable throwable, Runnable retryHandler);
 
         void showAboutView();
+    }
+
+    private static class State {
+        private static final String DETAILS_VIEW_ACTIVE = "DETAILS_VIEW_ACTIVE";
+
+        private static void saveInstanceState(RepositorySplitViewModel viewModel, Bundle outState) {
+            outState.putBoolean(DETAILS_VIEW_ACTIVE, viewModel.mDetailsViewActive);
+        }
+
+        private static void restoreInstanceState(RepositorySplitViewModel viewModel,
+                                                 Bundle savedState) {
+            if (savedState == null) {
+                return;
+            }
+            viewModel.mDetailsViewActive = savedState.getBoolean(DETAILS_VIEW_ACTIVE);
+        }
     }
 }

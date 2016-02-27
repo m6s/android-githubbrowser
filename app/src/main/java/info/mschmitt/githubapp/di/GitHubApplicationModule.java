@@ -2,10 +2,11 @@ package info.mschmitt.githubapp.di;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.di.qualifiers.ApplicationContext;
+import info.mschmitt.githubapp.di.qualifiers.Resources;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.domain.RepositoryDownloader;
 import info.mschmitt.githubapp.domain.UserDownloader;
@@ -31,7 +32,7 @@ public class GitHubApplicationModule {
 
     @Provides
     @GitHubApplicationScope
-    public AnalyticsService provideAnalyticsService(@ApplicationContextQualifier Context context) {
+    public AnalyticsService provideAnalyticsService(@ApplicationContext Context context) {
         return new AnalyticsService(context);
     }
 
@@ -49,15 +50,15 @@ public class GitHubApplicationModule {
 
     @Provides
     @GitHubApplicationScope
-    @ApplicationContextQualifier
+    @ApplicationContext
     public Context provideApplicationContext() {
         return mApplication;
     }
 
     @Provides
     @GitHubApplicationScope
-    @ResourcesQualifier
-    public Resources provideResources(@ApplicationContextQualifier Context context) {
+    @Resources
+    public android.content.res.Resources provideResources(@ApplicationContext Context context) {
         return context.getResources();
     }
 }

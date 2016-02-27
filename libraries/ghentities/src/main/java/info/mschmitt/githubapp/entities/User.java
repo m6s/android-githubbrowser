@@ -1,85 +1,43 @@
 package info.mschmitt.githubapp.entities;
 
-import info.mschmitt.githubapp.java.Tuple4;
+import com.google.auto.value.AutoValue;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Matthias Schmitt
  */
-public class User {
-    private final Tuple4<Long, String, String, String> mTuple4;
-
-    public User(Builder builder) {
-        mTuple4 = builder.mBuilder.build(tuple4 -> new Object[]{tuple4.component1});
+@AutoValue
+public abstract class User {
+    User() {
     }
 
     public static Builder builder() {
-        return new Builder(Tuple4.builder());
+        return new AutoValue_User.Builder();
     }
 
-    public long getId() {
-        return mTuple4.component1;
-    }
+    public abstract Builder toBuilder();
 
-    public String getLogin() {
-        return mTuple4.component2;
-    }
+    public abstract long id();
 
-    public String getUrl() {
-        return mTuple4.component3;
-    }
+    public abstract String url();
 
-    public String getEmail() {
-        return mTuple4.component4;
-    }
+    @Nullable
+    public abstract String login();
 
-    public Builder toBuilder() {
-        return new Builder(mTuple4.toBuilder());
-    }
+    @Nullable
+    public abstract String email();
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof User && mTuple4.equals(((User) o).mTuple4);
-    }
+    @AutoValue.Builder
+    public abstract static class Builder {
+        public abstract User build();
 
-    @Override
-    public int hashCode() {
-        return mTuple4.hashCode();
-    }
+        public abstract Builder id(long id);
 
-    @Override
-    public String toString() {
-        return mTuple4.toString();
-    }
+        public abstract Builder url(String url);
 
-    public static class Builder {
-        private final Tuple4.Builder<Long, String, String, String> mBuilder;
+        public abstract Builder login(@Nullable String login);
 
-        private Builder(Tuple4.Builder<Long, String, String, String> tupleBuilder) {
-            mBuilder = tupleBuilder;
-        }
-
-        public User build() {
-            return new User(this);
-        }
-
-        public Builder id(long id) {
-            mBuilder.component1(id);
-            return this;
-        }
-
-        public Builder login(String login) {
-            mBuilder.component2(login);
-            return this;
-        }
-
-        public Builder url(String url) {
-            mBuilder.component3(url);
-            return this;
-        }
-
-        public Builder email(String email) {
-            mBuilder.component4(email);
-            return this;
-        }
+        public abstract Builder email(@Nullable String email);
     }
 }

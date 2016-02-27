@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.di.RepositoryDetailsViewScope;
-import info.mschmitt.githubapp.di.RepositoryMapObservableQualifier;
+import info.mschmitt.githubapp.di.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
@@ -33,7 +33,7 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     private String mRepositoryName;
 
     @Inject
-    public RepositoryDetailsViewModel(@RepositoryMapObservableQualifier
+    public RepositoryDetailsViewModel(@RepositoryMapObservable
                                       Observable<LinkedHashMap<Long, Repository>>
                                                   repositoryMapObservable,
                                       AnalyticsService analyticsService,
@@ -82,8 +82,8 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     }
 
     private void setRepository(Repository repository) {
-        mRepositoryName = repository.getName();
-        mRepositoryUrl = repository.getUrl();
+        mRepositoryName = repository.name();
+        mRepositoryUrl = repository.url();
         notifyPropertyChanged(BR.repositoryName);
         notifyPropertyChanged(BR.repositoryUrl);
     }

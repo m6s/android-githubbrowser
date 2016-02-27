@@ -14,9 +14,9 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.di.RepositoryMapObservableQualifier;
 import info.mschmitt.githubapp.di.RepositoryPagerViewScope;
-import info.mschmitt.githubapp.di.SelectedRepositorySubjectQualifier;
+import info.mschmitt.githubapp.di.qualifiers.RepositoryMapObservable;
+import info.mschmitt.githubapp.di.qualifiers.SelectedRepositorySubject;
 import info.mschmitt.githubapp.domain.AnalyticsService;
 import info.mschmitt.githubapp.entities.Repository;
 import rx.Observable;
@@ -61,10 +61,10 @@ public class RepositoryPagerViewModel extends BaseObservable {
     private long mCurrentRepositoryId;
 
     @Inject
-    public RepositoryPagerViewModel(@RepositoryMapObservableQualifier
+    public RepositoryPagerViewModel(@RepositoryMapObservable
                                     Observable<LinkedHashMap<Long, Repository>>
                                                 repositoryMapObservable,
-                                    @SelectedRepositorySubjectQualifier
+                                    @SelectedRepositorySubject
                                     Subject<Repository, Repository> selectedRepositorySubject,
                                     AnalyticsService analyticsService,
                                     NavigationHandler navigationHandler) {
@@ -115,7 +115,7 @@ public class RepositoryPagerViewModel extends BaseObservable {
     }
 
     public void selectRepository(Repository repository) {
-        setCurrentRepositoryId(repository.getId());
+        setCurrentRepositoryId(repository.id());
     }
 
     @Bindable

@@ -23,7 +23,7 @@ public class RepositoryDownloader {
             for (GetRepositoriesResponseItem item : response) {
                 Repository repository =
                         Repository.builder().id(item.id).name(item.name).url(item.url).build();
-                map.put(repository.getId(), repository);
+                map.put(repository.id(), repository);
             }
             return map;
         });

@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.di;
+package info.mschmitt.githubapp.di.qualifiers;
 
 import javax.inject.Qualifier;
 
@@ -6,5 +6,5 @@ import javax.inject.Qualifier;
  * @author Matthias Schmitt
  */
 @Qualifier
-public @interface ResourcesQualifier {
+public @interface Resources {
 }
