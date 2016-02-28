@@ -1,9 +1,9 @@
 package info.mschmitt.githubapp.viewmodels;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
+import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
 import android.widget.AdapterView;
 
@@ -14,10 +14,11 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.di.RepositoryListViewScope;
-import info.mschmitt.githubapp.di.qualifiers.RepositoryMapObservable;
-import info.mschmitt.githubapp.di.qualifiers.SelectedRepositorySubject;
+import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
+import info.mschmitt.githubapp.dagger.RepositoryListViewScope;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
+import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
 import rx.Observable;
 import rx.subjects.Subject;
 import rx.subscriptions.CompositeSubscription;
@@ -26,8 +27,9 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 @RepositoryListViewScope
-public class RepositoryListViewModel extends BaseObservable {
+public class RepositoryListViewModel implements DataBindingObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
+    private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
@@ -51,6 +53,16 @@ public class RepositoryListViewModel extends BaseObservable {
             Repository repository = mRepositories.get(position);
             mSelectedRepositorySubject.onNext(repository);
         };
+    }
+
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.add(callback);
+    }
+
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.remove(callback);
     }
 
     public ObservableList<Repository> getRepositories() {
@@ -81,7 +93,7 @@ public class RepositoryListViewModel extends BaseObservable {
 
     private void setCurrentRepositoryId(long repositoryId) {
         mCurrentRepositoryId = repositoryId;
-        notifyPropertyChanged(BR.selection);
+        mPropertyChangeRegistry.notifyChange(this, BR.selection);
     }
 
     public void onSave(Bundle outState) {

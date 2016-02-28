@@ -1,1 +1,2 @@
-include ':app', ':libraries:ghnetwork', ':libraries:ghentities', ':libraries:ghandroid', ':libraries:ghjava'
+include ':app', ':libraries:ghnetwork', ':libraries:ghentities', ':libraries:ghandroid',
+        ':libraries:ghjava', ':libraries:ghdomain'

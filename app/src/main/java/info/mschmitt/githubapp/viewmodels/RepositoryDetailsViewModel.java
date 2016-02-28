@@ -1,9 +1,8 @@
 package info.mschmitt.githubapp.viewmodels;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,10 +11,11 @@ import java.util.LinkedHashMap;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.di.RepositoryDetailsViewScope;
-import info.mschmitt.githubapp.di.qualifiers.RepositoryMapObservable;
-import info.mschmitt.githubapp.domain.AnalyticsService;
+import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
+import info.mschmitt.githubapp.dagger.RepositoryDetailsViewScope;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.ghdomain.AnalyticsService;
+import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
 
@@ -23,10 +23,11 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 @RepositoryDetailsViewScope
-public class RepositoryDetailsViewModel extends BaseObservable {
+public class RepositoryDetailsViewModel implements DataBindingObservable {
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final AnalyticsService mAnalyticsService;
     private final NavigationHandler mNavigationHandler;
+    private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private Observable<Repository> mRepository;
     private CompositeSubscription mSubscriptions;
     private String mRepositoryUrl;
@@ -43,12 +44,21 @@ public class RepositoryDetailsViewModel extends BaseObservable {
         mNavigationHandler = navigationHandler;
     }
 
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.add(callback);
+    }
+
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.remove(callback);
+    }
+
     public void onLoadForPosition(int position, Bundle savedState) {
         mRepository = mapByRepositoryPosition(mRepositoryMapObservable, position);
         onLoad(savedState);
     }
 
-    @NonNull
     private static Observable<Repository> mapByRepositoryPosition(
             Observable<LinkedHashMap<Long, Repository>> repositories, int position) {
         return repositories.map(nextRepositories -> {
@@ -71,7 +81,6 @@ public class RepositoryDetailsViewModel extends BaseObservable {
         onLoad(savedState);
     }
 
-    @NonNull
     private static Observable<Repository> mapByRepositoryId(
             Observable<LinkedHashMap<Long, Repository>> repositories, long repositoryId) {
         return repositories.map(nextRepositories -> nextRepositories.get(repositoryId))
@@ -84,8 +93,8 @@ public class RepositoryDetailsViewModel extends BaseObservable {
     private void setRepository(Repository repository) {
         mRepositoryName = repository.name();
         mRepositoryUrl = repository.url();
-        notifyPropertyChanged(BR.repositoryName);
-        notifyPropertyChanged(BR.repositoryUrl);
+        mPropertyChangeRegistry.notifyChange(this, BR.repositoryName);
+        mPropertyChangeRegistry.notifyChange(this, BR.repositoryUrl);
     }
 
     @Bindable

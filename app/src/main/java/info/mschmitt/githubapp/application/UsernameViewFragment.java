@@ -15,8 +15,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
+import info.mschmitt.githubapp.dagger.UsernameViewModule;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
-import info.mschmitt.githubapp.di.UsernameViewModule;
 import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 
 

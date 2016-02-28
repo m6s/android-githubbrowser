@@ -10,8 +10,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
+import info.mschmitt.githubapp.dagger.RootViewModule;
 import info.mschmitt.githubapp.databinding.RootViewBinding;
-import info.mschmitt.githubapp.di.RootViewModule;
 import info.mschmitt.githubapp.viewmodels.RootViewModel;
 
 /**

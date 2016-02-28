@@ -1,7 +1,7 @@
 package info.mschmitt.githubapp.viewmodels;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,11 +10,12 @@ import android.view.View;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.di.UsernameViewScope;
-import info.mschmitt.githubapp.domain.AnalyticsService;
-import info.mschmitt.githubapp.domain.UserDownloader;
-import info.mschmitt.githubapp.domain.Validator;
+import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
+import info.mschmitt.githubapp.dagger.UsernameViewScope;
 import info.mschmitt.githubapp.entities.User;
+import info.mschmitt.githubapp.ghdomain.AnalyticsService;
+import info.mschmitt.githubapp.ghdomain.UserDownloader;
+import info.mschmitt.githubapp.ghdomain.Validator;
 import info.mschmitt.githubapp.java.LoadingProgressManager;
 import info.mschmitt.githubapp.java.ObjectsBackport;
 import info.mschmitt.githubapp.java.RxSingleUtils;
@@ -26,7 +27,8 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 @UsernameViewScope
-public class UsernameViewModel extends BaseObservable {
+public class UsernameViewModel implements DataBindingObservable {
+    private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final Validator mValidator;
     private final UserDownloader mUserDownloader;
     private final AnalyticsService mAnalyticsService;
@@ -62,6 +64,16 @@ public class UsernameViewModel extends BaseObservable {
         mAnalyticsService = analyticsService;
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;
+    }
+
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.add(callback);
+    }
+
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.remove(callback);
     }
 
     public String getUsername() {
@@ -111,7 +123,7 @@ public class UsernameViewModel extends BaseObservable {
             return;
         }
         mUsernameError = usernameError;
-        notifyPropertyChanged(BR.usernameError);
+        mPropertyChangeRegistry.notifyChange(this, BR.usernameError);
     }
 
     @Bindable
@@ -124,7 +136,7 @@ public class UsernameViewModel extends BaseObservable {
             return;
         }
         mLoading = loading;
-        notifyPropertyChanged(BR.loading);
+        mPropertyChangeRegistry.notifyChange(this, BR.loading);
     }
 
     public void onLoad(Bundle savedState) {

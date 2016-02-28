@@ -1,9 +1,9 @@
 package info.mschmitt.githubapp.viewmodels;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
+import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
@@ -14,11 +14,12 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.di.RepositoryPagerViewScope;
-import info.mschmitt.githubapp.di.qualifiers.RepositoryMapObservable;
-import info.mschmitt.githubapp.di.qualifiers.SelectedRepositorySubject;
-import info.mschmitt.githubapp.domain.AnalyticsService;
+import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
+import info.mschmitt.githubapp.dagger.RepositoryPagerViewScope;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.ghdomain.AnalyticsService;
+import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
+import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
 import rx.Observable;
 import rx.subjects.Subject;
 import rx.subscriptions.CompositeSubscription;
@@ -27,8 +28,9 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 @RepositoryPagerViewScope
-public class RepositoryPagerViewModel extends BaseObservable {
+public class RepositoryPagerViewModel implements DataBindingObservable {
     private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
+    private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final Subject<Repository, Repository> mSelectedRepositorySubject;
     private final AnalyticsService mAnalyticsService;
@@ -74,6 +76,16 @@ public class RepositoryPagerViewModel extends BaseObservable {
         mNavigationHandler = navigationHandler;
     }
 
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.add(callback);
+    }
+
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.remove(callback);
+    }
+
     public void onLoad(Bundle savedState) {
         mCurrentRepositoryId =
                 savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
@@ -99,7 +111,7 @@ public class RepositoryPagerViewModel extends BaseObservable {
 
     private void setCurrentRepositoryId(long repositoryId) {
         mCurrentRepositoryId = repositoryId;
-        notifyPropertyChanged(BR.currentItem);
+        mPropertyChangeRegistry.notifyChange(this, BR.currentItem);
     }
 
     public void onSave(Bundle outState) {

@@ -2,9 +2,10 @@ package info.mschmitt.githubapp.application;
 
 import android.app.Application;
 
-import info.mschmitt.githubapp.di.DaggerGitHubApplicationComponent;
-import info.mschmitt.githubapp.di.GitHubApplicationModule;
-import info.mschmitt.githubapp.di.NetworkModule;
+import info.mschmitt.githubapp.dagger.DaggerGitHubApplicationComponent;
+import info.mschmitt.githubapp.dagger.DefaultDomainModule;
+import info.mschmitt.githubapp.dagger.DefaultNetworkModule;
+import info.mschmitt.githubapp.dagger.GitHubApplicationModule;
 
 /**
  * @author Matthias Schmitt
@@ -16,9 +17,10 @@ public class GitHubApplication extends Application
     @Override
     public void onCreate() {
         super.onCreate();
-        mApplicationComponent =
-                DaggerGitHubApplicationComponent.builder().networkModule(new NetworkModule(this))
-                        .gitHubApplicationModule(new GitHubApplicationModule(this)).build();
+        mApplicationComponent = DaggerGitHubApplicationComponent.builder()
+                .defaultDomainModule(new DefaultDomainModule())
+                .defaultNetworkModule(new DefaultNetworkModule())
+                .gitHubApplicationModule(new GitHubApplicationModule(this)).build();
         mApplicationComponent.inject(this);
     }
 

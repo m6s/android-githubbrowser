@@ -1,7 +1,8 @@
 package info.mschmitt.githubapp.viewmodels;
 
-import android.databinding.BaseObservable;
+import android.content.res.Resources;
 import android.databinding.Bindable;
+import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
 
 import java.util.LinkedHashMap;
@@ -10,11 +11,11 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.di.RepositorySplitViewScope;
-import info.mschmitt.githubapp.di.qualifiers.Resources;
-import info.mschmitt.githubapp.domain.AnalyticsService;
-import info.mschmitt.githubapp.domain.RepositoryDownloader;
+import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
+import info.mschmitt.githubapp.dagger.RepositorySplitViewScope;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.ghdomain.AnalyticsService;
+import info.mschmitt.githubapp.ghdomain.RepositoryDownloader;
 import info.mschmitt.githubapp.java.LoadingProgressManager;
 import info.mschmitt.githubapp.java.RxSingleUtils;
 import rx.Observable;
@@ -29,7 +30,8 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 @RepositorySplitViewScope
-public class RepositorySplitViewModel extends BaseObservable {
+public class RepositorySplitViewModel implements DataBindingObservable {
+    private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final BehaviorSubject<Repository> mSelectedRepositorySubject = BehaviorSubject.create();
     private final android.content.res.Resources mResources;
     private final RepositoryDownloader mRepositoryDownloader;
@@ -44,8 +46,7 @@ public class RepositorySplitViewModel extends BaseObservable {
     private boolean mDetailsViewActive;
 
     @Inject
-    public RepositorySplitViewModel(@Resources android.content.res.Resources resources,
-                                    RepositoryDownloader repositoryDownloader,
+    public RepositorySplitViewModel(Resources resources, RepositoryDownloader repositoryDownloader,
                                     AnalyticsService analyticsService,
                                     LoadingProgressManager loadingProgressManager,
                                     NavigationHandler navigationHandler) {
@@ -54,6 +55,16 @@ public class RepositorySplitViewModel extends BaseObservable {
         mAnalyticsService = analyticsService;
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;
+    }
+
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.add(callback);
+    }
+
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.remove(callback);
     }
 
     public Subject<Repository, Repository> getSelectedRepositorySubject() {
@@ -115,7 +126,7 @@ public class RepositorySplitViewModel extends BaseObservable {
 
     private void setLoading(boolean loading) {
         mLoading = loading;
-        notifyPropertyChanged(BR.loading);
+        mPropertyChangeRegistry.notifyChange(this, BR.loading);
     }
 
     public boolean onAboutOptionsItemSelected() {
@@ -133,7 +144,7 @@ public class RepositorySplitViewModel extends BaseObservable {
             return;
         }
         mDetailsViewActive = active;
-        notifyPropertyChanged(BR.detailsViewActive);
+        mPropertyChangeRegistry.notifyChange(this, BR.detailsViewActive);
     }
 
     public boolean onHideDetailsView() {

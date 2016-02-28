@@ -5,9 +5,9 @@ import android.support.v4.app.Fragment;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.di.RootViewScope;
-import info.mschmitt.githubapp.domain.AnalyticsService;
+import info.mschmitt.githubapp.dagger.RootViewScope;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.ghdomain.AnalyticsService;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;

@@ -1,13 +1,14 @@
 package info.mschmitt.githubapp.viewmodels;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
 
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
-import info.mschmitt.githubapp.di.RootViewScope;
+import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
+import info.mschmitt.githubapp.dagger.RootViewScope;
 import info.mschmitt.githubapp.java.LoadingProgressManager;
 import rx.subscriptions.CompositeSubscription;
 
@@ -15,7 +16,8 @@ import rx.subscriptions.CompositeSubscription;
  * @author Matthias Schmitt
  */
 @RootViewScope
-public class RootViewModel extends BaseObservable {
+public class RootViewModel implements DataBindingObservable {
+    private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
     private CompositeSubscription mSubscriptions;
@@ -26,6 +28,16 @@ public class RootViewModel extends BaseObservable {
                          NavigationHandler navigationHandler) {
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;
+    }
+
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.add(callback);
+    }
+
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        mPropertyChangeRegistry.remove(callback);
     }
 
     public void onLoad(Bundle savedState) {
@@ -54,7 +66,7 @@ public class RootViewModel extends BaseObservable {
             return;
         }
         mLoading = loading;
-        notifyPropertyChanged(BR.loading);
+        mPropertyChangeRegistry.notifyChange(this, BR.loading);
     }
 
     public boolean onBackPressed() {

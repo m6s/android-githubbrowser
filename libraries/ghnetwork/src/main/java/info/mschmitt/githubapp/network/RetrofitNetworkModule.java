@@ -24,7 +24,7 @@ class RetrofitNetworkModule {
     private final boolean mDebug;
     private String mBaseUrl;
 
-    public RetrofitNetworkModule(String baseUrl, boolean debug) {
+    RetrofitNetworkModule(String baseUrl, boolean debug) {
         mBaseUrl = baseUrl;
         mDebug = debug;
     }
