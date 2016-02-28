@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 
 import dagger.Module;
 import dagger.Provides;
+import info.mschmitt.githubapp.application.RepositorySplitViewFragment;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
@@ -17,6 +18,7 @@ import rx.subjects.Subject;
 @Module
 public class RepositorySplitViewModule {
     @Provides
+    @RepositorySplitViewScope
     @RepositoryMapObservable
     public Observable<LinkedHashMap<Long, Repository>> provideRepositoryMapObservable(
             RepositorySplitViewModel viewModel) {
@@ -24,9 +26,17 @@ public class RepositorySplitViewModule {
     }
 
     @Provides
+    @RepositorySplitViewScope
     @SelectedRepositorySubject
     public Subject<Repository, Repository> provideSelectedRepositorySubject(
             RepositorySplitViewModel viewModel) {
         return viewModel.getSelectedRepositorySubject();
+    }
+
+    @Provides
+    @RepositorySplitViewScope
+    public RepositorySplitViewFragment.Component provideComponent(
+            RepositorySplitViewComponent component) {
+        return component;
     }
 }

@@ -37,9 +37,8 @@ public class RootViewFragment extends BugFixFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        Application application = (Application) getActivity().getApplication();
-        mComponent = application.getComponent().plus(new RootViewModule(this));
-        mComponent.inject(this);
+        ((Application) getActivity().getApplication()).getComponent().plus(new RootViewModule(this))
+                .inject(this);
         mViewModel.onLoad(savedInstanceState);
     }
 
@@ -87,6 +86,11 @@ public class RootViewFragment extends BugFixFragment
     @Override
     public Component getComponent() {
         return mComponent;
+    }
+
+    @Inject
+    public void setComponent(Component component) {
+        mComponent = component;
     }
 
     @Inject

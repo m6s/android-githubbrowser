@@ -38,8 +38,7 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getComponent().plus(new RepositoryPagerViewModule());
-        mComponent.inject(this);
+        mHost.getComponent().plus(new RepositoryPagerViewModule()).inject(this);
         mViewModel.onLoad(savedInstanceState);
         mAdapter =
                 new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
@@ -99,6 +98,11 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public Component getComponent() {
         return mComponent;
+    }
+
+    @Inject
+    public void setComponent(Component component) {
+        mComponent = component;
     }
 
     public interface Component extends RepositoryDetailsViewFragment.SuperComponent {

@@ -44,8 +44,7 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = mHost.getComponent().plus(new RepositorySplitViewModule());
-        mComponent.inject(this);
+        mHost.getComponent().plus(new RepositorySplitViewModule()).inject(this);
         mViewModel.onLoad(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -118,6 +117,11 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public Component getComponent() {
         return mComponent;
+    }
+
+    @Inject
+    public void setComponent(Component component) {
+        mComponent = component;
     }
 
     @Inject

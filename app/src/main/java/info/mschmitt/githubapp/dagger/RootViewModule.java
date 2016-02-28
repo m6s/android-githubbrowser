@@ -24,17 +24,20 @@ public class RootViewModule {
     }
 
     @Provides
+    @RootViewScope
     public RootViewFragment provideRootViewFragment() {
         return mRootViewFragment;
     }
 
     @Provides
+    @RootViewScope
     public RootViewModel.NavigationHandler provideRootViewModelNavigationHandler(
             NavigationManager navigationManager) {
         return navigationManager;
     }
 
     @Provides
+    @RootViewScope
     public RepositoryDetailsViewModel.NavigationHandler
     provideRepositoryDetailsViewModelNavigationHandler(
             NavigationManager navigationManager) {
@@ -42,6 +45,7 @@ public class RootViewModule {
     }
 
     @Provides
+    @RootViewScope
     public RepositoryListViewModel.NavigationHandler
     provideRepositoryListViewModelNavigationHandler(
             NavigationManager navigationManager) {
@@ -49,6 +53,7 @@ public class RootViewModule {
     }
 
     @Provides
+    @RootViewScope
     public RepositoryPagerViewModel.NavigationHandler
     provideRepositoryPagerViewModelNavigationHandler(
             NavigationManager navigationManager) {
@@ -56,6 +61,7 @@ public class RootViewModule {
     }
 
     @Provides
+    @RootViewScope
     public RepositorySplitViewModel.NavigationHandler
     provideRepositorySplitViewModelNavigationHandler(
             NavigationManager navigationManager) {
@@ -63,6 +69,7 @@ public class RootViewModule {
     }
 
     @Provides
+    @RootViewScope
     public UsernameViewModel.NavigationHandler provideUsernameViewModelNavigationHandler(
             NavigationManager navigationManager) {
         return navigationManager;
@@ -72,5 +79,11 @@ public class RootViewModule {
     @RootViewScope
     public LoadingProgressManager provideLoadingProgressManager() {
         return new LoadingProgressManager();
+    }
+
+    @Provides
+    @RootViewScope
+    public RootViewFragment.Component provideComponent(RootViewComponent component) {
+        return component;
     }
 }
