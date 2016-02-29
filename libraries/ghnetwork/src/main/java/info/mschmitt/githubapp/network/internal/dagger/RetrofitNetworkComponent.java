@@ -1,8 +1,9 @@
-package info.mschmitt.githubapp.network;
+package info.mschmitt.githubapp.network.internal.dagger;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
+import info.mschmitt.githubapp.network.GitHubService;
 import okhttp3.OkHttpClient;
 
 /**

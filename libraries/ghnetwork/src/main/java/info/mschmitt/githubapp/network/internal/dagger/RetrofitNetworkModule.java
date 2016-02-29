@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.network;
+package info.mschmitt.githubapp.network.internal.dagger;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -10,7 +10,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import info.mschmitt.githubapp.network.utils.AsyncRxJavaCallAdapterFactory;
+import info.mschmitt.githubapp.network.GitHubService;
+import info.mschmitt.githubapp.network.internal.GitHubServiceInterceptor;
+import info.mschmitt.githubapp.network.internal.utils.AsyncRxJavaCallAdapterFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -20,11 +22,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @author Matthias Schmitt
  */
 @Module
-class RetrofitNetworkModule {
+public class RetrofitNetworkModule {
     private final boolean mDebug;
     private String mBaseUrl;
 
-    RetrofitNetworkModule(String baseUrl, boolean debug) {
+    public RetrofitNetworkModule(String baseUrl, boolean debug) {
         mBaseUrl = baseUrl;
         mDebug = debug;
     }

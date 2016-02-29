@@ -15,8 +15,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
-import info.mschmitt.githubapp.dagger.RepositoryListViewScope;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.scopes.RepositoryListViewScope;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
 import rx.Observable;
@@ -28,7 +28,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 @RepositoryListViewScope
 public class RepositoryListViewModel implements DataBindingObservable {
-    private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
+    private static final String STATE_CURRENT_REPOSITORY_ID = "STATE_CURRENT_REPOSITORY_ID";
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
@@ -71,7 +71,7 @@ public class RepositoryListViewModel implements DataBindingObservable {
 
     public void onLoad(Bundle savedState) {
         mCurrentRepositoryId =
-                savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
+                savedState != null ? savedState.getLong(STATE_CURRENT_REPOSITORY_ID) : -1;
     }
 
     public void onResume() {
@@ -97,7 +97,7 @@ public class RepositoryListViewModel implements DataBindingObservable {
     }
 
     public void onSave(Bundle outState) {
-        outState.putLong(ARG_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
+        outState.putLong(STATE_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
     }
 
     public AdapterView.OnItemClickListener getOnRepositoryItemClickListener() {
@@ -109,7 +109,9 @@ public class RepositoryListViewModel implements DataBindingObservable {
     }
 
     public void selectRepository(Repository repository) {
-        setCurrentRepositoryId(repository.id());
+        if (repository != null) {
+            setCurrentRepositoryId(repository.id());
+        }
     }
 
     @Bindable

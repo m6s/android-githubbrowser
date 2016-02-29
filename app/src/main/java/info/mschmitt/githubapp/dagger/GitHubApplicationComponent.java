@@ -14,7 +14,11 @@ import info.mschmitt.githubapp.application.RootViewFragment;
         DefaultNetworkModule.class})
 public abstract class GitHubApplicationComponent implements GitHubApplication.Component {
     @Override
-    public RootViewComponent rootViewComponent(RootViewFragment fragment) {
+    public void inject(RootViewFragment fragment) {
+        rootViewComponent(fragment).inject(fragment);
+    }
+
+    RootViewComponent rootViewComponent(RootViewFragment fragment) {
         return rootViewComponent(new RootViewModule(fragment));
     }
 

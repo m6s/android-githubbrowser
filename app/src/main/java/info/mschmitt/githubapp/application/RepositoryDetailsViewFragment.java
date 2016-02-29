@@ -1,6 +1,5 @@
 package info.mschmitt.githubapp.application;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,12 +13,11 @@ import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 
 /**
- * A placeholder fragment containing a simple view.
+ * @author Matthias Schmitt
  */
 public class RepositoryDetailsViewFragment extends Fragment {
     private static final String ARG_REPOSITORY_POSITION = "ARG_REPOSITORY_POSITION";
-    private RepositoryDetailsViewModel mViewModel;
-    private FragmentHost mHost;
+    @Inject RepositoryDetailsViewModel mViewModel;
 
     public static RepositoryDetailsViewFragment newInstanceForRepositoryPosition(
             int repositoryPosition) {
@@ -31,15 +29,9 @@ public class RepositoryDetailsViewFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mHost = FragmentUtils.getParent(this, FragmentHost.class);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().repositoryDetailsViewComponent().inject(this);
+        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
         mViewModel.onLoadForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
                 savedInstanceState);
     }
@@ -71,25 +63,12 @@ public class RepositoryDetailsViewFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        mHost = null;
-        super.onDetach();
-    }
-
-    @Inject
-    public void setViewModel(RepositoryDetailsViewModel viewModel) {
-        mViewModel = viewModel;
-    }
-
-    public interface Component {
-        void inject(RepositoryDetailsViewFragment fragment);
-    }
-
-    public interface SuperComponent {
-        Component repositoryDetailsViewComponent();
+    public void onDestroy() {
+        mViewModel = null;
+        super.onDestroy();
     }
 
     public interface FragmentHost {
-        SuperComponent getComponent();
+        void inject(RepositoryDetailsViewFragment fragment);
     }
 }

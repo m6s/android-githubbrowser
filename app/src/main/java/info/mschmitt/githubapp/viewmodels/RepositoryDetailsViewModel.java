@@ -12,9 +12,9 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
-import info.mschmitt.githubapp.dagger.RepositoryDetailsViewScope;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.ghdomain.AnalyticsService;
+import info.mschmitt.githubapp.scopes.RepositoryDetailsViewScope;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;

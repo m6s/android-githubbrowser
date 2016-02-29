@@ -2,6 +2,9 @@ package info.mschmitt.githubapp.ghdomain;
 
 import android.content.Context;
 
+import info.mschmitt.githubapp.ghdomain.internal.dagger.DaggerDomainComponent;
+import info.mschmitt.githubapp.ghdomain.internal.dagger.DomainComponent;
+import info.mschmitt.githubapp.ghdomain.internal.dagger.DomainModule;
 import info.mschmitt.githubapp.network.Network;
 
 /**

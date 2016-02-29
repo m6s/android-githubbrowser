@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.ghdomain;
+package info.mschmitt.githubapp.ghdomain.internal.dagger;
 
 import android.content.Context;
 
@@ -13,12 +13,12 @@ import info.mschmitt.githubapp.network.Network;
  * @author Matthias Schmitt
  */
 @Module
-class DomainModule {
+public class DomainModule {
     private final Network mNetwork;
     private final boolean mDebug;
     private final Context mContext;
 
-    DomainModule(Network network, Context context, boolean debug) {
+    public DomainModule(Network network, Context context, boolean debug) {
         mNetwork = network;
         mDebug = debug;
         mContext = context;

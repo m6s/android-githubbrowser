@@ -1,5 +1,8 @@
 package info.mschmitt.githubapp.network;
 
+import info.mschmitt.githubapp.network.internal.dagger.DaggerRetrofitNetworkComponent;
+import info.mschmitt.githubapp.network.internal.dagger.RetrofitNetworkComponent;
+import info.mschmitt.githubapp.network.internal.dagger.RetrofitNetworkModule;
 import okhttp3.OkHttpClient;
 
 /**

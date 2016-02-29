@@ -12,12 +12,12 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
-import info.mschmitt.githubapp.dagger.RepositorySplitViewScope;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.ghdomain.AnalyticsService;
 import info.mschmitt.githubapp.ghdomain.RepositoryDownloader;
 import info.mschmitt.githubapp.java.LoadingProgressManager;
 import info.mschmitt.githubapp.java.RxSingleUtils;
+import info.mschmitt.githubapp.scopes.RepositorySplitViewScope;
 import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,7 +32,8 @@ import rx.subscriptions.CompositeSubscription;
 @RepositorySplitViewScope
 public class RepositorySplitViewModel implements DataBindingObservable {
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
-    private final BehaviorSubject<Repository> mSelectedRepositorySubject = BehaviorSubject.create();
+    private final BehaviorSubject<Repository> mSelectedRepositorySubject =
+            BehaviorSubject.create((Repository) null);
     private final android.content.res.Resources mResources;
     private final RepositoryDownloader mRepositoryDownloader;
     private final AnalyticsService mAnalyticsService;
@@ -104,7 +105,11 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     private void onNextSelectedRepository(Repository repository) {
-        mNavigationHandler.showRepository(repository);
+        if (repository == null) {
+            setDetailsViewActive(false);
+        } else {
+            mNavigationHandler.showRepository(repository);
+        }
     }
 
     public Observable<LinkedHashMap<Long, Repository>> getRepositoryMapObservable() {
@@ -151,7 +156,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         if (!mDetailsViewActive || mResources.getBoolean(R.bool.split)) {
             return false;
         }
-        setDetailsViewActive(false);
+        mSelectedRepositorySubject.onNext(null);
         return true;
     }
 

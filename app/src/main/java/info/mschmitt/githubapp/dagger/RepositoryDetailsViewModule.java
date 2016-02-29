@@ -6,5 +6,5 @@ import dagger.Module;
  * @author Matthias Schmitt
  */
 @Module
-public class RepositoryDetailsViewModule {
+class RepositoryDetailsViewModule {
 }

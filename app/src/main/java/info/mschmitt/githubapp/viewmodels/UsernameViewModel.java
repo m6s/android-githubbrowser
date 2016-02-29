@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
-import info.mschmitt.githubapp.dagger.UsernameViewScope;
 import info.mschmitt.githubapp.entities.User;
 import info.mschmitt.githubapp.ghdomain.AnalyticsService;
 import info.mschmitt.githubapp.ghdomain.UserDownloader;
@@ -19,6 +18,7 @@ import info.mschmitt.githubapp.ghdomain.Validator;
 import info.mschmitt.githubapp.java.LoadingProgressManager;
 import info.mschmitt.githubapp.java.ObjectsBackport;
 import info.mschmitt.githubapp.java.RxSingleUtils;
+import info.mschmitt.githubapp.scopes.UsernameViewScope;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;

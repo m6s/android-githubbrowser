@@ -15,9 +15,9 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
-import info.mschmitt.githubapp.dagger.RepositoryPagerViewScope;
 import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.ghdomain.AnalyticsService;
+import info.mschmitt.githubapp.scopes.RepositoryPagerViewScope;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
 import rx.Observable;
@@ -29,7 +29,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 @RepositoryPagerViewScope
 public class RepositoryPagerViewModel implements DataBindingObservable {
-    private static final String ARG_CURRENT_REPOSITORY_ID = "ARG_CURRENT_REPOSITORY_ID";
+    private static final String STATE_CURRENT_REPOSITORY_ID = "STATE_CURRENT_REPOSITORY_ID";
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final Subject<Repository, Repository> mSelectedRepositorySubject;
@@ -38,7 +38,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
     private final NavigationHandler mNavigationHandler;
     private CompositeSubscription mSubscriptions;
-    private int mSelectedPagePosition;
+    private long mCurrentRepositoryId;
     private final ViewPager.OnPageChangeListener mOnPageChangeListener =
             new ViewPager.OnPageChangeListener() {
                 @Override
@@ -48,19 +48,19 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
 
                 @Override
                 public void onPageSelected(int position) {
-                    if (mSelectedPagePosition == position) {
+                    if (mRepositories.isEmpty()) {
                         return;
                     }
-                    mSelectedPagePosition = position;
                     Repository repository = mRepositories.get(position);
-                    mSelectedRepositorySubject.onNext(repository);
+                    if (mCurrentRepositoryId != repository.id()) {
+                        mSelectedRepositorySubject.onNext(repository);
+                    }
                 }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
                 }
             };
-    private long mCurrentRepositoryId;
 
     @Inject
     public RepositoryPagerViewModel(@RepositoryMapObservable
@@ -88,7 +88,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
 
     public void onLoad(Bundle savedState) {
         mCurrentRepositoryId =
-                savedState != null ? savedState.getLong(ARG_CURRENT_REPOSITORY_ID) : -1;
+                savedState != null ? savedState.getLong(STATE_CURRENT_REPOSITORY_ID) : -1;
     }
 
     public void onResume() {
@@ -115,7 +115,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
     }
 
     public void onSave(Bundle outState) {
-        outState.putLong(ARG_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
+        outState.putLong(STATE_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
     }
 
     public ViewPager.OnPageChangeListener getOnPageChangeListener() {
@@ -127,7 +127,9 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
     }
 
     public void selectRepository(Repository repository) {
-        setCurrentRepositoryId(repository.id());
+        if (repository != null) {
+            setCurrentRepositoryId(repository.id());
+        }
     }
 
     @Bindable

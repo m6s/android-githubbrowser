@@ -8,8 +8,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
-import info.mschmitt.githubapp.dagger.RootViewScope;
 import info.mschmitt.githubapp.java.LoadingProgressManager;
+import info.mschmitt.githubapp.scopes.RootViewScope;
 import rx.subscriptions.CompositeSubscription;
 
 /**

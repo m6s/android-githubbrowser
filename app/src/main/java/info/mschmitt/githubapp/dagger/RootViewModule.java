@@ -5,6 +5,7 @@ import dagger.Provides;
 import info.mschmitt.githubapp.application.NavigationManager;
 import info.mschmitt.githubapp.application.RootViewFragment;
 import info.mschmitt.githubapp.java.LoadingProgressManager;
+import info.mschmitt.githubapp.scopes.RootViewScope;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
@@ -16,7 +17,7 @@ import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
  * @author Matthias Schmitt
  */
 @Module
-public class RootViewModule {
+class RootViewModule {
     private final RootViewFragment mRootViewFragment;
 
     public RootViewModule(RootViewFragment rootViewFragment) {

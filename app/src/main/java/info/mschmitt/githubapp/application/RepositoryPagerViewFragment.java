@@ -1,6 +1,5 @@
 package info.mschmitt.githubapp.application;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,13 +14,12 @@ import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
 
 /**
- * A placeholder fragment containing a simple view.
+ * @author Matthias Schmitt
  */
 public class RepositoryPagerViewFragment extends Fragment
         implements RepositoryDetailsViewFragment.FragmentHost {
-    private RepositoryPagerViewModel mViewModel;
-    private FragmentHost mHost;
-    private Component mComponent;
+    @Inject Component mComponent;
+    @Inject RepositoryPagerViewModel mViewModel;
     private RepositoryPagerAdapter mAdapter;
 
     public static RepositoryPagerViewFragment newInstance() {
@@ -29,15 +27,9 @@ public class RepositoryPagerViewFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mHost = FragmentUtils.getParent(this, FragmentHost.class);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().repositoryPagerViewComponent().inject(this);
+        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
         mAdapter =
                 new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
@@ -80,39 +72,21 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public void onDestroy() {
         mComponent = null;
+        mViewModel = null;
+        mAdapter = null;
         super.onDestroy();
     }
 
     @Override
-    public void onDetach() {
-        mHost = null;
-        super.onDetach();
+    public void inject(RepositoryDetailsViewFragment fragment) {
+        mComponent.inject(fragment);
     }
 
-    @Inject
-    public void setViewModel(RepositoryPagerViewModel viewModel) {
-        mViewModel = viewModel;
-    }
-
-    @Override
-    public Component getComponent() {
-        return mComponent;
-    }
-
-    @Inject
-    public void setComponent(Component component) {
-        mComponent = component;
-    }
-
-    public interface Component extends RepositoryDetailsViewFragment.SuperComponent {
-        void inject(RepositoryPagerViewFragment fragment);
-    }
-
-    public interface SuperComponent {
-        Component repositoryPagerViewComponent();
+    public interface Component {
+        void inject(RepositoryDetailsViewFragment fragment);
     }
 
     public interface FragmentHost {
-        SuperComponent getComponent();
+        void inject(RepositoryPagerViewFragment fragment);
     }
 }

@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.network;
+package info.mschmitt.githubapp.network.internal;
 
 import java.io.IOException;
 

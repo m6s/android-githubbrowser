@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package info.mschmitt.githubapp.network.utils;
+package info.mschmitt.githubapp.network.internal.utils;
 
 import com.google.gson.reflect.TypeToken;
 

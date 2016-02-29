@@ -14,7 +14,7 @@ import info.mschmitt.githubapp.dagger.GitHubApplicationModule;
  */
 public class GitHubApplication extends Application
         implements RootViewFragment.Application, MainActivity.Application {
-    private Component mComponent;
+    @Inject Component mComponent;
 
     @Override
     public void onCreate() {
@@ -25,16 +25,13 @@ public class GitHubApplication extends Application
     }
 
     @Override
-    public Component getComponent() {
-        return mComponent;
+    public void inject(RootViewFragment fragment) {
+        mComponent.inject(fragment);
     }
 
-    @Inject
-    public void setComponent(Component component) {
-        mComponent = component;
-    }
-
-    public interface Component extends RootViewFragment.SuperComponent {
+    public interface Component {
         void inject(GitHubApplication gitHubApplication);
+
+        void inject(RootViewFragment fragment);
     }
 }

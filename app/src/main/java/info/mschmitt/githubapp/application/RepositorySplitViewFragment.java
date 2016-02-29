@@ -1,6 +1,5 @@
 package info.mschmitt.githubapp.application;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +17,15 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 
+/**
+ * @author Matthias Schmitt
+ */
 public class RepositorySplitViewFragment extends Fragment
         implements RepositoryListViewFragment.FragmentHost,
         RepositoryPagerViewFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
-    private FragmentHost mHost;
-    private RepositorySplitViewModel mViewModel;
-    private Component mComponent;
+    @Inject Component mComponent;
+    @Inject RepositorySplitViewModel mViewModel;
 
     public static RepositorySplitViewFragment newInstance(String username) {
         RepositorySplitViewFragment fragment = new RepositorySplitViewFragment();
@@ -35,15 +36,9 @@ public class RepositorySplitViewFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mHost = FragmentUtils.getParent(this, FragmentHost.class);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().repositorySplitViewComponent().inject(this);
+        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
         mViewModel.onLoad(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -88,13 +83,8 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onDestroy() {
         mComponent = null;
+        mViewModel = null;
         super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        mHost = null;
-        super.onDetach();
     }
 
     @Override
@@ -113,21 +103,6 @@ public class RepositorySplitViewFragment extends Fragment
         }
     }
 
-    @Override
-    public Component getComponent() {
-        return mComponent;
-    }
-
-    @Inject
-    public void setComponent(Component component) {
-        mComponent = component;
-    }
-
-    @Inject
-    public void setViewModel(RepositorySplitViewModel viewModel) {
-        mViewModel = viewModel;
-    }
-
     public void showDetailsView() {
         mViewModel.onShowDetailsView();
     }
@@ -136,16 +111,23 @@ public class RepositorySplitViewFragment extends Fragment
         return mViewModel.onHideDetailsView();
     }
 
-    public interface Component extends RepositoryListViewFragment.SuperComponent,
-            RepositoryPagerViewFragment.SuperComponent {
-        void inject(RepositorySplitViewFragment fragment);
+    @Override
+    public void inject(RepositoryPagerViewFragment fragment) {
+        mComponent.inject(fragment);
     }
 
-    public interface SuperComponent {
-        Component repositorySplitViewComponent();
+    @Override
+    public void inject(RepositoryListViewFragment fragment) {
+        mComponent.inject(fragment);
+    }
+
+    public interface Component {
+        void inject(RepositoryPagerViewFragment fragment);
+
+        void inject(RepositoryListViewFragment fragment);
     }
 
     public interface FragmentHost {
-        SuperComponent getComponent();
+        void inject(RepositorySplitViewFragment fragment);
     }
 }

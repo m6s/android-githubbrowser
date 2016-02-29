@@ -1,4 +1,4 @@
-package info.mschmitt.githubapp.network.utils;
+package info.mschmitt.githubapp.network.internal.utils;
 
 import com.google.gson.TypeAdapter;
 

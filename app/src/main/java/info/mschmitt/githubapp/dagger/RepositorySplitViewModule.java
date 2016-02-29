@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubapp.application.RepositorySplitViewFragment;
 import info.mschmitt.githubapp.entities.Repository;
+import info.mschmitt.githubapp.scopes.RepositorySplitViewScope;
 import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
@@ -16,7 +17,7 @@ import rx.subjects.Subject;
  * @author Matthias Schmitt
  */
 @Module
-public class RepositorySplitViewModule {
+class RepositorySplitViewModule {
     @Provides
     @RepositorySplitViewScope
     @RepositoryMapObservable

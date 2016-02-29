@@ -1,6 +1,5 @@
 package info.mschmitt.githubapp.application;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -18,24 +17,20 @@ import info.mschmitt.githubapp.android.presentation.FragmentUtils;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
 
+/**
+ * @author Matthias Schmitt
+ */
 public class UsernameViewFragment extends Fragment {
-    private FragmentHost mHost;
-    private UsernameViewModel mViewModel;
+    @Inject UsernameViewModel mViewModel;
 
     public static UsernameViewFragment newInstance() {
         return new UsernameViewFragment();
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mHost = FragmentUtils.getParent(this, FragmentHost.class);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().usernameViewComponent().inject(this);
+        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -67,9 +62,9 @@ public class UsernameViewFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        mHost = null;
-        super.onDetach();
+    public void onDestroy() {
+        mViewModel = null;
+        super.onDestroy();
     }
 
     @Override
@@ -88,20 +83,7 @@ public class UsernameViewFragment extends Fragment {
         }
     }
 
-    @Inject
-    public void setViewModel(UsernameViewModel viewModel) {
-        mViewModel = viewModel;
-    }
-
-    public interface Component {
-        void inject(UsernameViewFragment fragment);
-    }
-
-    public interface SuperComponent {
-        Component usernameViewComponent();
-    }
-
     public interface FragmentHost {
-        SuperComponent getComponent();
+        void inject(UsernameViewFragment fragment);
     }
 }

@@ -1,6 +1,5 @@
 package info.mschmitt.githubapp.application;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,11 +14,10 @@ import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 
 /**
- * A placeholder fragment containing a simple view.
+ * @author Matthias Schmitt
  */
 public class RepositoryListViewFragment extends Fragment {
-    private RepositoryListViewModel mViewModel;
-    private FragmentHost mHost;
+    @Inject RepositoryListViewModel mViewModel;
     private RepositoryListAdapter mAdapter;
 
     public static RepositoryListViewFragment newInstance() {
@@ -27,15 +25,9 @@ public class RepositoryListViewFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mHost = FragmentUtils.getParent(this, FragmentHost.class);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().repositoryListViewComponent().inject(this);
+        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
         mAdapter = new RepositoryListAdapter(getActivity(), mViewModel.getRepositories());
     }
@@ -75,25 +67,13 @@ public class RepositoryListViewFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        mHost = null;
-        super.onDetach();
-    }
-
-    @Inject
-    public void setViewModel(RepositoryListViewModel viewModel) {
-        mViewModel = viewModel;
-    }
-
-    public interface Component {
-        void inject(RepositoryListViewFragment fragment);
-    }
-
-    public interface SuperComponent {
-        Component repositoryListViewComponent();
+    public void onDestroy() {
+        mViewModel = null;
+        mAdapter = null;
+        super.onDestroy();
     }
 
     public interface FragmentHost {
-        SuperComponent getComponent();
+        void inject(RepositoryListViewFragment fragment);
     }
 }
