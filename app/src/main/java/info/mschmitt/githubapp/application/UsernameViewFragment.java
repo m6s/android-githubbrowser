@@ -15,10 +15,8 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.dagger.UsernameViewModule;
 import info.mschmitt.githubapp.databinding.UsernameViewBinding;
 import info.mschmitt.githubapp.viewmodels.UsernameViewModel;
-
 
 public class UsernameViewFragment extends Fragment {
     private FragmentHost mHost;
@@ -37,7 +35,7 @@ public class UsernameViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().plus(new UsernameViewModule()).inject(this);
+        mHost.getComponent().usernameViewComponent().inject(this);
         mViewModel.onLoad(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -100,7 +98,7 @@ public class UsernameViewFragment extends Fragment {
     }
 
     public interface SuperComponent {
-        Component plus(UsernameViewModule module);
+        Component usernameViewComponent();
     }
 
     public interface FragmentHost {

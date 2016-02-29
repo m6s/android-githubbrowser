@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.dagger.RepositorySplitViewModule;
 import info.mschmitt.githubapp.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 
@@ -44,7 +43,7 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().plus(new RepositorySplitViewModule()).inject(this);
+        mHost.getComponent().repositorySplitViewComponent().inject(this);
         mViewModel.onLoad(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -143,7 +142,7 @@ public class RepositorySplitViewFragment extends Fragment
     }
 
     public interface SuperComponent {
-        Component plus(RepositorySplitViewModule module);
+        Component repositorySplitViewComponent();
     }
 
     public interface FragmentHost {

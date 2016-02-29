@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.dagger.RepositoryPagerViewModule;
 import info.mschmitt.githubapp.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel;
 
@@ -38,7 +37,7 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().plus(new RepositoryPagerViewModule()).inject(this);
+        mHost.getComponent().repositoryPagerViewComponent().inject(this);
         mViewModel.onLoad(savedInstanceState);
         mAdapter =
                 new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
@@ -110,7 +109,7 @@ public class RepositoryPagerViewFragment extends Fragment
     }
 
     public interface SuperComponent {
-        Component plus(RepositoryPagerViewModule module);
+        Component repositoryPagerViewComponent();
     }
 
     public interface FragmentHost {

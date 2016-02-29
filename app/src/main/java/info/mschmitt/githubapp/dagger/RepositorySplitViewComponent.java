@@ -10,8 +10,8 @@ import info.mschmitt.githubapp.application.RepositorySplitViewFragment;
 @Subcomponent(modules = {RepositorySplitViewModule.class})
 public interface RepositorySplitViewComponent extends RepositorySplitViewFragment.Component {
     @Override
-    RepositoryListViewComponent plus(RepositoryListViewModule module);
+    RepositoryListViewComponent repositoryListViewComponent();
 
     @Override
-    RepositoryPagerViewComponent plus(RepositoryPagerViewModule module);
+    RepositoryPagerViewComponent repositoryPagerViewComponent();
 }

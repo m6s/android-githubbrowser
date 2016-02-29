@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.dagger.RepositoryDetailsViewModule;
 import info.mschmitt.githubapp.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
 
@@ -40,7 +39,7 @@ public class RepositoryDetailsViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().plus(new RepositoryDetailsViewModule()).inject(this);
+        mHost.getComponent().repositoryDetailsViewComponent().inject(this);
         mViewModel.onLoadForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
                 savedInstanceState);
     }
@@ -87,7 +86,7 @@ public class RepositoryDetailsViewFragment extends Fragment {
     }
 
     public interface SuperComponent {
-        Component plus(RepositoryDetailsViewModule module);
+        Component repositoryDetailsViewComponent();
     }
 
     public interface FragmentHost {

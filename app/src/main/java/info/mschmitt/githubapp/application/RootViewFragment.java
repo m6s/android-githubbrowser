@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.android.presentation.BugFixFragment;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.dagger.RootViewModule;
 import info.mschmitt.githubapp.databinding.RootViewBinding;
 import info.mschmitt.githubapp.viewmodels.RootViewModel;
 
@@ -37,7 +36,7 @@ public class RootViewFragment extends BugFixFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        ((Application) getActivity().getApplication()).getComponent().plus(new RootViewModule(this))
+        ((Application) getActivity().getApplication()).getComponent().rootViewComponent(this)
                 .inject(this);
         mViewModel.onLoad(savedInstanceState);
     }
@@ -108,7 +107,7 @@ public class RootViewFragment extends BugFixFragment
     }
 
     public interface SuperComponent {
-        Component plus(RootViewModule module);
+        Component rootViewComponent(RootViewFragment fragment);
     }
 
     public interface Application {

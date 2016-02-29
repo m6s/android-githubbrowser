@@ -10,5 +10,5 @@ import info.mschmitt.githubapp.application.RepositoryPagerViewFragment;
 @Subcomponent(modules = {RepositoryPagerViewModule.class})
 public interface RepositoryPagerViewComponent extends RepositoryPagerViewFragment.Component {
     @Override
-    RepositoryDetailsViewComponent plus(RepositoryDetailsViewModule module);
+    RepositoryDetailsViewComponent repositoryDetailsViewComponent();
 }

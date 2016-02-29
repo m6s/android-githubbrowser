@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import info.mschmitt.githubapp.application.GitHubApplication;
+import info.mschmitt.githubapp.application.RootViewFragment;
 
 /**
  * @author Matthias Schmitt
@@ -11,7 +12,11 @@ import info.mschmitt.githubapp.application.GitHubApplication;
 @Singleton
 @Component(modules = {GitHubApplicationModule.class, DefaultDomainModule.class,
         DefaultNetworkModule.class})
-public interface GitHubApplicationComponent extends GitHubApplication.Component {
+public abstract class GitHubApplicationComponent implements GitHubApplication.Component {
     @Override
-    RootViewComponent plus(RootViewModule module);
+    public RootViewComponent rootViewComponent(RootViewFragment fragment) {
+        return rootViewComponent(new RootViewModule(fragment));
+    }
+
+    abstract RootViewComponent rootViewComponent(RootViewModule module);
 }

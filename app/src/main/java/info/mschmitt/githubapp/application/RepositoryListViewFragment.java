@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubapp.adapters.RepositoryListAdapter;
 import info.mschmitt.githubapp.android.presentation.FragmentUtils;
-import info.mschmitt.githubapp.dagger.RepositoryListViewModule;
 import info.mschmitt.githubapp.databinding.RepositoryListViewBinding;
 import info.mschmitt.githubapp.viewmodels.RepositoryListViewModel;
 
@@ -36,7 +35,7 @@ public class RepositoryListViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHost.getComponent().plus(new RepositoryListViewModule()).inject(this);
+        mHost.getComponent().repositoryListViewComponent().inject(this);
         mViewModel.onLoad(savedInstanceState);
         mAdapter = new RepositoryListAdapter(getActivity(), mViewModel.getRepositories());
     }
@@ -91,7 +90,7 @@ public class RepositoryListViewFragment extends Fragment {
     }
 
     public interface SuperComponent {
-        Component plus(RepositoryListViewModule module);
+        Component repositoryListViewComponent();
     }
 
     public interface FragmentHost {

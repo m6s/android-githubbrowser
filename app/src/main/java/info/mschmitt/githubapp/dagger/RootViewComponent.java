@@ -10,8 +10,8 @@ import info.mschmitt.githubapp.application.RootViewFragment;
 @Subcomponent(modules = {RootViewModule.class})
 public interface RootViewComponent extends RootViewFragment.Component {
     @Override
-    RepositorySplitViewComponent plus(RepositorySplitViewModule module);
+    RepositorySplitViewComponent repositorySplitViewComponent();
 
     @Override
-    UsernameViewComponent plus(UsernameViewModule module);
+    UsernameViewComponent usernameViewComponent();
 }
