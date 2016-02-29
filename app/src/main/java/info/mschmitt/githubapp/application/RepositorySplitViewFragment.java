@@ -103,10 +103,6 @@ public class RepositorySplitViewFragment extends Fragment
         }
     }
 
-    public void showDetailsView() {
-        mViewModel.onShowDetailsView();
-    }
-
     public boolean hideDetailsView() {
         return mViewModel.onHideDetailsView();
     }

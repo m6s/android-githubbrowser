@@ -11,7 +11,7 @@ import info.mschmitt.githubapp.viewmodels.RepositorySplitViewModel;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
 import rx.Observable;
-import rx.subjects.Subject;
+import rx.subjects.BehaviorSubject;
 
 /**
  * @author Matthias Schmitt
@@ -29,7 +29,7 @@ class RepositorySplitViewModule {
     @Provides
     @RepositorySplitViewScope
     @SelectedRepositorySubject
-    public Subject<Repository, Repository> provideSelectedRepositorySubject(
+    public BehaviorSubject<Long> provideSelectedRepositorySubject(
             RepositorySplitViewModel viewModel) {
         return viewModel.getSelectedRepositorySubject();
     }

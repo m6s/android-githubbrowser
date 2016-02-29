@@ -21,7 +21,7 @@ import info.mschmitt.githubapp.scopes.RepositoryPagerViewScope;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
 import rx.Observable;
-import rx.subjects.Subject;
+import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -32,7 +32,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
     private static final String STATE_CURRENT_REPOSITORY_ID = "STATE_CURRENT_REPOSITORY_ID";
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
-    private final Subject<Repository, Repository> mSelectedRepositorySubject;
+    private final BehaviorSubject<Long> mSelectedRepositoryIdSubject;
     private final AnalyticsService mAnalyticsService;
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
@@ -53,7 +53,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
                     }
                     Repository repository = mRepositories.get(position);
                     if (mCurrentRepositoryId != repository.id()) {
-                        mSelectedRepositorySubject.onNext(repository);
+                        mSelectedRepositoryIdSubject.onNext(repository.id());
                     }
                 }
 
@@ -67,11 +67,11 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
                                     Observable<LinkedHashMap<Long, Repository>>
                                                 repositoryMapObservable,
                                     @SelectedRepositorySubject
-                                    Subject<Repository, Repository> selectedRepositorySubject,
+                                    BehaviorSubject<Long> selectedRepositoryIdSubject,
                                     AnalyticsService analyticsService,
                                     NavigationHandler navigationHandler) {
         mRepositoryMapObservable = repositoryMapObservable;
-        mSelectedRepositorySubject = selectedRepositorySubject;
+        mSelectedRepositoryIdSubject = selectedRepositoryIdSubject;
         mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
     }
@@ -105,7 +105,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
                 setCurrentRepositoryId(mCurrentRepositoryId);
             }
         }));
-        mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::selectRepository));
+        mSubscriptions.add(mSelectedRepositoryIdSubject.subscribe(this::onNextRepositorySelected));
         mAnalyticsService.logScreenView(getClass().getName());
     }
 
@@ -126,9 +126,9 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
         mSubscriptions.unsubscribe();
     }
 
-    public void selectRepository(Repository repository) {
-        if (repository != null) {
-            setCurrentRepositoryId(repository.id());
+    public void onNextRepositorySelected(long id) {
+        if (id != -1) {
+            setCurrentRepositoryId(id);
         }
     }
 

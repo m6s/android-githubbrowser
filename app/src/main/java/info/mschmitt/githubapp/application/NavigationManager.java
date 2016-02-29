@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import javax.inject.Inject;
 
 import info.mschmitt.githubapp.R;
-import info.mschmitt.githubapp.entities.Repository;
 import info.mschmitt.githubapp.ghdomain.AnalyticsService;
 import info.mschmitt.githubapp.scopes.RootViewScope;
 import info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel;
@@ -32,18 +31,6 @@ public class NavigationManager
         mAnalyticsService = analyticsService;
     }
 
-    @Override
-    public void showRepository(Repository repository) {
-        findRepositorySplitViewFragment().showDetailsView();
-    }
-
-    private RepositorySplitViewFragment findRepositorySplitViewFragment() {
-        Fragment fragment =
-                mRootViewFragment.getChildFragmentManager().findFragmentById(R.id.contentView);
-        return fragment instanceof RepositorySplitViewFragment ?
-                (RepositorySplitViewFragment) fragment : null;
-    }
-
     public boolean goBack() {
         boolean handled = false;
         RepositorySplitViewFragment repositorySplitViewFragment = findRepositorySplitViewFragment();
@@ -54,6 +41,13 @@ public class NavigationManager
             handled = mRootViewFragment.getChildFragmentManager().popBackStackImmediate();
         }
         return handled;
+    }
+
+    private RepositorySplitViewFragment findRepositorySplitViewFragment() {
+        Fragment fragment =
+                mRootViewFragment.getChildFragmentManager().findFragmentById(R.id.contentView);
+        return fragment instanceof RepositorySplitViewFragment ?
+                (RepositorySplitViewFragment) fragment : null;
     }
 
     public void goUp() {

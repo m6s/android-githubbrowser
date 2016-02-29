@@ -23,7 +23,6 @@ import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.observables.ConnectableObservable;
 import rx.subjects.BehaviorSubject;
-import rx.subjects.Subject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -32,15 +31,14 @@ import rx.subscriptions.CompositeSubscription;
 @RepositorySplitViewScope
 public class RepositorySplitViewModel implements DataBindingObservable {
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
-    private final BehaviorSubject<Repository> mSelectedRepositorySubject =
-            BehaviorSubject.create((Repository) null);
-    private final android.content.res.Resources mResources;
+    private final BehaviorSubject<Long> mSelectedRepositorySubject = BehaviorSubject.create(-1l);
+    private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoryMapSubject =
+            BehaviorSubject.create(new LinkedHashMap<>());
+    private final Resources mResources;
     private final RepositoryDownloader mRepositoryDownloader;
     private final AnalyticsService mAnalyticsService;
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
-    private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoryMapSubject =
-            BehaviorSubject.create();
     private String mUsername;
     private CompositeSubscription mSubscriptions;
     private boolean mLoading;
@@ -58,6 +56,14 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         mNavigationHandler = navigationHandler;
     }
 
+    public BehaviorSubject<Long> getSelectedRepositorySubject() {
+        return mSelectedRepositorySubject;
+    }
+
+    public Observable<LinkedHashMap<Long, Repository>> getRepositoryMapObservable() {
+        return mRepositoryMapSubject.asObservable();
+    }
+
     @Override
     public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
         mPropertyChangeRegistry.add(callback);
@@ -68,10 +74,6 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         mPropertyChangeRegistry.remove(callback);
     }
 
-    public Subject<Repository, Repository> getSelectedRepositorySubject() {
-        return mSelectedRepositorySubject;
-    }
-
     public void onLoad(String username, Bundle savedState) {
         State.restoreInstanceState(this, savedState);
         mUsername = username;
@@ -79,9 +81,9 @@ public class RepositorySplitViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
-        ConnectableObservable<Repository> selected =
+        ConnectableObservable<Long> selected =
                 mSelectedRepositorySubject.observeOn(AndroidSchedulers.mainThread()).publish();
-        selected.subscribe(this::onNextSelectedRepository);
+        selected.subscribe(this::onNextRepositorySelected);
         selected.connect(mSubscriptions::add);
         connectModel();
     }
@@ -104,16 +106,8 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         });
     }
 
-    private void onNextSelectedRepository(Repository repository) {
-        if (repository == null) {
-            setDetailsViewActive(false);
-        } else {
-            mNavigationHandler.showRepository(repository);
-        }
-    }
-
-    public Observable<LinkedHashMap<Long, Repository>> getRepositoryMapObservable() {
-        return mRepositoryMapSubject.asObservable();
+    private void onNextRepositorySelected(long id) {
+        setDetailsViewActive(id != -1);
     }
 
     public void onSave(Bundle outState) {
@@ -156,17 +150,11 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         if (!mDetailsViewActive || mResources.getBoolean(R.bool.split)) {
             return false;
         }
-        mSelectedRepositorySubject.onNext(null);
+        mSelectedRepositorySubject.onNext(-1l);
         return true;
     }
 
-    public void onShowDetailsView() {
-        setDetailsViewActive(true);
-    }
-
     public interface NavigationHandler {
-        void showRepository(Repository repository);
-
         void showError(Throwable throwable, Runnable retryHandler);
 
         void showAboutView();

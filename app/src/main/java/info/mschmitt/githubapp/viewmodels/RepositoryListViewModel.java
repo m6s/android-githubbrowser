@@ -20,7 +20,7 @@ import info.mschmitt.githubapp.scopes.RepositoryListViewScope;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
 import rx.Observable;
-import rx.subjects.Subject;
+import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -33,7 +33,7 @@ public class RepositoryListViewModel implements DataBindingObservable {
     private final Map<Long, Integer> mRowIndexes = new HashMap<>();
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
-    private final Subject<Repository, Repository> mSelectedRepositorySubject;
+    private final BehaviorSubject<Long> mSelectedRepositoryIdSubject;
     private final NavigationHandler mNavigationHandler;
     private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
     private CompositeSubscription mSubscriptions;
@@ -44,14 +44,14 @@ public class RepositoryListViewModel implements DataBindingObservable {
                                    Observable<LinkedHashMap<Long, Repository>>
                                                repositoryMapObservable,
                                    @SelectedRepositorySubject
-                                   Subject<Repository, Repository> selectedRepositorySubject,
+                                   BehaviorSubject<Long> selectedRepositoryIdSubject,
                                    NavigationHandler navigationHandler) {
         mRepositoryMapObservable = repositoryMapObservable;
-        mSelectedRepositorySubject = selectedRepositorySubject;
+        mSelectedRepositoryIdSubject = selectedRepositoryIdSubject;
         mNavigationHandler = navigationHandler;
         mOnRepositoryItemClickListener = (ignore1, ignore2, position, ignore3) -> {
             Repository repository = mRepositories.get(position);
-            mSelectedRepositorySubject.onNext(repository);
+            mSelectedRepositoryIdSubject.onNext(repository.id());
         };
     }
 
@@ -88,7 +88,7 @@ public class RepositoryListViewModel implements DataBindingObservable {
                 setCurrentRepositoryId(mCurrentRepositoryId);
             }
         }));
-        mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::selectRepository));
+        mSubscriptions.add(mSelectedRepositoryIdSubject.subscribe(this::onNextRepositorySelected));
     }
 
     private void setCurrentRepositoryId(long repositoryId) {
@@ -108,9 +108,9 @@ public class RepositoryListViewModel implements DataBindingObservable {
         mSubscriptions.unsubscribe();
     }
 
-    public void selectRepository(Repository repository) {
-        if (repository != null) {
-            setCurrentRepositoryId(repository.id());
+    public void onNextRepositorySelected(long id) {
+        if (id != -1) {
+            setCurrentRepositoryId(id);
         }
     }
 
