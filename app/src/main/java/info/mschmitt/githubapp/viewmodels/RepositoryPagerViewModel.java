@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import info.mschmitt.githubapp.BR;
 import info.mschmitt.githubapp.android.presentation.DataBindingObservable;
 import info.mschmitt.githubapp.entities.Repository;
-import info.mschmitt.githubapp.ghdomain.AnalyticsService;
 import info.mschmitt.githubapp.scopes.RepositoryPagerViewScope;
 import info.mschmitt.githubapp.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubapp.viewmodels.qualifiers.SelectedRepositorySubject;
@@ -29,16 +28,12 @@ import rx.subscriptions.CompositeSubscription;
  */
 @RepositoryPagerViewScope
 public class RepositoryPagerViewModel implements DataBindingObservable {
-    private static final String STATE_CURRENT_REPOSITORY_ID = "STATE_CURRENT_REPOSITORY_ID";
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
-    private final BehaviorSubject<Long> mSelectedRepositoryIdSubject;
-    private final AnalyticsService mAnalyticsService;
+    private final BehaviorSubject<Long> mSelectedRepositorySubject;
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
     private final NavigationHandler mNavigationHandler;
-    private CompositeSubscription mSubscriptions;
-    private long mCurrentRepositoryId;
     private final ViewPager.OnPageChangeListener mOnPageChangeListener =
             new ViewPager.OnPageChangeListener() {
                 @Override
@@ -48,12 +43,9 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
 
                 @Override
                 public void onPageSelected(int position) {
-                    if (mRepositories.isEmpty()) {
-                        return;
-                    }
                     Repository repository = mRepositories.get(position);
-                    if (mCurrentRepositoryId != repository.id()) {
-                        mSelectedRepositoryIdSubject.onNext(repository.id());
+                    if (mSelectedRepositorySubject.getValue() != repository.id()) {
+                        mSelectedRepositorySubject.onNext(repository.id());
                     }
                 }
 
@@ -61,18 +53,17 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
                 public void onPageScrollStateChanged(int state) {
                 }
             };
+    private CompositeSubscription mSubscriptions;
 
     @Inject
     public RepositoryPagerViewModel(@RepositoryMapObservable
                                     Observable<LinkedHashMap<Long, Repository>>
                                                 repositoryMapObservable,
                                     @SelectedRepositorySubject
-                                    BehaviorSubject<Long> selectedRepositoryIdSubject,
-                                    AnalyticsService analyticsService,
+                                    BehaviorSubject<Long> selectedRepositorySubject,
                                     NavigationHandler navigationHandler) {
         mRepositoryMapObservable = repositoryMapObservable;
-        mSelectedRepositoryIdSubject = selectedRepositoryIdSubject;
-        mAnalyticsService = analyticsService;
+        mSelectedRepositorySubject = selectedRepositorySubject;
         mNavigationHandler = navigationHandler;
     }
 
@@ -87,35 +78,26 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
     }
 
     public void onLoad(Bundle savedState) {
-        mCurrentRepositoryId =
-                savedState != null ? savedState.getLong(STATE_CURRENT_REPOSITORY_ID) : -1;
     }
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
-        mSubscriptions.add(mRepositoryMapObservable.subscribe((repositoryMap) -> {
-            mPageIndexes.clear();
-            int i = 0;
-            for (long id : repositoryMap.keySet()) {
-                mPageIndexes.put(id, i++);
-            }
-            mRepositories.clear();
-            mRepositories.addAll(repositoryMap.values());
-            if (mCurrentRepositoryId != -1) {
-                setCurrentRepositoryId(mCurrentRepositoryId);
-            }
-        }));
-        mSubscriptions.add(mSelectedRepositoryIdSubject.subscribe(this::onNextRepositorySelected));
-        mAnalyticsService.logScreenView(getClass().getName());
+        mSubscriptions.add(mRepositoryMapObservable.subscribe(this::onNextRepositoryMap));
+        mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
     }
 
-    private void setCurrentRepositoryId(long repositoryId) {
-        mCurrentRepositoryId = repositoryId;
+    private void onNextRepositoryMap(LinkedHashMap<Long, Repository> map) {
+        mPageIndexes.clear();
+        int i = 0;
+        for (long id : map.keySet()) {
+            mPageIndexes.put(id, i++);
+        }
+        mRepositories.clear();
+        mRepositories.addAll(map.values());
         mPropertyChangeRegistry.notifyChange(this, BR.currentItem);
     }
 
     public void onSave(Bundle outState) {
-        outState.putLong(STATE_CURRENT_REPOSITORY_ID, mCurrentRepositoryId);
     }
 
     public ViewPager.OnPageChangeListener getOnPageChangeListener() {
@@ -126,16 +108,16 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
         mSubscriptions.unsubscribe();
     }
 
-    public void onNextRepositorySelected(long id) {
+    public void onNextSelectedRepository(long id) {
         if (id != -1) {
-            setCurrentRepositoryId(id);
+            mPropertyChangeRegistry.notifyChange(this, BR.currentItem);
         }
     }
 
     @Bindable
     public int getCurrentItem() {
-        Integer integer = mPageIndexes.get(mCurrentRepositoryId);
-        return integer != null ? integer : -1;
+        Integer index = mPageIndexes.get(mSelectedRepositorySubject.getValue());
+        return index != null ? index : -1;
     }
 
     public ObservableList<Repository> getRepositories() {

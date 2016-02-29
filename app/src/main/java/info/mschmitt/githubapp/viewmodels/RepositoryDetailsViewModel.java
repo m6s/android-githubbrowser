@@ -28,7 +28,7 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
     private final AnalyticsService mAnalyticsService;
     private final NavigationHandler mNavigationHandler;
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
-    private Observable<Repository> mRepository;
+    private Observable<Repository> mRepositoryObservable;
     private CompositeSubscription mSubscriptions;
     private String mRepositoryUrl;
     private String mRepositoryName;
@@ -55,7 +55,7 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
     }
 
     public void onLoadForPosition(int position, Bundle savedState) {
-        mRepository = mapByRepositoryPosition(mRepositoryMapObservable, position);
+        mRepositoryObservable = mapByRepositoryPosition(mRepositoryMapObservable, position);
         onLoad(savedState);
     }
 
@@ -72,12 +72,12 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
-        mSubscriptions.add(mRepository.subscribe(this::setRepository));
+        mSubscriptions.add(mRepositoryObservable.subscribe(this::onNextRepository));
         mAnalyticsService.logScreenView(getClass().getName());
     }
 
     public void onLoadForId(long repositoryId, Bundle savedState) {
-        mRepository = mapByRepositoryId(mRepositoryMapObservable, repositoryId);
+        mRepositoryObservable = mapByRepositoryId(mRepositoryMapObservable, repositoryId);
         onLoad(savedState);
     }
 
@@ -90,7 +90,7 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
     public void onSave(Bundle outState) {
     }
 
-    private void setRepository(Repository repository) {
+    private void onNextRepository(Repository repository) {
         mRepositoryName = repository.name();
         mRepositoryUrl = repository.url();
         mPropertyChangeRegistry.notifyChange(this, BR.repositoryName);

@@ -145,6 +145,7 @@ public class UsernameViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
+        mAnalyticsService.logScreenView(getClass().getName());
     }
 
     public void onSave(Bundle outState) {

@@ -82,7 +82,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         mSubscriptions = new CompositeSubscription();
         ConnectableObservable<Long> selected =
                 mSelectedRepositorySubject.observeOn(AndroidSchedulers.mainThread()).publish();
-        selected.subscribe(this::onNextRepositorySelected);
+        selected.subscribe(this::onNextSelectedRepository);
         selected.connect(mSubscriptions::add);
         connectModel();
     }
@@ -105,7 +105,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         });
     }
 
-    private void onNextRepositorySelected(long id) {
+    private void onNextSelectedRepository(long id) {
         mPropertyChangeRegistry.notifyChange(this, BR.detailsViewActive);
     }
 
@@ -142,7 +142,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
 
     @Bindable
     public boolean getDetailsViewActive() {
-        return mSelectedRepositorySubject.toBlocking().first() != -1l;
+        return mSelectedRepositorySubject.getValue() != -1l;
     }
 
     public interface NavigationHandler {
@@ -155,8 +155,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         private static final String SELECTED_REPOSITORY = "SELECTED_REPOSITORY";
 
         private static void saveInstanceState(RepositorySplitViewModel viewModel, Bundle outState) {
-            outState.putLong(SELECTED_REPOSITORY,
-                    viewModel.mSelectedRepositorySubject.toBlocking().first());
+            outState.putLong(SELECTED_REPOSITORY, viewModel.mSelectedRepositorySubject.getValue());
         }
 
         private static void restoreInstanceState(RepositorySplitViewModel viewModel,
