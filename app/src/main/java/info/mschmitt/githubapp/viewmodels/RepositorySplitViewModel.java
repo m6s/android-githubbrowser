@@ -42,7 +42,6 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     private String mUsername;
     private CompositeSubscription mSubscriptions;
     private boolean mLoading;
-    private boolean mDetailsViewActive;
 
     @Inject
     public RepositorySplitViewModel(Resources resources, RepositoryDownloader repositoryDownloader,
@@ -107,7 +106,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     private void onNextRepositorySelected(long id) {
-        setDetailsViewActive(id != -1);
+        mPropertyChangeRegistry.notifyChange(this, BR.detailsViewActive);
     }
 
     public void onSave(Bundle outState) {
@@ -133,25 +132,17 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         return true;
     }
 
-    @Bindable
-    public boolean getDetailsViewActive() {
-        return mDetailsViewActive;
-    }
-
-    private void setDetailsViewActive(boolean active) {
-        if (mDetailsViewActive == active) {
-            return;
-        }
-        mDetailsViewActive = active;
-        mPropertyChangeRegistry.notifyChange(this, BR.detailsViewActive);
-    }
-
     public boolean onHideDetailsView() {
-        if (!mDetailsViewActive || mResources.getBoolean(R.bool.split)) {
+        if (!getDetailsViewActive() || mResources.getBoolean(R.bool.split)) {
             return false;
         }
         mSelectedRepositorySubject.onNext(-1l);
         return true;
+    }
+
+    @Bindable
+    public boolean getDetailsViewActive() {
+        return mSelectedRepositorySubject.toBlocking().first() != -1l;
     }
 
     public interface NavigationHandler {
@@ -161,10 +152,11 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     private static class State {
-        private static final String DETAILS_VIEW_ACTIVE = "DETAILS_VIEW_ACTIVE";
+        private static final String SELECTED_REPOSITORY = "SELECTED_REPOSITORY";
 
         private static void saveInstanceState(RepositorySplitViewModel viewModel, Bundle outState) {
-            outState.putBoolean(DETAILS_VIEW_ACTIVE, viewModel.mDetailsViewActive);
+            outState.putLong(SELECTED_REPOSITORY,
+                    viewModel.mSelectedRepositorySubject.toBlocking().first());
         }
 
         private static void restoreInstanceState(RepositorySplitViewModel viewModel,
@@ -172,7 +164,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
             if (savedState == null) {
                 return;
             }
-            viewModel.mDetailsViewActive = savedState.getBoolean(DETAILS_VIEW_ACTIVE);
+            viewModel.mSelectedRepositorySubject.onNext(savedState.getLong(SELECTED_REPOSITORY));
         }
     }
 }
