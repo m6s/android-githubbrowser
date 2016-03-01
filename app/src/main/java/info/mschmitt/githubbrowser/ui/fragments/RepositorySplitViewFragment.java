@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import info.mschmitt.githubbrowser.R;
 import info.mschmitt.githubbrowser.android.presentation.FragmentUtils;
 import info.mschmitt.githubbrowser.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
@@ -88,14 +89,14 @@ public class RepositorySplitViewFragment extends Fragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(info.mschmitt.githubbrowser.R.menu.main, menu);
+        inflater.inflate(R.menu.main, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case info.mschmitt.githubbrowser.R.id.action_about:
+            case R.id.action_about:
                 return mViewModel.onAboutOptionsItemSelected();
             default:
                 return super.onOptionsItemSelected(item);

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import info.mschmitt.githubbrowser.R;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 
 public class MainActivity extends AppCompatActivity implements RootViewFragment.FragmentHost {
@@ -12,7 +13,7 @@ public class MainActivity extends AppCompatActivity implements RootViewFragment.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(info.mschmitt.githubbrowser.R.layout.main_activity);
+        setContentView(R.layout.main_activity);
     }
 
     @Override

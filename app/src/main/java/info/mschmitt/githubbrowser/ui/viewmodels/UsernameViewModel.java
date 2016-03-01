@@ -15,6 +15,8 @@ import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.UserDownloader;
 import info.mschmitt.githubbrowser.domain.Validator;
 import info.mschmitt.githubbrowser.entities.User;
+import info.mschmitt.githubbrowser.java.LoadingProgressManager;
+import info.mschmitt.githubbrowser.java.ObjectsBackport;
 import info.mschmitt.githubbrowser.java.RxSingleUtils;
 import info.mschmitt.githubbrowser.ui.scopes.UsernameViewScope;
 import rx.Single;
@@ -30,7 +32,7 @@ public class UsernameViewModel implements DataBindingObservable {
     private final Validator mValidator;
     private final UserDownloader mUserDownloader;
     private final AnalyticsService mAnalyticsService;
-    private final info.mschmitt.githubbrowser.java.LoadingProgressManager mLoadingProgressManager;
+    private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
     private CompositeSubscription mSubscriptions;
     private String mUsername;
@@ -55,7 +57,7 @@ public class UsernameViewModel implements DataBindingObservable {
     @Inject
     public UsernameViewModel(Validator validator, UserDownloader userDownloader,
                              AnalyticsService analyticsService,
-                             info.mschmitt.githubbrowser.java.LoadingProgressManager loadingProgressManager,
+                             LoadingProgressManager loadingProgressManager,
                              NavigationHandler navigationHandler) {
         mValidator = validator;
         mUserDownloader = userDownloader;
@@ -117,7 +119,7 @@ public class UsernameViewModel implements DataBindingObservable {
     }
 
     private void setUsernameError(String usernameError) {
-        if (info.mschmitt.githubbrowser.java.ObjectsBackport.equals(usernameError, mUsernameError)) {
+        if (ObjectsBackport.equals(usernameError, mUsernameError)) {
             return;
         }
         mUsernameError = usernameError;

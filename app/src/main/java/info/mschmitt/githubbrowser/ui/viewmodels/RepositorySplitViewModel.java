@@ -15,6 +15,7 @@ import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
 import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.RepositoryDownloader;
 import info.mschmitt.githubbrowser.entities.Repository;
+import info.mschmitt.githubbrowser.java.LoadingProgressManager;
 import info.mschmitt.githubbrowser.java.RxSingleUtils;
 import info.mschmitt.githubbrowser.ui.scopes.RepositorySplitViewScope;
 import rx.Observable;
@@ -36,7 +37,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     private final Resources mResources;
     private final RepositoryDownloader mRepositoryDownloader;
     private final AnalyticsService mAnalyticsService;
-    private final info.mschmitt.githubbrowser.java.LoadingProgressManager mLoadingProgressManager;
+    private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
     private String mUsername;
     private CompositeSubscription mSubscriptions;
@@ -45,7 +46,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     @Inject
     public RepositorySplitViewModel(Resources resources, RepositoryDownloader repositoryDownloader,
                                     AnalyticsService analyticsService,
-                                    info.mschmitt.githubbrowser.java.LoadingProgressManager loadingProgressManager,
+                                    LoadingProgressManager loadingProgressManager,
                                     NavigationHandler navigationHandler) {
         mResources = resources;
         mRepositoryDownloader = repositoryDownloader;

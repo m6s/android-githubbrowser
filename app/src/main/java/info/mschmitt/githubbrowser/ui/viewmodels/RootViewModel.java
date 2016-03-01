@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
+import info.mschmitt.githubbrowser.java.LoadingProgressManager;
 import info.mschmitt.githubbrowser.ui.scopes.RootViewScope;
 import rx.subscriptions.CompositeSubscription;
 
@@ -17,14 +18,13 @@ import rx.subscriptions.CompositeSubscription;
 @RootViewScope
 public class RootViewModel implements DataBindingObservable {
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
-    private final info.mschmitt.githubbrowser.java.LoadingProgressManager mLoadingProgressManager;
+    private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
     private CompositeSubscription mSubscriptions;
     private boolean mLoading;
 
     @Inject
-    public RootViewModel(
-            info.mschmitt.githubbrowser.java.LoadingProgressManager loadingProgressManager,
+    public RootViewModel(LoadingProgressManager loadingProgressManager,
                          NavigationHandler navigationHandler) {
         mLoadingProgressManager = loadingProgressManager;
         mNavigationHandler = navigationHandler;

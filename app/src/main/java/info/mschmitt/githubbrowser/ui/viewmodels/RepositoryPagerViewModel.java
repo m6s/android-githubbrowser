@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
+import info.mschmitt.githubbrowser.entities.Repository;
 import info.mschmitt.githubbrowser.ui.scopes.RepositoryPagerViewScope;
 import info.mschmitt.githubbrowser.ui.viewmodels.qualifiers.RepositoryMapObservable;
 import info.mschmitt.githubbrowser.ui.viewmodels.qualifiers.SelectedRepositorySubject;
@@ -28,11 +29,9 @@ import rx.subscriptions.CompositeSubscription;
 @RepositoryPagerViewScope
 public class RepositoryPagerViewModel implements DataBindingObservable {
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
-    private final Observable<LinkedHashMap<Long, info.mschmitt.githubbrowser.entities.Repository>>
-            mRepositoryMapObservable;
+    private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final BehaviorSubject<Long> mSelectedRepositorySubject;
-    private final ObservableList<info.mschmitt.githubbrowser.entities.Repository> mRepositories =
-            new ObservableArrayList<>();
+    private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
     private final NavigationHandler mNavigationHandler;
     private final ViewPager.OnPageChangeListener mOnPageChangeListener =
@@ -59,7 +58,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
 
     @Inject
     public RepositoryPagerViewModel(@RepositoryMapObservable
-                                        Observable<LinkedHashMap<Long, info.mschmitt.githubbrowser.entities.Repository>>
+                                        Observable<LinkedHashMap<Long, Repository>>
                                                 repositoryMapObservable,
                                     @SelectedRepositorySubject
                                     BehaviorSubject<Long> selectedRepositorySubject,
@@ -123,7 +122,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
         return index != null ? index : -1;
     }
 
-    public ObservableList<info.mschmitt.githubbrowser.entities.Repository> getRepositories() {
+    public ObservableList<Repository> getRepositories() {
         return mRepositories;
     }
 

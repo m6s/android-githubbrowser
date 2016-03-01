@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
 
+import info.mschmitt.githubbrowser.R;
 import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.ui.fragments.RepositorySplitViewFragment;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
@@ -45,8 +46,8 @@ public class NavigationManager
     }
 
     private RepositorySplitViewFragment findRepositorySplitViewFragment() {
-        Fragment fragment = mRootViewFragment.getChildFragmentManager()
-                .findFragmentById(info.mschmitt.githubbrowser.R.id.contentView);
+        Fragment fragment =
+                mRootViewFragment.getChildFragmentManager().findFragmentById(R.id.contentView);
         return fragment instanceof RepositorySplitViewFragment ?
                 (RepositorySplitViewFragment) fragment : null;
     }
@@ -62,8 +63,7 @@ public class NavigationManager
     public void showRepositorySplitView(String username) {
         mAnalyticsService.logScreenView(RepositorySplitViewFragment.class.getName());
         mRootViewFragment.getChildFragmentManager().beginTransaction()
-                .replace(info.mschmitt.githubbrowser.R.id.contentView,
-                        RepositorySplitViewFragment.newInstance(username))
+                .replace(R.id.contentView, RepositorySplitViewFragment.newInstance(username))
                 .addToBackStack(null).commit();
     }
 
