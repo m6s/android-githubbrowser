@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="info.mschmitt.githubapp.viewmodels.RepositoryPagerViewModel"/>
+            type="info.mschmitt.githubbrowser.ui.viewmodels.RepositoryPagerViewModel"/>
     </data>
 
     <android.support.v4.view.ViewPager

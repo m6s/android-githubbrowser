@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="info.mschmitt.githubapp.viewmodels.RepositoryListViewModel"/>
+            type="info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel"/>
     </data>
 
     <ListView

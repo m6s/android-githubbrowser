@@ -1,2 +1,2 @@
-include ':app', ':libraries:ghnetwork', ':libraries:ghentities', ':libraries:ghandroid',
-        ':libraries:ghjava', ':libraries:ghdomain'
+include ':app', ':libraries:network', ':libraries:entities', ':libraries:utilities-android',
+        ':libraries:utilities-java', ':libraries:domain'

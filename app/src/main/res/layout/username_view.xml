@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="info.mschmitt.githubapp.viewmodels.UsernameViewModel"/>
+            type="info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel"/>
     </data>
 
     <RelativeLayout

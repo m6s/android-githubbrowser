@@ -5,7 +5,7 @@
 
         <variable
             name="viewModel"
-            type="info.mschmitt.githubapp.viewmodels.RepositoryDetailsViewModel"/>
+            type="info.mschmitt.githubbrowser.ui.viewmodels.RepositoryDetailsViewModel"/>
     </data>
 
     <ScrollView

@@ -16,8 +16,8 @@ android {
             config {
                 storeFile file(properties.getProperty('keystore.path'))
                 storePassword properties.getProperty('keystore.password')
-                keyAlias properties.getProperty('keystore.key.githubapp.alias')
-                keyPassword properties.getProperty('keystore.key.githubapp.password')
+                keyAlias properties.getProperty('keystore.key.githubbrowser.alias')
+                keyPassword properties.getProperty('keystore.key.githubbrowser.password')
             }
         }
         buildTypes {
@@ -52,10 +52,10 @@ android {
 }
 
 dependencies {
-    compile project(':libraries:ghnetwork')
-    compile project(':libraries:ghdomain')
-    compile project(':libraries:ghandroid')
-    compile project(':libraries:ghjava')
+    compile project(':libraries:network')
+    compile project(':libraries:domain')
+    compile project(':libraries:utilities-android')
+    compile project(':libraries:utilities-java')
     compile group: 'com.android.support', name: 'appcompat-v7', version: project.DEPENDENCIES_ANDROID_SUPPORT_VERSION
     compile group: 'com.android.support', name: 'design', version: project.DEPENDENCIES_ANDROID_SUPPORT_VERSION
     compile group: 'com.android.support', name: 'support-annotations', version: project.DEPENDENCIES_ANDROID_SUPPORT_VERSION
