@@ -21,7 +21,6 @@ import info.mschmitt.githubbrowser.ui.scopes.RepositorySplitViewScope;
 import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.observables.ConnectableObservable;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 
@@ -41,7 +40,6 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     private final NavigationHandler mNavigationHandler;
     private String mUsername;
     private CompositeSubscription mSubscriptions;
-    private boolean mLoading;
 
     @Inject
     public RepositorySplitViewModel(Resources resources, RepositoryDownloader repositoryDownloader,
@@ -80,33 +78,31 @@ public class RepositorySplitViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
-        ConnectableObservable<Long> selected =
-                mSelectedRepositorySubject.observeOn(AndroidSchedulers.mainThread()).publish();
-        selected.subscribe(this::onNextSelectedRepository);
-        selected.connect(mSubscriptions::add);
         connectModel();
     }
 
     private void connectModel() {
-        setLoading(true);
+        mSubscriptions.add(mLoadingProgressManager.getLoadingStateObservable()
+                .subscribe(this::onNextLoadingState));
+        mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
         Single<LinkedHashMap<Long, Repository>> download =
                 mRepositoryDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
-                        .doOnUnsubscribe(() -> {
-                            setLoading(false);
-                            mLoadingProgressManager.notifyLoadingEnd(this);
-                        });
+                        .doOnUnsubscribe(() -> mLoadingProgressManager.notifyLoadingEnd(this));
         RxSingleUtils.subscribe(download, mRepositoryMapSubject::onNext, throwable -> {
             mAnalyticsService.logError(throwable);
             mNavigationHandler.showError(throwable, this::connectModel);
         }, subscription -> {
             mSubscriptions.add(subscription);
-            setLoading(true);
             mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         });
     }
 
     private void onNextSelectedRepository(long id) {
         mPropertyChangeRegistry.notifyChange(this, BR.detailsViewActive);
+    }
+
+    private void onNextLoadingState(boolean loading) {
+        mPropertyChangeRegistry.notifyChange(this, BR.loading);
     }
 
     public void onSave(Bundle outState) {
@@ -118,13 +114,8 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     @Bindable
-    public boolean isLoading() {
-        return mLoading;
-    }
-
-    private void setLoading(boolean loading) {
-        mLoading = loading;
-        mPropertyChangeRegistry.notifyChange(this, BR.loading);
+    public boolean getLoading() {
+        return mLoadingProgressManager.isLoading();
     }
 
     public boolean onAboutOptionsItemSelected() {

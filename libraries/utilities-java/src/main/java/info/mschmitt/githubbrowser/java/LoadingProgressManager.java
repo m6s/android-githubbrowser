@@ -15,11 +15,10 @@ import rx.subjects.BehaviorSubject;
 public class LoadingProgressManager {
     private final List<Object> mLoadingQueue = new ArrayList<>();
     private final Map<Object, Runnable> mCancellationHandlers = new HashMap<>();
-    private final BehaviorSubject<Boolean> mLoadingSubject = BehaviorSubject.create();
-    private boolean mLoading;
+    private final BehaviorSubject<Boolean> mLoadingSubject = BehaviorSubject.create(false);
 
     public boolean cancelAllTasks(boolean runCancelHandlers) {
-        if (mLoading) {
+        if (isLoading()) {
             List<Runnable> cancellationHandlers =
                     runCancelHandlers ? new ArrayList<>(mCancellationHandlers.values()) :
                             Collections.emptyList();
@@ -34,12 +33,15 @@ public class LoadingProgressManager {
         return false;
     }
 
+    public boolean isLoading() {
+        return mLoadingSubject.getValue();
+    }
+
     private void setLoading(boolean loading) {
-        mLoading = loading;
         mLoadingSubject.onNext(loading);
     }
 
-    public Observable<Boolean> isLoading() {
+    public Observable<Boolean> getLoadingStateObservable() {
         return mLoadingSubject.asObservable();
     }
 

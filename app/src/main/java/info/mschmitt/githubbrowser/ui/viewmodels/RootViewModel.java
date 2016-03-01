@@ -21,7 +21,6 @@ public class RootViewModel implements DataBindingObservable {
     private final LoadingProgressManager mLoadingProgressManager;
     private final NavigationHandler mNavigationHandler;
     private CompositeSubscription mSubscriptions;
-    private boolean mLoading;
 
     @Inject
     public RootViewModel(LoadingProgressManager loadingProgressManager,
@@ -45,7 +44,8 @@ public class RootViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
-        mSubscriptions.add(mLoadingProgressManager.isLoading().subscribe(this::setLoading));
+        mSubscriptions.add(mLoadingProgressManager.getLoadingStateObservable()
+                .subscribe(this::onNextLoadingState));
     }
 
     public void onSave(Bundle outState) {
@@ -57,15 +57,11 @@ public class RootViewModel implements DataBindingObservable {
     }
 
     @Bindable
-    public boolean isLoading() {
-        return mLoading;
+    public boolean getLoading() {
+        return mLoadingProgressManager.isLoading();
     }
 
-    private void setLoading(boolean loading) {
-        if (loading == mLoading) {
-            return;
-        }
-        mLoading = loading;
+    private void onNextLoadingState(boolean loading) {
         mPropertyChangeRegistry.notifyChange(this, BR.loading);
     }
 

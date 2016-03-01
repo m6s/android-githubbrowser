@@ -14,7 +14,6 @@ import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
 import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.UserDownloader;
 import info.mschmitt.githubbrowser.domain.Validator;
-import info.mschmitt.githubbrowser.entities.User;
 import info.mschmitt.githubbrowser.java.LoadingProgressManager;
 import info.mschmitt.githubbrowser.java.ObjectsBackport;
 import info.mschmitt.githubbrowser.java.RxSingleUtils;
@@ -52,7 +51,6 @@ public class UsernameViewModel implements DataBindingObservable {
             setUsernameError(null);
         }
     };
-    private boolean mLoading;
 
     @Inject
     public UsernameViewModel(Validator validator, UserDownloader userDownloader,
@@ -90,23 +88,17 @@ public class UsernameViewModel implements DataBindingObservable {
             setUsernameError("Validation error");
             return;
         }
-        Single<User> download =
+        Single<?> download =
                 mUserDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
-                        .doOnUnsubscribe(() -> {
-                            setLoading(false);
-                            mLoadingProgressManager.notifyLoadingEnd(this);
-                        });
-        RxSingleUtils
-                .subscribe(download, user -> mNavigationHandler.showRepositorySplitView(mUsername),
-                        throwable -> {
-                            mAnalyticsService.logError(throwable);
-                            mNavigationHandler.showError(throwable, this::showRepositories);
-                        }, subscription -> {
-                            mSubscriptions.add(subscription);
-                            setLoading(true);
-                            mLoadingProgressManager
-                                    .notifyLoadingBegin(this, subscription::unsubscribe);
-                        });
+                        .doOnUnsubscribe(() -> mLoadingProgressManager.notifyLoadingEnd(this));
+        RxSingleUtils.subscribe(download,
+                ignore -> mNavigationHandler.showRepositorySplitView(mUsername), throwable -> {
+                    mAnalyticsService.logError(throwable);
+                    mNavigationHandler.showError(throwable, this::showRepositories);
+                }, subscription -> {
+                    mSubscriptions.add(subscription);
+                    mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
+                });
     }
 
     public TextWatcher getUsernameTextWatcher() {
@@ -127,15 +119,11 @@ public class UsernameViewModel implements DataBindingObservable {
     }
 
     @Bindable
-    public boolean isLoading() {
-        return mLoading;
+    public boolean getLoading() {
+        return mLoadingProgressManager.isLoading();
     }
 
-    private void setLoading(boolean loading) {
-        if (loading == mLoading) {
-            return;
-        }
-        mLoading = loading;
+    private void onNextLoadingState(boolean loading) {
         mPropertyChangeRegistry.notifyChange(this, BR.loading);
     }
 
@@ -145,7 +133,13 @@ public class UsernameViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
+        connectModel();
         mAnalyticsService.logScreenView(getClass().getName());
+    }
+
+    private void connectModel() {
+        mSubscriptions.add(mLoadingProgressManager.getLoadingStateObservable()
+                .subscribe(this::onNextLoadingState));
     }
 
     public void onSave(Bundle outState) {
