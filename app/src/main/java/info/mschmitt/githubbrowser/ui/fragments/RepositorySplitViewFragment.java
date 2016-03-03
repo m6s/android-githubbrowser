@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.android.presentation.FragmentUtils;
+import info.mschmitt.githubbrowser.android.InjectionUtils;
 import info.mschmitt.githubbrowser.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
 
@@ -21,8 +21,7 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
  * @author Matthias Schmitt
  */
 public class RepositorySplitViewFragment extends Fragment
-        implements RepositoryListViewFragment.FragmentHost,
-        RepositoryPagerViewFragment.FragmentHost {
+        implements RepositoryListViewFragment.Injector, RepositoryPagerViewFragment.Injector {
     private static final String ARG_USERNAME = "arg_username";
     @Inject Component mComponent;
     @Inject RepositorySplitViewModel mViewModel;
@@ -38,7 +37,7 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
+        InjectionUtils.getInjector(this, Injector.class).inject(this);
         mViewModel.onLoad(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -123,7 +122,7 @@ public class RepositorySplitViewFragment extends Fragment
         void inject(RepositoryListViewFragment fragment);
     }
 
-    public interface FragmentHost {
+    public interface Injector {
         void inject(RepositorySplitViewFragment fragment);
     }
 }

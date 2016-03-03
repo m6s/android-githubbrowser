@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubbrowser.android.presentation.FragmentUtils;
+import info.mschmitt.githubbrowser.android.InjectionUtils;
 import info.mschmitt.githubbrowser.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubbrowser.ui.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryPagerViewModel;
@@ -17,7 +17,7 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryPagerViewModel;
  * @author Matthias Schmitt
  */
 public class RepositoryPagerViewFragment extends Fragment
-        implements RepositoryDetailsViewFragment.FragmentHost {
+        implements RepositoryDetailsViewFragment.Injector {
     @Inject Component mComponent;
     @Inject RepositoryPagerViewModel mViewModel;
     private RepositoryPagerAdapter mAdapter;
@@ -29,7 +29,7 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
+        InjectionUtils.getInjector(this, Injector.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
         mAdapter =
                 new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
@@ -86,7 +86,7 @@ public class RepositoryPagerViewFragment extends Fragment
         void inject(RepositoryDetailsViewFragment fragment);
     }
 
-    public interface FragmentHost {
+    public interface Injector {
         void inject(RepositoryPagerViewFragment fragment);
     }
 }

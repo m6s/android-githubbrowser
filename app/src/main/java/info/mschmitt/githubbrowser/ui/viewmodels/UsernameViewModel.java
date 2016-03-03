@@ -10,7 +10,7 @@ import android.view.View;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
-import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
+import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
 import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.UserDownloader;
 import info.mschmitt.githubbrowser.domain.Validator;
@@ -18,6 +18,7 @@ import info.mschmitt.githubbrowser.java.LoadingProgressManager;
 import info.mschmitt.githubbrowser.java.ObjectsBackport;
 import info.mschmitt.githubbrowser.ui.scopes.UsernameViewScope;
 import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -86,12 +87,14 @@ public class UsernameViewModel implements DataBindingObservable {
             setUsernameError("Validation error");
             return;
         }
-        Completable download = mUserDownloader.download(mUsername).toObservable().toCompletable()
-                .doOnUnsubscribe(() -> mLoadingProgressManager.notifyLoadingEnd(this));
+        Completable download =
+                mUserDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
+                        .toObservable().toCompletable()
+                        .doOnUnsubscribe(() -> mLoadingProgressManager.notifyLoadingEnd(this));
         CompositeSubscription subscription = new CompositeSubscription();
         mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         subscription.add(download.subscribe(throwable -> {
-                    mAnalyticsService.logError(throwable);
+            mAnalyticsService.logError(throwable);
             mNavigationHandler.showError(throwable, this::connectModel);
         }, () -> mNavigationHandler.showRepositorySplitView(mUsername)));
         mSubscriptions.add(subscription);

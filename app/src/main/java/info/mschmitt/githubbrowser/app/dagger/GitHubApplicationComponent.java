@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import info.mschmitt.githubbrowser.app.GitHubApplication;
+import info.mschmitt.githubbrowser.ui.MainActivity;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 
 /**
@@ -17,6 +18,17 @@ public abstract class GitHubApplicationComponent implements GitHubApplication.Co
     public void inject(RootViewFragment fragment) {
         rootViewComponent(fragment).inject(fragment);
     }
+
+    @Override
+    public void inject(MainActivity activity) {
+        mainActivityComponent(activity).inject(activity);
+    }
+
+    MainActivityComponent mainActivityComponent(MainActivity activity) {
+        return mainActivityComponent(new MainActivityModule(activity));
+    }
+
+    abstract MainActivityComponent mainActivityComponent(MainActivityModule module);
 
     RootViewComponent rootViewComponent(RootViewFragment fragment) {
         return rootViewComponent(new RootViewModule(fragment));

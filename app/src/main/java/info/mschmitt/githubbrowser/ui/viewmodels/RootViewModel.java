@@ -7,7 +7,7 @@ import android.os.Bundle;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
-import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
+import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
 import info.mschmitt.githubbrowser.java.LoadingProgressManager;
 import info.mschmitt.githubbrowser.ui.scopes.RootViewScope;
 import rx.subscriptions.CompositeSubscription;

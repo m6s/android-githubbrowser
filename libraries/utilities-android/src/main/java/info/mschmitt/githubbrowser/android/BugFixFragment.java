@@ -1,4 +1,4 @@
-package info.mschmitt.githubbrowser.android.presentation;
+package info.mschmitt.githubbrowser.android;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;

@@ -1,16 +1,16 @@
-package info.mschmitt.githubbrowser.android.presentation;
+package info.mschmitt.githubbrowser.android.databinding;
 
 import android.databinding.ObservableList;
-import android.widget.ArrayAdapter;
+import android.support.v4.view.PagerAdapter;
 
 /**
  * @author Matthias Schmitt
  */
-public class BaseAdapterOnListChangedCallback<T>
+public class PagerAdapterOnListChangedCallback<T>
         extends ObservableList.OnListChangedCallback<ObservableList<T>> {
-    private final ArrayAdapter<T> mAdapter;
+    private final PagerAdapter mAdapter;
 
-    public BaseAdapterOnListChangedCallback(ArrayAdapter<T> adapter) {
+    public PagerAdapterOnListChangedCallback(PagerAdapter adapter) {
         mAdapter = adapter;
     }
 

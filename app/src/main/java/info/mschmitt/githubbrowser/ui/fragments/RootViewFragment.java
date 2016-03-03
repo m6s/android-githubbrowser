@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubbrowser.android.presentation.BugFixFragment;
+import info.mschmitt.githubbrowser.android.BugFixFragment;
+import info.mschmitt.githubbrowser.android.InjectionUtils;
 import info.mschmitt.githubbrowser.databinding.RootViewBinding;
 import info.mschmitt.githubbrowser.ui.viewmodels.RootViewModel;
 
@@ -15,7 +16,7 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RootViewModel;
  * @author Matthias Schmitt
  */
 public class RootViewFragment extends BugFixFragment
-        implements UsernameViewFragment.FragmentHost, RepositorySplitViewFragment.FragmentHost {
+        implements UsernameViewFragment.Injector, RepositorySplitViewFragment.Injector {
     @Inject RootViewModel mViewModel;
     @Inject Component mComponent;
 
@@ -26,8 +27,7 @@ public class RootViewFragment extends BugFixFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        ((Application) getActivity().getApplication()).inject(this);
+        InjectionUtils.retainAndGetInjector(this, Injector.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
     }
 
@@ -87,10 +87,7 @@ public class RootViewFragment extends BugFixFragment
         void inject(UsernameViewFragment fragment);
     }
 
-    public interface Application {
+    public interface Injector {
         void inject(RootViewFragment fragment);
-    }
-
-    public interface FragmentHost {
     }
 }

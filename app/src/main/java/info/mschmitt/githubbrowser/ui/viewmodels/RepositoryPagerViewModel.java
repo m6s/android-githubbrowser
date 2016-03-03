@@ -14,7 +14,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
-import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
+import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
 import info.mschmitt.githubbrowser.entities.Repository;
 import info.mschmitt.githubbrowser.ui.scopes.RepositoryPagerViewScope;
 import info.mschmitt.githubbrowser.ui.viewmodels.qualifiers.RepositoryMapObservable;

@@ -1,4 +1,4 @@
-package info.mschmitt.githubbrowser.android.presentation;
+package info.mschmitt.githubbrowser.android.databinding;
 
 import android.databinding.Observable;
 

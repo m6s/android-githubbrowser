@@ -15,7 +15,7 @@ import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
  * @author Matthias Schmitt
  */
 public class GitHubApplication extends Application
-        implements RootViewFragment.Application, MainActivity.Application {
+        implements RootViewFragment.Injector, MainActivity.Injector {
     @Inject Component mComponent;
 
     @Override
@@ -31,9 +31,16 @@ public class GitHubApplication extends Application
         mComponent.inject(fragment);
     }
 
+    @Override
+    public void inject(MainActivity activity) {
+        mComponent.inject(activity);
+    }
+
     public interface Component {
-        void inject(GitHubApplication gitHubApplication);
+        void inject(GitHubApplication application);
 
         void inject(RootViewFragment fragment);
+
+        void inject(MainActivity activity);
     }
 }

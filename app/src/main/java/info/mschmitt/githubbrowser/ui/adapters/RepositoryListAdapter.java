@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import info.mschmitt.githubbrowser.android.presentation.BaseAdapterOnListChangedCallback;
+import info.mschmitt.githubbrowser.android.databinding.BaseAdapterOnListChangedCallback;
 import info.mschmitt.githubbrowser.entities.Repository;
 
 /**

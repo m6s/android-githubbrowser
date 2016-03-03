@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.android.presentation.FragmentUtils;
+import info.mschmitt.githubbrowser.android.InjectionUtils;
 import info.mschmitt.githubbrowser.databinding.UsernameViewBinding;
 import info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel;
 
@@ -30,7 +30,7 @@ public class UsernameViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentUtils.getParent(this, FragmentHost.class).inject(this);
+        InjectionUtils.getInjector(this, Injector.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -83,7 +83,7 @@ public class UsernameViewFragment extends Fragment {
         }
     }
 
-    public interface FragmentHost {
+    public interface Injector {
         void inject(UsernameViewFragment fragment);
     }
 }

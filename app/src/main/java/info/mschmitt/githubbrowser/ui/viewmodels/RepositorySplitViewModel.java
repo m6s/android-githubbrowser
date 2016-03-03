@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
+import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
 import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.RepositoryDownloader;
 import info.mschmitt.githubbrowser.entities.Repository;
@@ -19,6 +19,7 @@ import info.mschmitt.githubbrowser.java.LoadingProgressManager;
 import info.mschmitt.githubbrowser.ui.scopes.RepositorySplitViewScope;
 import rx.Observable;
 import rx.Single;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 
@@ -83,8 +84,9 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         mSubscriptions.add(mLoadingProgressManager.getLoadingStateObservable()
                 .subscribe(this::onNextLoadingState));
         mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
-        Single<LinkedHashMap<Long, Repository>> download = mRepositoryDownloader.download(mUsername)
-                .doOnUnsubscribe(() -> mLoadingProgressManager.notifyLoadingEnd(this));
+        Single<LinkedHashMap<Long, Repository>> download =
+                mRepositoryDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
+                        .doOnUnsubscribe(() -> mLoadingProgressManager.notifyLoadingEnd(this));
         CompositeSubscription subscription = new CompositeSubscription();
         mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         subscription.add(download.subscribe(mRepositoryMapSubject::onNext, throwable -> {

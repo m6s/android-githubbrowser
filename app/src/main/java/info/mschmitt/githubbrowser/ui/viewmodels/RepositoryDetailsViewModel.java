@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
-import info.mschmitt.githubbrowser.android.presentation.DataBindingObservable;
+import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
 import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.entities.Repository;
 import info.mschmitt.githubbrowser.ui.scopes.RepositoryDetailsViewScope;
