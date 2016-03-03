@@ -43,9 +43,8 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
 
                 @Override
                 public void onPageSelected(int position) {
-                    info.mschmitt.githubbrowser.entities.Repository repository =
-                            mRepositories.get(position);
-                    if (mSelectedRepositorySubject.getValue() != repository.id()) {
+                    Repository repository = mRepositories.get(position);
+                    if (mSelectedRepositorySubject.getValue() != -1) {
                         mSelectedRepositorySubject.onNext(repository.id());
                     }
                 }
@@ -111,9 +110,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
     }
 
     public void onNextSelectedRepository(long id) {
-        if (id != -1) {
-            mPropertyChangeRegistry.notifyChange(this, BR.currentItem);
-        }
+        mPropertyChangeRegistry.notifyChange(this, BR.currentItem);
     }
 
     @Bindable
