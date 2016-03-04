@@ -1,6 +1,7 @@
 package info.mschmitt.githubbrowser.domain;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,13 +24,16 @@ public class RepositoryDownloader {
     }
 
     public Single<LinkedHashMap<Long, Repository>> download(String username) {
-        return mGitHubService.getUserRepositories(username).map(response -> {
-            LinkedHashMap<Long, Repository> map = new LinkedHashMap<>();
-            for (GetRepositoriesResponseItem item : response) {
-                map.put(item.id,
-                        Repository.builder().id(item.id).name(item.name).url(item.url).build());
-            }
-            return map;
-        });
+        return mGitHubService.getUserRepositories(username).map(this::processDownloadResponse);
+    }
+
+    private LinkedHashMap<Long, Repository> processDownloadResponse(
+            List<GetRepositoriesResponseItem> response) {
+        LinkedHashMap<Long, Repository> map = new LinkedHashMap<>();
+        for (GetRepositoriesResponseItem item : response) {
+            map.put(item.id,
+                    Repository.builder().id(item.id).name(item.name).url(item.url).build());
+        }
+        return map;
     }
 }

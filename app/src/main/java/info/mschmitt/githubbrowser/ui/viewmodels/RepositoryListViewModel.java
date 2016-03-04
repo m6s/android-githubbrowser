@@ -76,9 +76,13 @@ public class RepositoryListViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
+        connectModel();
+        mAnalyticsService.logScreenView(getClass().getName());
+    }
+
+    private void connectModel() {
         mSubscriptions.add(mRepositoryMapObservable.subscribe(this::onNextRepositoryMap));
         mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
-        mAnalyticsService.logScreenView(getClass().getName());
     }
 
     private void onNextRepositoryMap(LinkedHashMap<Long, Repository> repositoryMap) {

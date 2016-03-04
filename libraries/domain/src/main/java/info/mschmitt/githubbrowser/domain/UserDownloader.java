@@ -3,7 +3,9 @@ package info.mschmitt.githubbrowser.domain;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import info.mschmitt.githubbrowser.entities.User;
 import info.mschmitt.githubbrowser.network.GitHubService;
+import info.mschmitt.githubbrowser.network.responses.GetUserResponse;
 import rx.Single;
 
 /**
@@ -18,10 +20,12 @@ public class UserDownloader {
         mGitHubService = gitHubService;
     }
 
-    public Single<info.mschmitt.githubbrowser.entities.User> download(String username) {
-        return mGitHubService.getUser(username)
-                .map(response -> info.mschmitt.githubbrowser.entities.User.builder().id(response.id)
-                        .login(response.login)
-                        .url(response.url).email(response.email).build());
+    public Single<User> download(String username) {
+        return mGitHubService.getUser(username).map(this::processDownloadResponse);
+    }
+
+    private User processDownloadResponse(GetUserResponse response) {
+        return User.builder().id(response.id).login(response.login).url(response.url)
+                .email(response.email).build();
     }
 }

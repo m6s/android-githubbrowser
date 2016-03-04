@@ -82,6 +82,10 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
+        connectModel();
+    }
+
+    private void connectModel() {
         mSubscriptions.add(mRepositoryMapObservable.subscribe(this::onNextRepositoryMap));
         mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
     }

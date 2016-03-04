@@ -72,8 +72,12 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
-        mSubscriptions.add(mRepositoryObservable.subscribe(this::onNextRepository));
+        connectModel();
         mAnalyticsService.logScreenView(getClass().getName());
+    }
+
+    private void connectModel() {
+        mSubscriptions.add(mRepositoryObservable.subscribe(this::onNextRepository));
     }
 
     public void onLoadForId(long repositoryId, Bundle savedState) {

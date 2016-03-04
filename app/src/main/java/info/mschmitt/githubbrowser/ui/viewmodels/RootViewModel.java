@@ -44,6 +44,10 @@ public class RootViewModel implements DataBindingObservable {
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
+        connectModel();
+    }
+
+    private void connectModel() {
         mSubscriptions.add(mLoadingProgressManager.getLoadingStateObservable()
                 .subscribe(this::onNextLoadingState));
     }

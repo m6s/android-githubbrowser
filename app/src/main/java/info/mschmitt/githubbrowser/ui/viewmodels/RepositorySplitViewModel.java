@@ -28,10 +28,12 @@ import rx.subscriptions.CompositeSubscription;
  */
 @RepositorySplitViewScope
 public class RepositorySplitViewModel implements DataBindingObservable {
+    private static final LinkedHashMap<Long, Repository> EMPTY_REPOSITORY_MAP =
+            new LinkedHashMap<>();
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final BehaviorSubject<Long> mSelectedRepositorySubject = BehaviorSubject.create(-1l);
     private final BehaviorSubject<LinkedHashMap<Long, Repository>> mRepositoryMapSubject =
-            BehaviorSubject.create(new LinkedHashMap<>());
+            BehaviorSubject.create(EMPTY_REPOSITORY_MAP);
     private final Resources mResources;
     private final RepositoryDownloader mRepositoryDownloader;
     private final AnalyticsService mAnalyticsService;
@@ -78,12 +80,16 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
         connectModel();
+        if (mRepositoryMapSubject.getValue() == EMPTY_REPOSITORY_MAP) {
+            initializeRepositoryMap();
+        }
     }
 
     private void connectModel() {
-        mSubscriptions.add(mLoadingProgressManager.getLoadingStateObservable()
-                .subscribe(this::onNextLoadingState));
-        mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
+        connectLoadingState();
+    }
+
+    private void initializeRepositoryMap() {
         Single<LinkedHashMap<Long, Repository>> download =
                 mRepositoryDownloader.download(mUsername).observeOn(AndroidSchedulers.mainThread())
                         .doOnUnsubscribe(() -> mLoadingProgressManager.notifyLoadingEnd(this));
@@ -91,9 +97,15 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         subscription.add(download.subscribe(mRepositoryMapSubject::onNext, throwable -> {
             mAnalyticsService.logError(throwable);
-            mNavigationHandler.showError(throwable, this::connectModel);
+            mNavigationHandler.showError(throwable, this::initializeRepositoryMap);
         }));
         mSubscriptions.add(subscription);
+    }
+
+    private void connectLoadingState() {
+        mSubscriptions.add(mLoadingProgressManager.getLoadingStateObservable()
+                .subscribe(this::onNextLoadingState));
+        mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
     }
 
     private void onNextSelectedRepository(long id) {
