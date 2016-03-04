@@ -28,6 +28,7 @@ android {
 
 dependencies {
     compile group: 'com.android.support', name: 'appcompat-v7', version: project.DEPENDENCIES_ANDROID_SUPPORT_VERSION
+    compile group: 'com.android.support', name: 'design', version: project.DEPENDENCIES_ANDROID_SUPPORT_VERSION
     provided 'javax.inject:javax.inject:1@jar'
     compile group: 'com.google.dagger', name: 'dagger', version: project.DEPENDENCIES_DAGGER_VERSION
     apt group: 'com.google.dagger', name: 'dagger-compiler', version: project.DEPENDENCIES_DAGGER_VERSION

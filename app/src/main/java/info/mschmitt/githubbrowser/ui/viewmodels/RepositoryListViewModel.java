@@ -5,7 +5,6 @@ import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
 import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
-import android.widget.AdapterView;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -36,7 +35,6 @@ public class RepositoryListViewModel implements DataBindingObservable {
     private final BehaviorSubject<Long> mSelectedRepositorySubject;
     private final AnalyticsService mAnalyticsService;
     private final NavigationHandler mNavigationHandler;
-    private final AdapterView.OnItemClickListener mOnRepositoryItemClickListener;
     private CompositeSubscription mSubscriptions;
 
     @Inject
@@ -51,10 +49,10 @@ public class RepositoryListViewModel implements DataBindingObservable {
         mSelectedRepositorySubject = selectedRepositorySubject;
         mAnalyticsService = analyticsService;
         mNavigationHandler = navigationHandler;
-        mOnRepositoryItemClickListener = (ignore1, ignore2, position, ignore3) -> {
-            Repository repository = mRepositories.get(position);
-            mSelectedRepositorySubject.onNext(repository.id());
-        };
+    }
+
+    public void onClick(Repository repository) {
+        mSelectedRepositorySubject.onNext(repository.id());
     }
 
     @Override
@@ -97,10 +95,6 @@ public class RepositoryListViewModel implements DataBindingObservable {
     }
 
     public void onSave(Bundle outState) {
-    }
-
-    public AdapterView.OnItemClickListener getOnRepositoryItemClickListener() {
-        return mOnRepositoryItemClickListener;
     }
 
     public void onPause() {

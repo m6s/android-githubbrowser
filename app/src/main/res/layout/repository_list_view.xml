@@ -6,18 +6,16 @@
 
         <variable
             name="adapter"
-            type="android.widget.ListAdapter"/>
+            type="android.support.v7.widget.RecyclerView.Adapter"/>
 
         <variable
             name="viewModel"
             type="info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel"/>
     </data>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/repositoriesView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:drawSelectorOnTop="true"
-        bind:adapter="@{adapter}"
-        bind:onItemClickListener="@{viewModel.onRepositoryItemClickListener}"
-        bind:selection="@{viewModel.selection}"/>
+        bind:adapter="@{adapter}"/>
 </layout>
