@@ -90,8 +90,7 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
         mSubscriptions.add(mSelectedRepositorySubject.subscribe(this::onNextSelectedRepository));
     }
 
-    private void onNextRepositoryMap(
-            LinkedHashMap<Long, info.mschmitt.githubbrowser.entities.Repository> map) {
+    private void onNextRepositoryMap(LinkedHashMap<Long, Repository> map) {
         mPageIndexes.clear();
         int i = 0;
         for (long id : map.keySet()) {
