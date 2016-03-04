@@ -25,7 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * Copied and from https://gist.github.com/alexfu/0f464fc3742f134ccd1e and removed deprecated
+ * Copied from https://gist.github.com/alexfu/0f464fc3742f134ccd1e and migrated deprecated
  * methods.
  */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
