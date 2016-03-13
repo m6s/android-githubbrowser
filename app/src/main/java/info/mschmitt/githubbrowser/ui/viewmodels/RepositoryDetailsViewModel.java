@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
-import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.entities.Repository;
 import info.mschmitt.githubbrowser.ui.scopes.RepositoryDetailsViewScope;
 import info.mschmitt.githubbrowser.ui.viewmodels.qualifiers.RepositoryMapObservable;
@@ -26,7 +25,6 @@ import rx.subscriptions.CompositeSubscription;
 public class RepositoryDetailsViewModel implements DataBindingObservable {
     private final Observable<LinkedHashMap<Long, Repository>> mRepositoryMapObservable;
     private final AnalyticsService mAnalyticsService;
-    private final NavigationHandler mNavigationHandler;
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private Observable<Repository> mRepositoryObservable;
     private CompositeSubscription mSubscriptions;
@@ -37,11 +35,9 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
     public RepositoryDetailsViewModel(@RepositoryMapObservable
                                       Observable<LinkedHashMap<Long, Repository>>
                                                   repositoryMapObservable,
-                                      AnalyticsService analyticsService,
-                                      NavigationHandler navigationHandler) {
+                                      AnalyticsService analyticsService) {
         mRepositoryMapObservable = repositoryMapObservable;
         mAnalyticsService = analyticsService;
-        mNavigationHandler = navigationHandler;
     }
 
     @Override
@@ -73,7 +69,7 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
         connectModel();
-        mAnalyticsService.logScreenView(getClass().getName());
+        mAnalyticsService.logRepositoryDetailsShown();
     }
 
     private void connectModel() {
@@ -115,6 +111,7 @@ public class RepositoryDetailsViewModel implements DataBindingObservable {
         mSubscriptions.unsubscribe();
     }
 
-    public interface NavigationHandler {
+    public interface AnalyticsService {
+        void logRepositoryDetailsShown();
     }
 }

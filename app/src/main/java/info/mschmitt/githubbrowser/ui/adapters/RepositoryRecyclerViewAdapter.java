@@ -1,7 +1,6 @@
 package info.mschmitt.githubbrowser.ui.adapters;
 
 import android.databinding.Bindable;
-import android.databinding.ObservableList;
 import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -9,54 +8,57 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
 import info.mschmitt.githubbrowser.android.databinding.RecyclerViewAdapterOnListChangedCallback;
 import info.mschmitt.githubbrowser.databinding.RepositoryListItemViewBinding;
 import info.mschmitt.githubbrowser.entities.Repository;
+import info.mschmitt.githubbrowser.ui.scopes.RepositoryListViewScope;
+import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel;
 
 /**
  * TODO Highlight selected item http://stackoverflow.com/q/27194044/2317680
  *
  * @author Matthias Schmitt
  */
+@RepositoryListViewScope
 public class RepositoryRecyclerViewAdapter
         extends RecyclerView.Adapter<RepositoryRecyclerViewAdapter.ItemViewHolder> {
     private final RecyclerViewAdapterOnListChangedCallback<Repository> mCallback =
             new RecyclerViewAdapterOnListChangedCallback<>(this);
-    private final ObservableList<Repository> mRepositories;
-    private final OnRepositoryClickListener mOnRepositoryClickListener;
+    private final RepositoryListViewModel mViewModel;
 
-    public RepositoryRecyclerViewAdapter(ObservableList<Repository> repositories,
-                                         OnRepositoryClickListener onRepositoryClickListener) {
-        mRepositories = repositories;
-        mOnRepositoryClickListener = onRepositoryClickListener;
+    @Inject
+    public RepositoryRecyclerViewAdapter(RepositoryListViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ItemViewHolder viewHolder = ItemViewHolder.inflateView(parent);
-        viewHolder.setOnRepositoryClickListener(mOnRepositoryClickListener);
+        viewHolder.setOnRepositoryClickListener(mViewModel::onClick);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
-        Repository repository = mRepositories.get(position);
+        Repository repository = mViewModel.getRepositories().get(position);
         holder.setRepository(repository);
     }
 
     @Override
     public int getItemCount() {
-        return mRepositories.size();
+        return mViewModel.getRepositories().size();
     }
 
     public void onCreateView(Bundle savedInstanceState) {
-        mRepositories.addOnListChangedCallback(mCallback);
+        mViewModel.getRepositories().addOnListChangedCallback(mCallback);
     }
 
     public void onDestroyView() {
-        mRepositories.removeOnListChangedCallback(mCallback);
+        mViewModel.getRepositories().removeOnListChangedCallback(mCallback);
     }
 
     public interface OnRepositoryClickListener {

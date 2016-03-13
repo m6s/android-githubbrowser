@@ -18,10 +18,6 @@ public class Domain {
                 .domainModule(new DomainModule(network, context, debug)).build();
     }
 
-    public AnalyticsService getAnalyticsService() {
-        return mDomainComponent.getAnalyticsService();
-    }
-
     public RepositoryDownloader getRepositoryDownloader() {
         return mDomainComponent.getRepositoryDownloader();
     }

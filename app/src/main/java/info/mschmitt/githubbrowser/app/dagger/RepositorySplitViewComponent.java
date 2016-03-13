@@ -14,7 +14,7 @@ import info.mschmitt.githubbrowser.ui.scopes.RepositorySplitViewScope;
 abstract class RepositorySplitViewComponent implements RepositorySplitViewFragment.Component {
     @Override
     public void inject(RepositoryPagerViewFragment fragment) {
-        repositoryPagerViewComponent().inject(fragment);
+        repositoryPagerViewComponent(fragment).inject(fragment);
     }
 
     @Override
@@ -24,7 +24,13 @@ abstract class RepositorySplitViewComponent implements RepositorySplitViewFragme
 
     abstract RepositoryListViewComponent repositoryListViewComponent();
 
-    abstract RepositoryPagerViewComponent repositoryPagerViewComponent();
+    private RepositoryPagerViewComponent repositoryPagerViewComponent(
+            RepositoryPagerViewFragment fragment) {
+        return repositoryPagerViewComponent(new RepositoryPagerViewModule(fragment));
+    }
+
+    abstract RepositoryPagerViewComponent repositoryPagerViewComponent(
+            RepositoryPagerViewModule module);
 
     public abstract void inject(RepositorySplitViewFragment fragment);
 }

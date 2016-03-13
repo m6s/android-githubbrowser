@@ -24,13 +24,13 @@ public abstract class GitHubApplicationComponent implements GitHubApplication.Co
         mainActivityComponent(activity).inject(activity);
     }
 
-    MainActivityComponent mainActivityComponent(MainActivity activity) {
+    private MainActivityComponent mainActivityComponent(MainActivity activity) {
         return mainActivityComponent(new MainActivityModule(activity));
     }
 
     abstract MainActivityComponent mainActivityComponent(MainActivityModule module);
 
-    RootViewComponent rootViewComponent(RootViewFragment fragment) {
+    private RootViewComponent rootViewComponent(RootViewFragment fragment) {
         return rootViewComponent(new RootViewModule(fragment));
     }
 

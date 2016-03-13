@@ -18,8 +18,9 @@ public class RepositoryPagerAdapter extends FragmentStatePagerAdapter {
     private final PagerAdapterOnListChangedCallback<Repository> mCallback =
             new PagerAdapterOnListChangedCallback<>(this);
 
-    public RepositoryPagerAdapter(FragmentManager fm, ObservableList<Repository> repositories) {
-        super(fm);
+    public RepositoryPagerAdapter(FragmentManager fragmentManager,
+                                  ObservableList<Repository> repositories) {
+        super(fragmentManager);
         mRepositories = repositories;
     }
 

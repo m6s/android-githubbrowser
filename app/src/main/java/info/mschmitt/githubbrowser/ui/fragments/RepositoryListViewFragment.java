@@ -20,7 +20,7 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel;
  */
 public class RepositoryListViewFragment extends Fragment {
     @Inject RepositoryListViewModel mViewModel;
-    private RepositoryRecyclerViewAdapter mAdapter;
+    @Inject RepositoryRecyclerViewAdapter mAdapter;
 
     public static RepositoryListViewFragment newInstance() {
         return new RepositoryListViewFragment();
@@ -31,8 +31,6 @@ public class RepositoryListViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         InjectionUtils.getInjector(this, Injector.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
-        mAdapter = new RepositoryRecyclerViewAdapter(mViewModel.getRepositories(),
-                mViewModel::onClick);
     }
 
     @Override

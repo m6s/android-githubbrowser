@@ -3,12 +3,12 @@ package info.mschmitt.githubbrowser.app.dagger;
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubbrowser.java.LoadingProgressManager;
-import info.mschmitt.githubbrowser.ui.NavigationManager;
+import info.mschmitt.githubbrowser.ui.AnalyticsService;
+import info.mschmitt.githubbrowser.ui.NavigationService;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 import info.mschmitt.githubbrowser.ui.scopes.RootViewScope;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel;
-import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryPagerViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RootViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel;
@@ -32,48 +32,54 @@ class RootViewModule {
 
     @Provides
     @RootViewScope
-    public RootViewModel.NavigationHandler provideRootViewModelNavigationHandler(
-            NavigationManager navigationManager) {
-        return navigationManager;
+    public RootViewModel.NavigationService provideRootViewModelNavigationService(
+            NavigationService navigationService) {
+        return navigationService;
     }
 
     @Provides
     @RootViewScope
-    public RepositoryDetailsViewModel.NavigationHandler
-    provideRepositoryDetailsViewModelNavigationHandler(
-            NavigationManager navigationManager) {
-        return navigationManager;
+    public RepositorySplitViewModel.NavigationService
+    provideRepositorySplitViewModelNavigationService(
+            NavigationService navigationService) {
+        return navigationService;
     }
 
     @Provides
     @RootViewScope
-    public RepositoryListViewModel.NavigationHandler
-    provideRepositoryListViewModelNavigationHandler(
-            NavigationManager navigationManager) {
-        return navigationManager;
+    public UsernameViewModel.NavigationService provideUsernameViewModelNavigationService(
+            NavigationService navigationService) {
+        return navigationService;
     }
 
     @Provides
     @RootViewScope
-    public RepositoryPagerViewModel.NavigationHandler
-    provideRepositoryPagerViewModelNavigationHandler(
-            NavigationManager navigationManager) {
-        return navigationManager;
+    public UsernameViewModel.AnalyticsService provideUserNameViewModelAnalyticsService(
+            AnalyticsService analyticsService) {
+        return analyticsService;
     }
 
     @Provides
     @RootViewScope
-    public RepositorySplitViewModel.NavigationHandler
-    provideRepositorySplitViewModelNavigationHandler(
-            NavigationManager navigationManager) {
-        return navigationManager;
+    public RepositorySplitViewModel.AnalyticsService
+    provideRepositorySplitViewModelAnalyticsService(
+            AnalyticsService analyticsService) {
+        return analyticsService;
     }
 
     @Provides
     @RootViewScope
-    public UsernameViewModel.NavigationHandler provideUsernameViewModelNavigationHandler(
-            NavigationManager navigationManager) {
-        return navigationManager;
+    public RepositoryListViewModel.AnalyticsService provideRepositoryListViewModelAnalyticsService(
+            AnalyticsService analyticsService) {
+        return analyticsService;
+    }
+
+    @Provides
+    @RootViewScope
+    public RepositoryDetailsViewModel.AnalyticsService
+    provideRepositoryDetailsViewModelAnalyticsService(
+            AnalyticsService analyticsService) {
+        return analyticsService;
     }
 
     @Provides

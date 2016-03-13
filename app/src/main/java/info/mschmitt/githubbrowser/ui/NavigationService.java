@@ -5,13 +5,9 @@ import android.support.v4.app.Fragment;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.ui.fragments.RepositorySplitViewFragment;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 import info.mschmitt.githubbrowser.ui.scopes.RootViewScope;
-import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryDetailsViewModel;
-import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel;
-import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryPagerViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RootViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel;
@@ -20,17 +16,14 @@ import info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel;
  * @author Matthias Schmitt
  */
 @RootViewScope
-public class NavigationManager
-        implements UsernameViewModel.NavigationHandler, RepositorySplitViewModel.NavigationHandler,
-        RepositoryListViewModel.NavigationHandler, RepositoryPagerViewModel.NavigationHandler,
-        RepositoryDetailsViewModel.NavigationHandler, RootViewModel.NavigationHandler {
-    private final AnalyticsService mAnalyticsService;
+public class NavigationService
+        implements UsernameViewModel.NavigationService, RepositorySplitViewModel.NavigationService,
+        RootViewModel.NavigationService {
     private final Fragment mRootViewFragment;
 
     @Inject
-    public NavigationManager(RootViewFragment rootViewFragment, AnalyticsService analyticsService) {
+    public NavigationService(RootViewFragment rootViewFragment) {
         mRootViewFragment = rootViewFragment;
-        mAnalyticsService = analyticsService;
     }
 
     public boolean goBack() {
@@ -61,7 +54,6 @@ public class NavigationManager
 
     @Override
     public void showRepositorySplitView(String username) {
-        mAnalyticsService.logScreenView(RepositorySplitViewFragment.class.getName());
         mRootViewFragment.getChildFragmentManager().beginTransaction()
                 .replace(R.id.contentView, RepositorySplitViewFragment.newInstance(username))
                 .addToBackStack(null).commit();

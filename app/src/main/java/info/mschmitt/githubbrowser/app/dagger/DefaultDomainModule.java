@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubbrowser.BuildConfig;
-import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.Domain;
 import info.mschmitt.githubbrowser.domain.RepositoryDownloader;
 import info.mschmitt.githubbrowser.domain.UserDownloader;
@@ -23,12 +22,6 @@ public class DefaultDomainModule {
     @Singleton
     Domain provideDomain(Network network, @ApplicationContext Context context) {
         return new Domain(network, context, BuildConfig.DEBUG);
-    }
-
-    @Provides
-    @Singleton
-    AnalyticsService provideAnalyticsService(Domain domain) {
-        return domain.getAnalyticsService();
     }
 
     @Provides

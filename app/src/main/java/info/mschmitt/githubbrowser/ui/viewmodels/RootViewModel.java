@@ -19,14 +19,14 @@ import rx.subscriptions.CompositeSubscription;
 public class RootViewModel implements DataBindingObservable {
     private final PropertyChangeRegistry mPropertyChangeRegistry = new PropertyChangeRegistry();
     private final LoadingProgressManager mLoadingProgressManager;
-    private final NavigationHandler mNavigationHandler;
+    private final NavigationService mNavigationService;
     private CompositeSubscription mSubscriptions;
 
     @Inject
     public RootViewModel(LoadingProgressManager loadingProgressManager,
-                         NavigationHandler navigationHandler) {
+                         NavigationService NavigationService) {
         mLoadingProgressManager = loadingProgressManager;
-        mNavigationHandler = navigationHandler;
+        mNavigationService = NavigationService;
     }
 
     @Override
@@ -70,10 +70,10 @@ public class RootViewModel implements DataBindingObservable {
     }
 
     public boolean onBackPressed() {
-        return mLoadingProgressManager.cancelAllTasks(true) || mNavigationHandler.goBack();
+        return mLoadingProgressManager.cancelAllTasks(true) || mNavigationService.goBack();
     }
 
-    public interface NavigationHandler {
+    public interface NavigationService {
         boolean goBack();
     }
 }

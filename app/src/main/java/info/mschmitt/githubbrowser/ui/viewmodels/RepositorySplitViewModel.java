@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.R;
 import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
-import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.RepositoryDownloader;
 import info.mschmitt.githubbrowser.entities.Repository;
 import info.mschmitt.githubbrowser.java.LoadingProgressManager;
@@ -38,7 +37,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     private final RepositoryDownloader mRepositoryDownloader;
     private final AnalyticsService mAnalyticsService;
     private final LoadingProgressManager mLoadingProgressManager;
-    private final NavigationHandler mNavigationHandler;
+    private final NavigationService mNavigationService;
     private String mUsername;
     private CompositeSubscription mSubscriptions;
 
@@ -46,12 +45,12 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     public RepositorySplitViewModel(Resources resources, RepositoryDownloader repositoryDownloader,
                                     AnalyticsService analyticsService,
                                     LoadingProgressManager loadingProgressManager,
-                                    NavigationHandler navigationHandler) {
+                                    NavigationService NavigationService) {
         mResources = resources;
         mRepositoryDownloader = repositoryDownloader;
         mAnalyticsService = analyticsService;
         mLoadingProgressManager = loadingProgressManager;
-        mNavigationHandler = navigationHandler;
+        mNavigationService = NavigationService;
     }
 
     public BehaviorSubject<Long> getSelectedRepositorySubject() {
@@ -73,7 +72,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     public void onLoad(String username, Bundle savedState) {
-        State.restoreInstanceState(this, savedState);
+        InstanceStateUtils.load(this, savedState);
         mUsername = username;
     }
 
@@ -97,7 +96,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         subscription.add(download.subscribe(mRepositoryMapSubject::onNext, throwable -> {
             mAnalyticsService.logError(throwable);
-            mNavigationHandler.showError(throwable, this::initializeRepositoryMap);
+            mNavigationService.showError(throwable, this::initializeRepositoryMap);
         }));
         mSubscriptions.add(subscription);
     }
@@ -117,7 +116,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     public void onSave(Bundle outState) {
-        State.saveInstanceState(this, outState);
+        InstanceStateUtils.save(this, outState);
     }
 
     public void onPause() {
@@ -130,7 +129,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     public boolean onAboutOptionsItemSelected() {
-        mNavigationHandler.showAboutView();
+        mNavigationService.showAboutView();
         return true;
     }
 
@@ -147,21 +146,24 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         return mSelectedRepositorySubject.getValue() != -1l;
     }
 
-    public interface NavigationHandler {
+    public interface NavigationService {
         void showError(Throwable throwable, Runnable retryHandler);
 
         void showAboutView();
     }
 
-    private static class State {
+    public interface AnalyticsService {
+        void logError(Throwable throwable);
+    }
+
+    private static class InstanceStateUtils {
         private static final String SELECTED_REPOSITORY = "SELECTED_REPOSITORY";
 
-        private static void saveInstanceState(RepositorySplitViewModel viewModel, Bundle outState) {
+        private static void save(RepositorySplitViewModel viewModel, Bundle outState) {
             outState.putLong(SELECTED_REPOSITORY, viewModel.mSelectedRepositorySubject.getValue());
         }
 
-        private static void restoreInstanceState(RepositorySplitViewModel viewModel,
-                                                 Bundle savedState) {
+        private static void load(RepositorySplitViewModel viewModel, Bundle savedState) {
             if (savedState == null) {
                 return;
             }

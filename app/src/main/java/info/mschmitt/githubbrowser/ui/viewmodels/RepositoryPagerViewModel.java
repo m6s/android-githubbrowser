@@ -33,7 +33,6 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
     private final BehaviorSubject<Long> mSelectedRepositorySubject;
     private final ObservableList<Repository> mRepositories = new ObservableArrayList<>();
     private final Map<Long, Integer> mPageIndexes = new HashMap<>();
-    private final NavigationHandler mNavigationHandler;
     private final ViewPager.OnPageChangeListener mOnPageChangeListener =
             new ViewPager.OnPageChangeListener() {
                 @Override
@@ -60,11 +59,9 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
                                         Observable<LinkedHashMap<Long, Repository>>
                                                 repositoryMapObservable,
                                     @SelectedRepositorySubject
-                                    BehaviorSubject<Long> selectedRepositorySubject,
-                                    NavigationHandler navigationHandler) {
+                                        BehaviorSubject<Long> selectedRepositorySubject) {
         mRepositoryMapObservable = repositoryMapObservable;
         mSelectedRepositorySubject = selectedRepositorySubject;
-        mNavigationHandler = navigationHandler;
     }
 
     @Override
@@ -124,8 +121,5 @@ public class RepositoryPagerViewModel implements DataBindingObservable {
 
     public ObservableList<Repository> getRepositories() {
         return mRepositories;
-    }
-
-    public interface NavigationHandler {
     }
 }

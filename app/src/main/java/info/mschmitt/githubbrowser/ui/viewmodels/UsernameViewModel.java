@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
-import info.mschmitt.githubbrowser.domain.AnalyticsService;
 import info.mschmitt.githubbrowser.domain.UserDownloader;
 import info.mschmitt.githubbrowser.domain.Validator;
 import info.mschmitt.githubbrowser.java.LoadingProgressManager;
@@ -31,7 +30,7 @@ public class UsernameViewModel implements DataBindingObservable {
     private final UserDownloader mUserDownloader;
     private final AnalyticsService mAnalyticsService;
     private final LoadingProgressManager mLoadingProgressManager;
-    private final NavigationHandler mNavigationHandler;
+    private final NavigationService mNavigationService;
     private CompositeSubscription mSubscriptions;
     private String mUsername;
     private String mUsernameError;
@@ -55,12 +54,12 @@ public class UsernameViewModel implements DataBindingObservable {
     public UsernameViewModel(Validator validator, UserDownloader userDownloader,
                              AnalyticsService analyticsService,
                              LoadingProgressManager loadingProgressManager,
-                             NavigationHandler navigationHandler) {
+                             NavigationService NavigationService) {
         mValidator = validator;
         mUserDownloader = userDownloader;
         mAnalyticsService = analyticsService;
         mLoadingProgressManager = loadingProgressManager;
-        mNavigationHandler = navigationHandler;
+        mNavigationService = NavigationService;
     }
 
     @Override
@@ -95,8 +94,8 @@ public class UsernameViewModel implements DataBindingObservable {
         mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         subscription.add(download.subscribe(throwable -> {
             mAnalyticsService.logError(throwable);
-            mNavigationHandler.showError(throwable, this::connectModel);
-        }, () -> mNavigationHandler.showRepositorySplitView(mUsername)));
+            mNavigationService.showError(throwable, this::connectModel);
+        }, () -> mNavigationService.showRepositorySplitView(mUsername)));
         mSubscriptions.add(subscription);
     }
 
@@ -127,13 +126,13 @@ public class UsernameViewModel implements DataBindingObservable {
     }
 
     public void onLoad(Bundle savedState) {
-        State.restoreInstanceState(this, savedState);
+        InstanceStateUtils.load(this, savedState);
     }
 
     public void onResume() {
         mSubscriptions = new CompositeSubscription();
         connectModel();
-        mAnalyticsService.logScreenView(getClass().getName());
+        mAnalyticsService.logUsernameShown();
     }
 
     private void connectModel() {
@@ -142,7 +141,7 @@ public class UsernameViewModel implements DataBindingObservable {
     }
 
     public void onSave(Bundle outState) {
-        State.saveInstanceState(this, outState);
+        InstanceStateUtils.save(this, outState);
     }
 
     public void onPause() {
@@ -150,11 +149,11 @@ public class UsernameViewModel implements DataBindingObservable {
     }
 
     public boolean onAboutOptionsItemSelected() {
-        mNavigationHandler.showAboutView();
+        mNavigationService.showAboutView();
         return true;
     }
 
-    public interface NavigationHandler {
+    public interface NavigationService {
         void showRepositorySplitView(String username);
 
         void showError(Throwable throwable, Runnable retryHandler);
@@ -162,14 +161,20 @@ public class UsernameViewModel implements DataBindingObservable {
         void showAboutView();
     }
 
-    private static class State {
+    public interface AnalyticsService {
+        void logUsernameShown();
+
+        void logError(Throwable throwable);
+    }
+
+    private static class InstanceStateUtils {
         private static final String USERNAME = "USERNAME";
 
-        private static void saveInstanceState(UsernameViewModel viewModel, Bundle outState) {
+        private static void save(UsernameViewModel viewModel, Bundle outState) {
             outState.putString(USERNAME, viewModel.mUsername);
         }
 
-        private static void restoreInstanceState(UsernameViewModel viewModel, Bundle savedState) {
+        private static void load(UsernameViewModel viewModel, Bundle savedState) {
             if (savedState == null) {
                 return;
             }

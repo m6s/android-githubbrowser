@@ -20,7 +20,7 @@ public class RepositoryPagerViewFragment extends Fragment
         implements RepositoryDetailsViewFragment.Injector {
     @Inject Component mComponent;
     @Inject RepositoryPagerViewModel mViewModel;
-    private RepositoryPagerAdapter mAdapter;
+    @Inject RepositoryPagerAdapter mAdapter;
 
     public static RepositoryPagerViewFragment newInstance() {
         return new RepositoryPagerViewFragment();
@@ -31,8 +31,6 @@ public class RepositoryPagerViewFragment extends Fragment
         super.onCreate(savedInstanceState);
         InjectionUtils.getInjector(this, Injector.class).inject(this);
         mViewModel.onLoad(savedInstanceState);
-        mAdapter =
-                new RepositoryPagerAdapter(getChildFragmentManager(), mViewModel.getRepositories());
     }
 
     @Override
