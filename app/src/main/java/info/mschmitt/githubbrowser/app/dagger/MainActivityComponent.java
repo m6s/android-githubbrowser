@@ -10,5 +10,4 @@ import info.mschmitt.githubbrowser.ui.scopes.MainActivityScope;
 @MainActivityScope
 @Subcomponent(modules = {MainActivityModule.class})
 abstract class MainActivityComponent implements MainActivity.Component {
-    public abstract void inject(MainActivity activity);
 }

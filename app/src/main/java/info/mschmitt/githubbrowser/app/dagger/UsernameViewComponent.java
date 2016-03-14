@@ -9,6 +9,5 @@ import info.mschmitt.githubbrowser.ui.scopes.UsernameViewScope;
  */
 @UsernameViewScope
 @Subcomponent(modules = {UsernameViewModule.class})
-interface UsernameViewComponent {
-    void inject(UsernameViewFragment fragment);
+interface UsernameViewComponent extends UsernameViewFragment.Component {
 }

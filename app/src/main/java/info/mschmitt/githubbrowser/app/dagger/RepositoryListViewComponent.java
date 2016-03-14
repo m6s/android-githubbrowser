@@ -9,6 +9,5 @@ import info.mschmitt.githubbrowser.ui.scopes.RepositoryListViewScope;
  */
 @RepositoryListViewScope
 @Subcomponent(modules = {RepositoryListViewModule.class})
-interface RepositoryListViewComponent {
-    void inject(RepositoryListViewFragment fragment);
+interface RepositoryListViewComponent extends RepositoryListViewFragment.Component {
 }

@@ -12,11 +12,11 @@ import info.mschmitt.githubbrowser.ui.scopes.RepositoryPagerViewScope;
 @Subcomponent(modules = {RepositoryPagerViewModule.class})
 abstract class RepositoryPagerViewComponent implements RepositoryPagerViewFragment.Component {
     @Override
-    public void inject(RepositoryDetailsViewFragment fragment) {
-        repositoryDetailsViewComponent().inject(fragment);
+    public RepositoryDetailsViewComponent repositoryDetailsViewComponent(
+            RepositoryDetailsViewFragment fragment) {
+        return repositoryDetailsViewComponent(new RepositoryDetailsViewModule());
     }
 
-    abstract RepositoryDetailsViewComponent repositoryDetailsViewComponent();
-
-    abstract void inject(RepositoryPagerViewFragment fragment);
+    abstract RepositoryDetailsViewComponent repositoryDetailsViewComponent(
+            RepositoryDetailsViewModule module);
 }

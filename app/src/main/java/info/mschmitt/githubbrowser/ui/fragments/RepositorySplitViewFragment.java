@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.android.InjectionUtils;
+import info.mschmitt.githubbrowser.android.FragmentUtils;
 import info.mschmitt.githubbrowser.databinding.RepositorySplitViewBinding;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
 
@@ -21,7 +21,8 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
  * @author Matthias Schmitt
  */
 public class RepositorySplitViewFragment extends Fragment
-        implements RepositoryListViewFragment.Injector, RepositoryPagerViewFragment.Injector {
+        implements RepositoryListViewFragment.FragmentHost,
+        RepositoryPagerViewFragment.FragmentHost {
     private static final String ARG_USERNAME = "arg_username";
     @Inject Component mComponent;
     @Inject RepositorySplitViewModel mViewModel;
@@ -37,7 +38,8 @@ public class RepositorySplitViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InjectionUtils.getInjector(this, Injector.class).inject(this);
+        FragmentUtils.getHost(this, FragmentHost.class).repositorySplitViewComponent(this)
+                .inject(this);
         mViewModel.onLoad(getArguments().getString(ARG_USERNAME), savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -107,22 +109,28 @@ public class RepositorySplitViewFragment extends Fragment
     }
 
     @Override
-    public void inject(RepositoryPagerViewFragment fragment) {
-        mComponent.inject(fragment);
+    public RepositoryPagerViewFragment.Component repositoryPagerViewComponent(
+            RepositoryPagerViewFragment fragment) {
+        return mComponent.repositoryPagerViewComponent(fragment);
     }
 
     @Override
-    public void inject(RepositoryListViewFragment fragment) {
-        mComponent.inject(fragment);
+    public RepositoryListViewFragment.Component repositoryListViewComponent(
+            RepositoryListViewFragment fragment) {
+        return mComponent.repositoryListViewComponent(fragment);
     }
 
     public interface Component {
-        void inject(RepositoryPagerViewFragment fragment);
+        RepositoryListViewFragment.Component repositoryListViewComponent(
+                RepositoryListViewFragment fragment);
 
-        void inject(RepositoryListViewFragment fragment);
+        RepositoryPagerViewFragment.Component repositoryPagerViewComponent(
+                RepositoryPagerViewFragment fragment);
+
+        void inject(RepositorySplitViewFragment fragment);
     }
 
-    public interface Injector {
-        void inject(RepositorySplitViewFragment fragment);
+    public interface FragmentHost {
+        Component repositorySplitViewComponent(RepositorySplitViewFragment fragment);
     }
 }

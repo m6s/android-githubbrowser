@@ -15,24 +15,16 @@ import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
         DefaultNetworkModule.class})
 public abstract class GitHubApplicationComponent implements GitHubApplication.Component {
     @Override
-    public void inject(RootViewFragment fragment) {
-        rootViewComponent(fragment).inject(fragment);
+    public RootViewComponent rootViewComponent(RootViewFragment fragment) {
+        return rootViewComponent(new RootViewModule(fragment));
     }
 
     @Override
-    public void inject(MainActivity activity) {
-        mainActivityComponent(activity).inject(activity);
-    }
-
-    private MainActivityComponent mainActivityComponent(MainActivity activity) {
+    public MainActivityComponent mainActivityComponent(MainActivity activity) {
         return mainActivityComponent(new MainActivityModule(activity));
     }
 
     abstract MainActivityComponent mainActivityComponent(MainActivityModule module);
-
-    private RootViewComponent rootViewComponent(RootViewFragment fragment) {
-        return rootViewComponent(new RootViewModule(fragment));
-    }
 
     abstract RootViewComponent rootViewComponent(RootViewModule module);
 }

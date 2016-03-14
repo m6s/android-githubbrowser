@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.android.BugFixFragment;
-import info.mschmitt.githubbrowser.android.InjectionUtils;
+import info.mschmitt.githubbrowser.android.FragmentUtils;
 import info.mschmitt.githubbrowser.databinding.RootViewBinding;
 import info.mschmitt.githubbrowser.ui.viewmodels.RootViewModel;
 
@@ -16,7 +16,7 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RootViewModel;
  * @author Matthias Schmitt
  */
 public class RootViewFragment extends BugFixFragment
-        implements UsernameViewFragment.Injector, RepositorySplitViewFragment.Injector {
+        implements UsernameViewFragment.FragmentHost, RepositorySplitViewFragment.FragmentHost {
     @Inject RootViewModel mViewModel;
     @Inject Component mComponent;
 
@@ -27,7 +27,8 @@ public class RootViewFragment extends BugFixFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InjectionUtils.retainAndGetInjector(this, Injector.class).inject(this);
+        FragmentUtils.retainAndGetHost(this, FragmentHost.class).rootViewComponent(this)
+                .inject(this);
         mViewModel.onLoad(savedInstanceState);
     }
 
@@ -72,22 +73,26 @@ public class RootViewFragment extends BugFixFragment
     }
 
     @Override
-    public void inject(RepositorySplitViewFragment fragment) {
-        mComponent.inject(fragment);
+    public RepositorySplitViewFragment.Component repositorySplitViewComponent(
+            RepositorySplitViewFragment fragment) {
+        return mComponent.repositorySplitViewComponent(fragment);
     }
 
     @Override
-    public void inject(UsernameViewFragment fragment) {
-        mComponent.inject(fragment);
+    public UsernameViewFragment.Component usernameViewComponent(UsernameViewFragment fragment) {
+        return mComponent.usernameViewComponent(fragment);
     }
 
     public interface Component {
-        void inject(RepositorySplitViewFragment fragment);
+        RepositorySplitViewFragment.Component repositorySplitViewComponent(
+                RepositorySplitViewFragment fragment);
 
-        void inject(UsernameViewFragment fragment);
+        UsernameViewFragment.Component usernameViewComponent(UsernameViewFragment fragment);
+
+        void inject(RootViewFragment fragment);
     }
 
-    public interface Injector {
-        void inject(RootViewFragment fragment);
+    public interface FragmentHost {
+        Component rootViewComponent(RootViewFragment fragment);
     }
 }

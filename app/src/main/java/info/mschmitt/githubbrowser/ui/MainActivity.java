@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.android.InjectionUtils;
+import info.mschmitt.githubbrowser.android.FragmentUtils;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InjectionUtils.getInjector(this, Injector.class).inject(this);
+        FragmentUtils.getHost(this, Application.class).mainActivityComponent(this).inject(this);
         setContentView(R.layout.main_activity);
     }
 
@@ -31,10 +31,11 @@ public class MainActivity extends AppCompatActivity {
         super.onAttachFragment(fragment);
     }
 
-    public interface Injector {
-        void inject(MainActivity mainActivity);
+    public interface Application {
+        Component mainActivityComponent(MainActivity activity);
     }
 
     public interface Component {
+        void inject(MainActivity mainActivity);
     }
 }

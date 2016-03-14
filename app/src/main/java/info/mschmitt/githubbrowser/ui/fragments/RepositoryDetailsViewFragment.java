@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubbrowser.android.InjectionUtils;
+import info.mschmitt.githubbrowser.android.FragmentUtils;
 import info.mschmitt.githubbrowser.databinding.RepositoryDetailsViewBinding;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryDetailsViewModel;
 
@@ -31,7 +31,8 @@ public class RepositoryDetailsViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InjectionUtils.getInjector(this, Injector.class).inject(this);
+        FragmentUtils.getHost(this, FragmentHost.class).repositoryDetailsViewComponent(this)
+                .inject(this);
         mViewModel.onLoadForPosition(getArguments().getInt(ARG_REPOSITORY_POSITION),
                 savedInstanceState);
     }
@@ -68,7 +69,11 @@ public class RepositoryDetailsViewFragment extends Fragment {
         super.onDestroy();
     }
 
-    public interface Injector {
+    public interface FragmentHost {
+        Component repositoryDetailsViewComponent(RepositoryDetailsViewFragment fragment);
+    }
+
+    public interface Component {
         void inject(RepositoryDetailsViewFragment fragment);
     }
 }

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubbrowser.android.InjectionUtils;
+import info.mschmitt.githubbrowser.android.FragmentUtils;
 import info.mschmitt.githubbrowser.android.design.DividerItemDecoration;
 import info.mschmitt.githubbrowser.databinding.RepositoryListViewBinding;
 import info.mschmitt.githubbrowser.ui.adapters.RepositoryRecyclerViewAdapter;
@@ -29,7 +29,8 @@ public class RepositoryListViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InjectionUtils.getInjector(this, Injector.class).inject(this);
+        FragmentUtils.getHost(this, FragmentHost.class).repositoryListViewComponent(this)
+                .inject(this);
         mViewModel.onLoad(savedInstanceState);
     }
 
@@ -77,7 +78,11 @@ public class RepositoryListViewFragment extends Fragment {
         super.onDestroy();
     }
 
-    public interface Injector {
+    public interface FragmentHost {
+        Component repositoryListViewComponent(RepositoryListViewFragment fragment);
+    }
+
+    public interface Component {
         void inject(RepositoryListViewFragment fragment);
     }
 }

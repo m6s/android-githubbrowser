@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubbrowser.android.InjectionUtils;
+import info.mschmitt.githubbrowser.android.FragmentUtils;
 import info.mschmitt.githubbrowser.databinding.RepositoryPagerViewBinding;
 import info.mschmitt.githubbrowser.ui.adapters.RepositoryPagerAdapter;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryPagerViewModel;
@@ -17,7 +17,7 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryPagerViewModel;
  * @author Matthias Schmitt
  */
 public class RepositoryPagerViewFragment extends Fragment
-        implements RepositoryDetailsViewFragment.Injector {
+        implements RepositoryDetailsViewFragment.FragmentHost {
     @Inject Component mComponent;
     @Inject RepositoryPagerViewModel mViewModel;
     @Inject RepositoryPagerAdapter mAdapter;
@@ -29,7 +29,8 @@ public class RepositoryPagerViewFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InjectionUtils.getInjector(this, Injector.class).inject(this);
+        FragmentUtils.getHost(this, FragmentHost.class).repositoryPagerViewComponent(this)
+                .inject(this);
         mViewModel.onLoad(savedInstanceState);
     }
 
@@ -76,15 +77,19 @@ public class RepositoryPagerViewFragment extends Fragment
     }
 
     @Override
-    public void inject(RepositoryDetailsViewFragment fragment) {
-        mComponent.inject(fragment);
+    public RepositoryDetailsViewFragment.Component repositoryDetailsViewComponent(
+            RepositoryDetailsViewFragment fragment) {
+        return mComponent.repositoryDetailsViewComponent(fragment);
     }
 
     public interface Component {
-        void inject(RepositoryDetailsViewFragment fragment);
+        RepositoryDetailsViewFragment.Component repositoryDetailsViewComponent(
+                RepositoryDetailsViewFragment fragment);
+
+        void inject(RepositoryPagerViewFragment fragment);
     }
 
-    public interface Injector {
-        void inject(RepositoryPagerViewFragment fragment);
+    public interface FragmentHost {
+        Component repositoryPagerViewComponent(RepositoryPagerViewFragment fragment);
     }
 }

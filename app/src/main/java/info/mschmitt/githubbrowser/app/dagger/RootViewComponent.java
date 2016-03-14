@@ -13,18 +13,18 @@ import info.mschmitt.githubbrowser.ui.scopes.RootViewScope;
 @Subcomponent(modules = {RootViewModule.class})
 abstract class RootViewComponent implements RootViewFragment.Component {
     @Override
-    public void inject(RepositorySplitViewFragment fragment) {
-        repositorySplitViewComponent().inject(fragment);
+    public RepositorySplitViewComponent repositorySplitViewComponent(
+            RepositorySplitViewFragment fragment) {
+        return repositorySplitViewComponent(new RepositorySplitViewModule());
     }
 
     @Override
-    public void inject(UsernameViewFragment fragment) {
-        usernameViewComponent().inject(fragment);
+    public UsernameViewComponent usernameViewComponent(UsernameViewFragment fragment) {
+        return usernameViewComponent(new UsernameViewModule());
     }
 
-    abstract UsernameViewComponent usernameViewComponent();
+    abstract UsernameViewComponent usernameViewComponent(UsernameViewModule module);
 
-    abstract RepositorySplitViewComponent repositorySplitViewComponent();
-
-    public abstract void inject(RootViewFragment fragment);
+    abstract RepositorySplitViewComponent repositorySplitViewComponent(
+            RepositorySplitViewModule module);
 }
