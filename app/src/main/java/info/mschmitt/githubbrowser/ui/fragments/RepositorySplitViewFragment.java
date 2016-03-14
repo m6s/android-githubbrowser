@@ -61,6 +61,8 @@ public class RepositorySplitViewFragment extends Fragment
                     .commit();
         }
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
+        //noinspection ConstantConditions
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return binding.getRoot();
     }
 

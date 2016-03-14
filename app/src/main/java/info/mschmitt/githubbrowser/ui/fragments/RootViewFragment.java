@@ -2,6 +2,7 @@ package info.mschmitt.githubbrowser.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -30,6 +31,7 @@ public class RootViewFragment extends BugFixFragment
         FragmentUtils.retainAndGetHost(this, FragmentHost.class).rootViewComponent(this)
                 .inject(this);
         mViewModel.onLoad(savedInstanceState);
+        setHasOptionsMenu(true); // We want to catch the home button
     }
 
     @Override
@@ -66,6 +68,17 @@ public class RootViewFragment extends BugFixFragment
         mComponent = null;
         mViewModel = null;
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                return mViewModel.onHomeOptionsItemSelected();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public boolean onBackPressed() {

@@ -73,7 +73,13 @@ public class RootViewModel implements DataBindingObservable {
         return mLoadingProgressManager.cancelAllTasks(true) || mNavigationService.goBack();
     }
 
+    public boolean onHomeOptionsItemSelected() {
+        return mNavigationService.goUp();
+    }
+
     public interface NavigationService {
         boolean goBack();
+
+        boolean goUp();
     }
 }

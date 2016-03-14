@@ -26,6 +26,14 @@ public class NavigationService
         mRootViewFragment = rootViewFragment;
     }
 
+    @Override
+    public void showRepositorySplitView(String username) {
+        mRootViewFragment.getChildFragmentManager().beginTransaction()
+                .replace(R.id.contentView, RepositorySplitViewFragment.newInstance(username))
+                .addToBackStack(null).commit();
+    }
+
+    @Override
     public boolean goBack() {
         boolean handled = false;
         RepositorySplitViewFragment repositorySplitViewFragment = findRepositorySplitViewFragment();
@@ -38,6 +46,11 @@ public class NavigationService
         return handled;
     }
 
+    @Override
+    public void showError(Throwable throwable, Runnable retryHandler) {
+        AlertDialogs.showErrorDialog(mRootViewFragment.getContext(), throwable, retryHandler);
+    }
+
     private RepositorySplitViewFragment findRepositorySplitViewFragment() {
         Fragment fragment =
                 mRootViewFragment.getChildFragmentManager().findFragmentById(R.id.contentView);
@@ -45,26 +58,12 @@ public class NavigationService
                 (RepositorySplitViewFragment) fragment : null;
     }
 
-    public void goUp() {
-        RepositorySplitViewFragment repositorySplitViewFragment = findRepositorySplitViewFragment();
-        if (repositorySplitViewFragment == null || !repositorySplitViewFragment.hideDetailsView()) {
-            mRootViewFragment.getChildFragmentManager().popBackStackImmediate();
-        }
-    }
-
-    @Override
-    public void showRepositorySplitView(String username) {
-        mRootViewFragment.getChildFragmentManager().beginTransaction()
-                .replace(R.id.contentView, RepositorySplitViewFragment.newInstance(username))
-                .addToBackStack(null).commit();
-    }
-
-    @Override
-    public void showError(Throwable throwable, Runnable retryHandler) {
-        AlertDialogs.showErrorDialog(mRootViewFragment.getContext(), throwable, retryHandler);
-    }
-
     @Override
     public void showAboutView() {
+    }
+
+    @Override
+    public boolean goUp() {
+        return goBack();
     }
 }
