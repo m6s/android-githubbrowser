@@ -14,23 +14,23 @@ import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.R;
 import info.mschmitt.githubbrowser.android.FragmentUtils;
-import info.mschmitt.githubbrowser.databinding.UsernameViewBinding;
-import info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel;
+import info.mschmitt.githubbrowser.databinding.AboutViewBinding;
+import info.mschmitt.githubbrowser.ui.viewmodels.AboutViewModel;
 
 /**
  * @author Matthias Schmitt
  */
-public class UsernameViewFragment extends Fragment {
-    @Inject UsernameViewModel mViewModel;
+public class AboutViewFragment extends Fragment {
+    @Inject AboutViewModel mViewModel;
 
-    public static UsernameViewFragment newInstance() {
-        return new UsernameViewFragment();
+    public static AboutViewFragment newInstance() {
+        return new AboutViewFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentUtils.getHost(this, FragmentHost.class).usernameViewComponent(this).inject(this);
+        FragmentUtils.getHost(this, FragmentHost.class).aboutViewComponent(this).inject(this);
         mViewModel.onLoad(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -38,7 +38,7 @@ public class UsernameViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        UsernameViewBinding binding = UsernameViewBinding.inflate(inflater, container, false);
+        AboutViewBinding binding = AboutViewBinding.inflate(inflater, container, false);
         binding.setViewModel(mViewModel);
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
         return binding.getRoot();
@@ -69,25 +69,23 @@ public class UsernameViewFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.username, menu);
+        inflater.inflate(R.menu.about, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_about:
-                return mViewModel.onAboutOptionsItemSelected();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     public interface FragmentHost {
-        Component usernameViewComponent(UsernameViewFragment fragment);
+        Component aboutViewComponent(AboutViewFragment fragment);
     }
 
     public interface Component {
-        void inject(UsernameViewFragment fragment);
+        void inject(AboutViewFragment fragment);
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<template
+    name="MVVM Scene"
+    description="Creates an MVVM scene."
+    format="3"
+    minApi="7"
+    minBuildApi="14"
+    revision="1">
+
+    <category value="MVVM"/>
+
+    <parameter
+        name="View name"
+        constraints="nonempty"
+        default="Sample"
+        help="The name of the view starting with an uppercase letter and without any suffixes."
+        id="viewName"
+        type="string"/>
+
+    <parameter
+        name="Package name"
+        constraints="package"
+        default="info.mschmitt.githubbrowser"
+        id="localPackageName"
+        type="string"/>
+
+    <globals file="globals.xml.ftl"/>
+    <execute file="recipe.xml.ftl"/>
+</template>

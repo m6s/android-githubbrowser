@@ -92,7 +92,7 @@ public class RepositorySplitViewFragment extends Fragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.repository_split, menu);
     }
 
     @Override

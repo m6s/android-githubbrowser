@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import info.mschmitt.githubbrowser.app.dagger.ApplicationContext;
+import info.mschmitt.githubbrowser.ui.viewmodels.AboutViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
@@ -18,7 +19,8 @@ import info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel;
 @Singleton
 public class AnalyticsService
         implements UsernameViewModel.AnalyticsService, RepositorySplitViewModel.AnalyticsService,
-        RepositoryListViewModel.AnalyticsService, RepositoryDetailsViewModel.AnalyticsService {
+        RepositoryListViewModel.AnalyticsService, RepositoryDetailsViewModel.AnalyticsService,
+        AboutViewModel.AnalyticsService {
     private Context mContext;
 
     @Inject

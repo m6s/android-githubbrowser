@@ -1,4 +1,4 @@
-package info.mschmitt.githubbrowser.ui.fragments;
+package ${localPackageName}.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,25 +12,25 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.android.FragmentUtils;
-import info.mschmitt.githubbrowser.databinding.UsernameViewBinding;
-import info.mschmitt.githubbrowser.ui.viewmodels.UsernameViewModel;
+import ${localPackageName}.R;
+import ${localPackageName}.android.FragmentUtils;
+import ${localPackageName}.databinding.${viewName}ViewBinding;
+import ${localPackageName}.ui.viewmodels.${viewName}ViewModel;
 
 /**
  * @author Matthias Schmitt
  */
-public class UsernameViewFragment extends Fragment {
-    @Inject UsernameViewModel mViewModel;
+public class ${viewName}ViewFragment extends Fragment {
+    @Inject ${viewName}ViewModel mViewModel;
 
-    public static UsernameViewFragment newInstance() {
-        return new UsernameViewFragment();
+    public static ${viewName}ViewFragment newInstance() {
+        return new ${viewName}ViewFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentUtils.getHost(this, FragmentHost.class).usernameViewComponent(this).inject(this);
+        FragmentUtils.getHost(this, FragmentHost.class).${viewName?lower_case}ViewComponent(this).inject(this);
         mViewModel.onLoad(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -38,7 +38,7 @@ public class UsernameViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        UsernameViewBinding binding = UsernameViewBinding.inflate(inflater, container, false);
+        ${viewName}ViewBinding binding = ${viewName}ViewBinding.inflate(inflater, container, false);
         binding.setViewModel(mViewModel);
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
         return binding.getRoot();
@@ -69,25 +69,23 @@ public class UsernameViewFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.username, menu);
+        inflater.inflate(R.menu.${viewName?lower_case}, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_about:
-                return mViewModel.onAboutOptionsItemSelected();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     public interface FragmentHost {
-        Component usernameViewComponent(UsernameViewFragment fragment);
+        Component ${viewName?lower_case}ViewComponent(${viewName}ViewFragment fragment);
     }
 
     public interface Component {
-        void inject(UsernameViewFragment fragment);
+        void inject(${viewName}ViewFragment fragment);
     }
 }

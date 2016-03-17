@@ -7,6 +7,7 @@ import info.mschmitt.githubbrowser.ui.AnalyticsService;
 import info.mschmitt.githubbrowser.ui.NavigationService;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 import info.mschmitt.githubbrowser.ui.scopes.RootViewScope;
+import info.mschmitt.githubbrowser.ui.viewmodels.AboutViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
@@ -54,6 +55,13 @@ class RootViewModule {
 
     @Provides
     @RootViewScope
+    public AboutViewModel.NavigationService provideAboutViewModelNavigationService(
+            NavigationService navigationService) {
+        return navigationService;
+    }
+
+    @Provides
+    @RootViewScope
     public UsernameViewModel.AnalyticsService provideUserNameViewModelAnalyticsService(
             AnalyticsService analyticsService) {
         return analyticsService;
@@ -78,6 +86,13 @@ class RootViewModule {
     @RootViewScope
     public RepositoryDetailsViewModel.AnalyticsService
     provideRepositoryDetailsViewModelAnalyticsService(
+            AnalyticsService analyticsService) {
+        return analyticsService;
+    }
+
+    @Provides
+    @RootViewScope
+    public AboutViewModel.AnalyticsService provideAboutViewModelAnalyticsService(
             AnalyticsService analyticsService) {
         return analyticsService;
     }
