@@ -3,12 +3,6 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion sdk.compileVersion
-    buildToolsVersion sdk.buildToolsVersion
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
     defaultConfig {
         minSdkVersion sdk.minVersion
         targetSdkVersion sdk.targetVersion

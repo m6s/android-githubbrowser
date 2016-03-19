@@ -28,14 +28,8 @@ android {
             }
         }
     }
-    compileSdkVersion sdk.compileVersion
-    buildToolsVersion sdk.buildToolsVersion
     dataBinding {
         enabled = true
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
         applicationId "info.mschmitt.githubapp.f"

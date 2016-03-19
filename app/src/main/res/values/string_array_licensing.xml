@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="licensing">
+        <item>@string/licensing_dagger2</item>
         <item>@string/licensing_gson</item>
         <item>@string/licensing_okhttp</item>
         <item>@string/licensing_retrofit</item>
+        <item>@string/licensing_rxandroid</item>
+        <item>@string/licensing_rxjava</item>
     </string-array>
 </resources>
