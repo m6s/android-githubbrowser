@@ -3,8 +3,8 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileSdkVersion sdk.compileVersion
+    buildToolsVersion sdk.buildToolsVersion
     dataBinding {
         enabled = true
     }
@@ -13,10 +13,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
-        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        minSdkVersion sdk.minVersion
+        targetSdkVersion sdk.targetVersion
     }
     buildTypes {
         release {
@@ -31,10 +31,10 @@ dependencies {
     compile project(':libraries:entities')
     compile project(':libraries:utilities-android')
     compile project(':libraries:utilities-java')
-    compile group: 'com.android.support', name: 'appcompat-v7', version: project.DEPENDENCIES_ANDROID_SUPPORT_VERSION
-    provided 'javax.inject:javax.inject:1@jar'
-    compile group: 'com.google.dagger', name: 'dagger', version: project.DEPENDENCIES_DAGGER_VERSION
-    apt group: 'com.google.dagger', name: 'dagger-compiler', version: project.DEPENDENCIES_DAGGER_VERSION
-    compile group: 'io.reactivex', name: 'rxandroid', version: project.DEPENDENCIES_RX_ANDROID_VERSION
-    compile group: 'io.reactivex', name: 'rxjava', version: project.DEPENDENCIES_RX_VERSION
+    compile libraries.supportAppCompat
+    provided libraries.javaxInject
+    compile libraries.dagger
+    apt libraries.daggerCompiler
+    compile libraries.rxAndroid
+    compile libraries.rxJava
 }

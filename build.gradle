@@ -1,18 +1,38 @@
+apply from: 'dependencies.gradle'
+
 buildscript {
+    apply from: 'dependencies.gradle'
     repositories {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:1.5.0"
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
-        classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
+        // See dependencies.gradle for declaration of plugins.
+        classpath gradlePlugins.android
+        // Compile-time annotation processing.
+        classpath gradlePlugins.apt
+        // Backport of some Java 8 language features such as Lambdas and method references.
+        classpath gradlePlugins.retrolambda
+        // Needed for Lint + Retrolambda.
+        classpath gradlePlugins.lombok
+        // Publish to play market from Gradle
+        classpath gradlePlugins.playPublisher
     }
+    // Part of workaround for Lint + Retrolambda.
+    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
-allprojects {
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+subprojects {
     repositories {
         jcenter()
+    }
+    project.plugins.whenPluginAdded { plugin ->
+        if ('com.android.build.gradle.AppPlugin'.equals(plugin.class.name) || 'com.android.build.gradle.LibraryPlugin'.equals(plugin.class.name)) {
+            // TODO
+        }
     }
     tasks.withType(JavaCompile) {
         apply plugin: 'me.tatarka.retrolambda'

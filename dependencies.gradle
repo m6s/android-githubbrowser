@@ -1,0 +1,45 @@
+ext.sdk = [
+        minVersion       : 16,
+        targetVersion    : 23,
+        compileVersion   : 23,
+        buildToolsVersion: '23.0.2',
+]
+
+ext.versions = [
+        dagger     : '2.1',
+        okHttp     : '3.2.0',
+        retrofit   : '2.0.0-beta4',
+        rxJava     : '1.1.1',
+        supportLibs: '23.1.1',
+]
+
+ext.gradlePlugins = [
+        android      : "com.android.tools.build:gradle:1.5.0",
+        apt          : "com.neenbedankt.gradle.plugins:android-apt:1.8",
+        lombok       : "me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2",
+        playPublisher: "com.github.triplet.gradle:play-publisher:1.1.4",
+        retrolambda  : "me.tatarka:gradle-retrolambda:3.3.0-beta4",
+]
+
+ext.libraries = [
+        autoValue               : "com.google.auto.value:auto-value:1.1",
+        dagger                  : "com.google.dagger:dagger:$versions.dagger",
+        daggerCompiler          : "com.google.dagger:dagger-compiler:$versions.dagger",
+        findBugs                : "com.google.code.findbugs:jsr305:3.0.0",
+        gson                    : "com.google.code.gson:gson:2.5",
+        javaxInject             : "javax.inject:javax.inject:1",
+        okHttp                  : "com.squareup.okhttp3:okhttp:$versions.okHttp",
+        okHttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:$versions.okHttp",
+        retrofit                : "com.squareup.retrofit2:retrofit:2.0.0-beta4",
+        retrofitGsonConverter   : "com.squareup.retrofit2:converter-gson:$versions.retrofit",
+        retrofitRxJavaAdapter   : "com.squareup.retrofit2:adapter-rxjava:$versions.retrofit",
+        rxAndroid               : "io.reactivex:rxandroid:1.1.0",
+        rxJava                  : "io.reactivex:rxjava:$versions.rxJava",
+        supportAnnotations      : "com.android.support:support-annotations:$versions.supportLibs",
+        supportAppCompat        : "com.android.support:appcompat-v7:$versions.supportLibs",
+        supportCardView         : "com.android.support:cardview-v7:$versions.supportLibs",
+        supportDesign           : "com.android.support:design:$versions.supportLibs",
+        supportRecyclerView     : "com.android.support:recyclerview-v7:$versions.supportLibs",
+        // Test dependencies
+        junit                   : "junit:junit:4.12",
+]

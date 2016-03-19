@@ -3,15 +3,15 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileSdkVersion sdk.compileVersion
+    buildToolsVersion sdk.buildToolsVersion
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
-        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+        minSdkVersion sdk.minVersion
+        targetSdkVersion sdk.targetVersion
         versionCode 1
         versionName "1.0"
     }
@@ -25,20 +25,14 @@ android {
 
 dependencies {
     compile project(':libraries:entities')
-    provided 'javax.inject:javax.inject:1@jar'
-    compile group: 'com.google.dagger', name: 'dagger', version: project.DEPENDENCIES_DAGGER_VERSION
-    apt group: 'com.google.dagger', name: 'dagger-compiler', version: project.DEPENDENCIES_DAGGER_VERSION
-    compile group: 'io.reactivex', name: 'rxjava', version: project.DEPENDENCIES_RX_VERSION
-    compile 'com.google.code.gson:gson:2.5'
-    compile 'com.squareup.okhttp3:okhttp:3.1.2'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.1.2'
-    compile('com.squareup.retrofit2:retrofit:2.0.0-beta4') {
-        exclude module: 'okhttp'
-    }
-    compile('com.squareup.retrofit2:converter-gson:2.0.0-beta4') {
-        exclude module: 'gson'
-    }
-    compile('com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4') {
-        exclude module: 'rxjava'
-    }
+    provided libraries.javaxInject
+    compile libraries.dagger
+    apt libraries.daggerCompiler
+    compile libraries.rxJava
+    compile libraries.gson
+    compile libraries.okHttp
+    compile libraries.okHttpLoggingInterceptor
+    compile libraries.retrofit
+    compile libraries.retrofitGsonConverter
+    compile libraries.retrofitRxJavaAdapter
 }

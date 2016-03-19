@@ -1,5 +1,5 @@
 apply plugin: 'java'
 
 dependencies {
-    compile group: 'io.reactivex', name: 'rxjava', version: project.DEPENDENCIES_RX_VERSION
+    compile libraries.rxJava
 }
