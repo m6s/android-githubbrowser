@@ -1,7 +1,7 @@
 package info.mschmitt.githubbrowser.app.dagger;
 
 import dagger.Subcomponent;
-import info.mschmitt.githubbrowser.ui.fragments.AboutViewFragment;
+import info.mschmitt.githubbrowser.ui.fragments.AboutViewDialogFragment;
 import info.mschmitt.githubbrowser.ui.fragments.RepositorySplitViewFragment;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 import info.mschmitt.githubbrowser.ui.fragments.UsernameViewFragment;
@@ -25,7 +25,8 @@ abstract class RootViewComponent implements RootViewFragment.Component {
     }
 
     @Override
-    public AboutViewFragment.Component repositorySplitViewComponent(AboutViewFragment fragment) {
+    public AboutViewDialogFragment.Component repositorySplitViewComponent(
+            AboutViewDialogFragment fragment) {
         return repositorySplitViewComponent(new AboutViewModule());
     }
 

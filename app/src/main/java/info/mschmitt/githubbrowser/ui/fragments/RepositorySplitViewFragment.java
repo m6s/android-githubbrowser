@@ -2,6 +2,7 @@ package info.mschmitt.githubbrowser.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,9 +24,10 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RepositorySplitViewModel;
 public class RepositorySplitViewFragment extends Fragment
         implements RepositoryListViewFragment.FragmentHost,
         RepositoryPagerViewFragment.FragmentHost {
-    private static final String ARG_USERNAME = "arg_username";
+    private static final String ARG_USERNAME = "ARG_USERNAME";
     @Inject Component mComponent;
     @Inject RepositorySplitViewModel mViewModel;
+    private String mUsername;
 
     public static RepositorySplitViewFragment newInstance(String username) {
         RepositorySplitViewFragment fragment = new RepositorySplitViewFragment();
@@ -40,7 +42,8 @@ public class RepositorySplitViewFragment extends Fragment
         super.onCreate(savedInstanceState);
         FragmentUtils.getHost(this, FragmentHost.class).repositorySplitViewComponent(this)
                 .inject(this);
-        mViewModel.onLoad(getArguments().getString(ARG_USERNAME), savedInstanceState);
+        mUsername = getArguments().getString(ARG_USERNAME);
+        mViewModel.onLoad(mUsername, savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -60,9 +63,12 @@ public class RepositorySplitViewFragment extends Fragment
                     .add(binding.detailsView.getId(), RepositoryPagerViewFragment.newInstance())
                     .commit();
         }
-        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
-        //noinspection ConstantConditions
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(binding.toolbar);
+        ActionBar supportActionBar = activity.getSupportActionBar();
+        assert supportActionBar != null;
+        supportActionBar.setDisplayHomeAsUpEnabled(true);
+        supportActionBar.setTitle(mUsername);
         return binding.getRoot();
     }
 

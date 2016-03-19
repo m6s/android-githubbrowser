@@ -1,7 +1,7 @@
 package info.mschmitt.githubbrowser.app.dagger;
 
 import dagger.Subcomponent;
-import info.mschmitt.githubbrowser.ui.fragments.AboutViewFragment;
+import info.mschmitt.githubbrowser.ui.fragments.AboutViewDialogFragment;
 import info.mschmitt.githubbrowser.ui.scopes.AboutViewScope;
 
 /**
@@ -9,5 +9,5 @@ import info.mschmitt.githubbrowser.ui.scopes.AboutViewScope;
  */
 @AboutViewScope
 @Subcomponent(modules = {AboutViewModule.class})
-interface AboutViewComponent extends AboutViewFragment.Component {
+interface AboutViewComponent extends AboutViewDialogFragment.Component {
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_view_title">About</string>
+    <string name="about_view_template">
+<![CDATA[
+<h3>GitHub Browser</h3>
+<p>Version %1$s (%2$d)</p>
+<h4>Third-party licensing notices</h4>
+%3$s
+]]>
+    </string>
+</resources>

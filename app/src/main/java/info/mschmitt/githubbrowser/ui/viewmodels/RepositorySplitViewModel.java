@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import info.mschmitt.githubbrowser.BR;
 import info.mschmitt.githubbrowser.R;
 import info.mschmitt.githubbrowser.android.databinding.DataBindingObservable;
+import info.mschmitt.githubbrowser.app.qualifiers.ApplicationResources;
 import info.mschmitt.githubbrowser.domain.RepositoryDownloader;
 import info.mschmitt.githubbrowser.entities.Repository;
 import info.mschmitt.githubbrowser.java.LoadingProgressManager;
@@ -42,7 +43,8 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     private CompositeSubscription mSubscriptions;
 
     @Inject
-    public RepositorySplitViewModel(Resources resources, RepositoryDownloader repositoryDownloader,
+    public RepositorySplitViewModel(@ApplicationResources Resources resources,
+                                    RepositoryDownloader repositoryDownloader,
                                     AnalyticsService analyticsService,
                                     LoadingProgressManager loadingProgressManager,
                                     NavigationService NavigationService) {

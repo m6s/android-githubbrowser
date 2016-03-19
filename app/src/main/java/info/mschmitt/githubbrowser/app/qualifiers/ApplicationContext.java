@@ -1,4 +1,4 @@
-package info.mschmitt.githubbrowser.app.dagger;
+package info.mschmitt.githubbrowser.app.qualifiers;
 
 import javax.inject.Qualifier;
 

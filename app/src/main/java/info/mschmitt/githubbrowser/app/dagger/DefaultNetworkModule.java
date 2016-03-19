@@ -8,6 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubbrowser.BuildConfig;
 import info.mschmitt.githubbrowser.R;
+import info.mschmitt.githubbrowser.app.qualifiers.ApplicationResources;
 import info.mschmitt.githubbrowser.network.Network;
 
 /**
@@ -17,7 +18,7 @@ import info.mschmitt.githubbrowser.network.Network;
 public class DefaultNetworkModule {
     @Provides
     @Singleton
-    Network provideNetwork(Resources resources) {
+    Network provideNetwork(@ApplicationResources Resources resources) {
         return new Network(resources.getString(R.string.base_url), BuildConfig.DEBUG);
     }
 }

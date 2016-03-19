@@ -9,6 +9,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubbrowser.app.GitHubApplication;
+import info.mschmitt.githubbrowser.app.qualifiers.ApplicationContext;
+import info.mschmitt.githubbrowser.app.qualifiers.ApplicationResources;
 
 /**
  * @author Matthias Schmitt
@@ -25,13 +27,14 @@ public class GitHubApplicationModule {
     @Singleton
     @ApplicationContext
     public Context provideApplicationContext() {
-        return mApplication;
+        return mApplication.getApplicationContext();
     }
 
     @Provides
     @Singleton
-    public Resources provideResources(@ApplicationContext Context context) {
-        return context.getResources();
+    @ApplicationResources
+    public Resources provideApplicationResources() {
+        return mApplication.getResources();
     }
 
     @Provides

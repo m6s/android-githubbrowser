@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import info.mschmitt.githubbrowser.BuildConfig;
+import info.mschmitt.githubbrowser.app.qualifiers.ApplicationContext;
 import info.mschmitt.githubbrowser.domain.Domain;
 import info.mschmitt.githubbrowser.domain.RepositoryDownloader;
 import info.mschmitt.githubbrowser.domain.UserDownloader;

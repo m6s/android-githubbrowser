@@ -6,7 +6,7 @@ import android.util.Log;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import info.mschmitt.githubbrowser.app.dagger.ApplicationContext;
+import info.mschmitt.githubbrowser.app.qualifiers.ApplicationContext;
 import info.mschmitt.githubbrowser.ui.viewmodels.AboutViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryDetailsViewModel;
 import info.mschmitt.githubbrowser.ui.viewmodels.RepositoryListViewModel;

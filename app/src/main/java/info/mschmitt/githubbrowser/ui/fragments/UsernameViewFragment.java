@@ -40,7 +40,8 @@ public class UsernameViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         UsernameViewBinding binding = UsernameViewBinding.inflate(inflater, container, false);
         binding.setViewModel(mViewModel);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(binding.toolbar);
         return binding.getRoot();
     }
 

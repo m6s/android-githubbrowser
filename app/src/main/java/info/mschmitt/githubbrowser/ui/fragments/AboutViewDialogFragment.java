@@ -1,8 +1,10 @@
 package info.mschmitt.githubbrowser.ui.fragments;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,11 +22,11 @@ import info.mschmitt.githubbrowser.ui.viewmodels.AboutViewModel;
 /**
  * @author Matthias Schmitt
  */
-public class AboutViewFragment extends Fragment {
+public class AboutViewDialogFragment extends DialogFragment {
     @Inject AboutViewModel mViewModel;
 
-    public static AboutViewFragment newInstance() {
-        return new AboutViewFragment();
+    public static AboutViewDialogFragment newInstance() {
+        return new AboutViewDialogFragment();
     }
 
     @Override
@@ -32,7 +34,19 @@ public class AboutViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         FragmentUtils.getHost(this, FragmentHost.class).aboutViewComponent(this).inject(this);
         mViewModel.onLoad(savedInstanceState);
-        setHasOptionsMenu(true);
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.setTitle(R.string.about_view_title);
+        return dialog;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        mViewModel.onSave(outState);
     }
 
     @Override
@@ -40,7 +54,7 @@ public class AboutViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         AboutViewBinding binding = AboutViewBinding.inflate(inflater, container, false);
         binding.setViewModel(mViewModel);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
+        binding.textView.setMovementMethod(new ScrollingMovementMethod());
         return binding.getRoot();
     }
 
@@ -48,11 +62,6 @@ public class AboutViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mViewModel.onResume();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        mViewModel.onSave(outState);
     }
 
     @Override
@@ -82,10 +91,10 @@ public class AboutViewFragment extends Fragment {
     }
 
     public interface FragmentHost {
-        Component aboutViewComponent(AboutViewFragment fragment);
+        Component aboutViewComponent(AboutViewDialogFragment fragment);
     }
 
     public interface Component {
-        void inject(AboutViewFragment fragment);
+        void inject(AboutViewDialogFragment fragment);
     }
 }

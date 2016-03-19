@@ -40,7 +40,11 @@ public class ${viewName}ViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         ${viewName}ViewBinding binding = ${viewName}ViewBinding.inflate(inflater, container, false);
         binding.setViewModel(mViewModel);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(binding.toolbar);
+        ActionBar supportActionBar = activity.getSupportActionBar();
+//        assert supportActionBar != null;
+//        supportActionBar.setDisplayHomeAsUpEnabled(true);
         return binding.getRoot();
     }
 

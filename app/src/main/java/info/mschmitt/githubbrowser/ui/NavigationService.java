@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import javax.inject.Inject;
 
 import info.mschmitt.githubbrowser.R;
-import info.mschmitt.githubbrowser.ui.fragments.AboutViewFragment;
+import info.mschmitt.githubbrowser.ui.fragments.AboutViewDialogFragment;
 import info.mschmitt.githubbrowser.ui.fragments.RepositorySplitViewFragment;
 import info.mschmitt.githubbrowser.ui.fragments.RootViewFragment;
 import info.mschmitt.githubbrowser.ui.scopes.RootViewScope;
@@ -41,6 +41,12 @@ public class NavigationService
     }
 
     @Override
+    public void showAboutView() {
+        AboutViewDialogFragment.newInstance().show(mRootViewFragment.getChildFragmentManager(),
+                AboutViewDialogFragment.class.getSimpleName());
+    }
+
+    @Override
     public boolean goBack() {
         boolean handled = false;
         RepositorySplitViewFragment repositorySplitViewFragment = findRepositorySplitViewFragment();
@@ -51,13 +57,6 @@ public class NavigationService
             handled = mRootViewFragment.getChildFragmentManager().popBackStackImmediate();
         }
         return handled;
-    }
-
-    @Override
-    public void showAboutView() {
-        mRootViewFragment.getChildFragmentManager().beginTransaction()
-                .replace(R.id.contentView, AboutViewFragment.newInstance()).addToBackStack(null)
-                .commit();
     }
 
     private RepositorySplitViewFragment findRepositorySplitViewFragment() {

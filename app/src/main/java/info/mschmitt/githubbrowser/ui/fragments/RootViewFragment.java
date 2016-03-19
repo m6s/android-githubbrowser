@@ -18,7 +18,7 @@ import info.mschmitt.githubbrowser.ui.viewmodels.RootViewModel;
  */
 public class RootViewFragment extends BugFixFragment
         implements UsernameViewFragment.FragmentHost, RepositorySplitViewFragment.FragmentHost,
-        AboutViewFragment.FragmentHost {
+        AboutViewDialogFragment.FragmentHost {
     @Inject RootViewModel mViewModel;
     @Inject Component mComponent;
 
@@ -98,7 +98,7 @@ public class RootViewFragment extends BugFixFragment
     }
 
     @Override
-    public AboutViewFragment.Component aboutViewComponent(AboutViewFragment fragment) {
+    public AboutViewDialogFragment.Component aboutViewComponent(AboutViewDialogFragment fragment) {
         return mComponent.repositorySplitViewComponent(fragment);
     }
 
@@ -110,7 +110,8 @@ public class RootViewFragment extends BugFixFragment
 
         UsernameViewFragment.Component usernameViewComponent(UsernameViewFragment fragment);
 
-        AboutViewFragment.Component repositorySplitViewComponent(AboutViewFragment fragment);
+        AboutViewDialogFragment.Component repositorySplitViewComponent(
+                AboutViewDialogFragment fragment);
     }
 
     public interface FragmentHost {

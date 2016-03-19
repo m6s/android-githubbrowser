@@ -10,31 +10,11 @@
             type="info.mschmitt.githubbrowser.ui.viewmodels.AboutViewModel"/>
     </data>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"/>
-        </android.support.design.widget.AppBarLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1">
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="10dp"/>
-        </FrameLayout>
-    </LinearLayout>
+        android:padding="12dp"
+        android:text="@{viewModel.description}"
+        />
 </layout>
