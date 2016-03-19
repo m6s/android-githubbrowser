@@ -20,7 +20,6 @@ To keep this example short, a data layer has been excluded.
 
 ## TODO
 
-* Display copyright information
 * Incorporate latest changes from the data binding framework
 * Find a solution to remove Android dependencies from view-models
 * Evaluate LoganSquare or AutoValue extensions for JSON parsing

@@ -35,8 +35,8 @@ android {
         applicationId "info.mschmitt.githubapp.f"
         minSdkVersion sdk.minVersion
         targetSdkVersion sdk.targetVersion
-        versionCode 11
-        versionName "v1.0.11"
+        versionCode 12
+        versionName "1.0.12"
     }
     buildTypes {
         debug {
