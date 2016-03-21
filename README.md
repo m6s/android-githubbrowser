@@ -17,10 +17,3 @@ created higher up the containment hierarchy. Every fragment constitutes a depend
 scope.
 
 To keep this example short, a data layer has been excluded.
-
-## TODO
-
-* Incorporate latest changes from the data binding framework
-* Find a solution to remove Android dependencies from view-models
-* Evaluate LoganSquare or AutoValue extensions for JSON parsing
-* Use Quasar, should it ever make its way to Android
