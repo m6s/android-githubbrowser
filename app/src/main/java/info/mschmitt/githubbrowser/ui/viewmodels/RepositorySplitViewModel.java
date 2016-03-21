@@ -98,7 +98,9 @@ public class RepositorySplitViewModel implements DataBindingObservable {
         mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         subscription.add(download.subscribe(mRepositoryMapSubject::onNext, throwable -> {
             mAnalyticsService.logError(throwable);
-            mNavigationService.showError(throwable, this::initializeRepositoryMap);
+            mNavigationService.showError(throwable, this::initializeRepositoryMap, () -> {
+            });
+            subscription.unsubscribe();
         }));
         mSubscriptions.add(subscription);
     }
@@ -149,7 +151,7 @@ public class RepositorySplitViewModel implements DataBindingObservable {
     }
 
     public interface NavigationService {
-        void showError(Throwable throwable, Runnable retryHandler);
+        void showError(Throwable throwable, Runnable retryHandler, Runnable cancelHandler);
 
         void showAboutView();
     }

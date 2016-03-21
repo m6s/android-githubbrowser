@@ -7,8 +7,8 @@ import android.support.v7.app.AlertDialog;
  * @author Matthias Schmitt
  */
 public class AlertDialogs {
-    public static void showErrorDialog(Context context, Throwable throwable,
-                                       Runnable retryRunnable) {
+    public static void showErrorDialog(Context context, Throwable throwable, Runnable retryRunnable,
+                                       Runnable cancelHandler) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle("Error");
         String message = throwable.getLocalizedMessage();
@@ -16,6 +16,7 @@ public class AlertDialogs {
         alertDialog.setMessage(message);
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", (dialog, which) -> {
             dialog.dismiss();
+            cancelHandler.run();
         });
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Retry", (dialog, which) -> {
             dialog.dismiss();

@@ -21,6 +21,7 @@ android {
 }
 
 dependencies {
+    compile project(':libraries:utilities-java')
     compile libraries.supportAppCompat
     compile libraries.supportDesign
     provided libraries.javaxInject

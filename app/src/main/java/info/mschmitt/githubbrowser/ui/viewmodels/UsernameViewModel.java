@@ -94,7 +94,9 @@ public class UsernameViewModel implements DataBindingObservable {
         mLoadingProgressManager.notifyLoadingBegin(this, subscription::unsubscribe);
         subscription.add(download.subscribe(throwable -> {
             mAnalyticsService.logError(throwable);
-            mNavigationService.showError(throwable, this::connectModel);
+            mNavigationService.showError(throwable, this::showRepositories, () -> {
+            });
+            subscription.unsubscribe();
         }, () -> mNavigationService.showRepositorySplitView(mUsername)));
         mSubscriptions.add(subscription);
     }
@@ -156,7 +158,7 @@ public class UsernameViewModel implements DataBindingObservable {
     public interface NavigationService {
         void showRepositorySplitView(String username);
 
-        void showError(Throwable throwable, Runnable retryHandler);
+        void showError(Throwable throwable, Runnable retryHandler, Runnable cancelHandler);
 
         void showAboutView();
     }

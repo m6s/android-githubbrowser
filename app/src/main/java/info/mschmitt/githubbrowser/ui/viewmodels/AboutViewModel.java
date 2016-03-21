@@ -85,7 +85,6 @@ public class AboutViewModel implements DataBindingObservable {
     }
 
     public interface NavigationService {
-        void showError(Throwable throwable, Runnable retryHandler);
     }
 
     public interface AnalyticsService {

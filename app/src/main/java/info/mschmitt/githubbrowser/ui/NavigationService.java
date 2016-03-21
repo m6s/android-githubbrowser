@@ -36,8 +36,9 @@ public class NavigationService
     }
 
     @Override
-    public void showError(Throwable throwable, Runnable retryHandler) {
-        AlertDialogs.showErrorDialog(mRootViewFragment.getContext(), throwable, retryHandler);
+    public void showError(Throwable throwable, Runnable retryHandler, Runnable cancelHandler) {
+        AlertDialogs.showErrorDialog(mRootViewFragment.getContext(), throwable, retryHandler,
+                cancelHandler);
     }
 
     @Override
