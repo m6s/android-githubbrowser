@@ -99,7 +99,7 @@ public class RootViewFragment extends BugFixFragment
 
     @Override
     public AboutViewDialogFragment.Component aboutViewComponent(AboutViewDialogFragment fragment) {
-        return mComponent.repositorySplitViewComponent(fragment);
+        return mComponent.aboutViewComponent(fragment);
     }
 
     public interface Component {
@@ -110,8 +110,7 @@ public class RootViewFragment extends BugFixFragment
 
         UsernameViewFragment.Component usernameViewComponent(UsernameViewFragment fragment);
 
-        AboutViewDialogFragment.Component repositorySplitViewComponent(
-                AboutViewDialogFragment fragment);
+        AboutViewDialogFragment.Component aboutViewComponent(AboutViewDialogFragment fragment);
     }
 
     public interface FragmentHost {

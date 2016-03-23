@@ -25,12 +25,11 @@ abstract class RootViewComponent implements RootViewFragment.Component {
     }
 
     @Override
-    public AboutViewDialogFragment.Component repositorySplitViewComponent(
-            AboutViewDialogFragment fragment) {
-        return repositorySplitViewComponent(new AboutViewModule());
+    public AboutViewDialogFragment.Component aboutViewComponent(AboutViewDialogFragment fragment) {
+        return aboutViewComponent(new AboutViewModule());
     }
 
-    abstract AboutViewComponent repositorySplitViewComponent(AboutViewModule aboutViewModule);
+    abstract AboutViewComponent aboutViewComponent(AboutViewModule aboutViewModule);
 
     abstract UsernameViewComponent usernameViewComponent(UsernameViewModule module);
 
