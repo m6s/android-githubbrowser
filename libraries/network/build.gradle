@@ -18,7 +18,6 @@ android {
 }
 
 dependencies {
-    compile project(':libraries:entities')
     provided libraries.javaxInject
     compile libraries.dagger
     apt libraries.daggerCompiler
