@@ -17,3 +17,7 @@ created higher up the containment hierarchy. Every fragment constitutes a depend
 scope.
 
 To keep this example short, a data layer has been excluded.
+
+## License
+
+Released into the public domain. May contain third-party, copyrighted code and resources.
