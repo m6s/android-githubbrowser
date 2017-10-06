@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.github.triplet.play'
 
 android {
@@ -54,7 +53,7 @@ dependencies {
     compile libraries.supportDesign
     compile libraries.supportAnnotations
     compile libraries.dagger
-    apt libraries.daggerCompiler
+    annotationProcessor libraries.daggerCompiler
     compile libraries.rxAndroid
     compile libraries.rxJava
 }

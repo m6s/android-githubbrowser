@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     defaultConfig {
@@ -23,7 +22,7 @@ dependencies {
     compile libraries.supportAppCompat
     provided libraries.javaxInject
     compile libraries.dagger
-    apt libraries.daggerCompiler
+    annotationProcessor libraries.daggerCompiler
     compile libraries.rxAndroid
     compile libraries.rxJava
 }

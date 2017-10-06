@@ -1,3 +1,5 @@
+# DEPRECATED
+
 # GitHub Browser
 
 Android example application showcasing the following frameworks and build-tools:

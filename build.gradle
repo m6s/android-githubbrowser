@@ -4,12 +4,11 @@ buildscript {
     apply from: 'dependencies.gradle'
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' }
     }
     dependencies {
         // See dependencies.gradle for declaration of plugins.
         classpath gradlePlugins.android
-        // Compile-time annotation processing.
-        classpath gradlePlugins.apt
         // Backport of some Java 8 language features such as Lambdas and method references.
         classpath gradlePlugins.retrolambda
         // Needed for Lint + Retrolambda.
@@ -28,6 +27,7 @@ task clean(type: Delete) {
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' }
     }
 
     // Workaround to prevent Gradle from stealing focus from other apps during tests run/etc.
